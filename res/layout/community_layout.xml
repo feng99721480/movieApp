@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <!-- community header -->
+
+    <RelativeLayout
+        android:id="@+id/community_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="#E02826" >
+
+        <ImageView
+            android:id="@+id/community_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_toRightOf="@id/city_name"
+            android:paddingLeft="5dp"
+            android:src="@drawable/ic_three_line" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:text="@string/community"
+            android:textColor="@android:color/white" />
+
+        <ImageView
+            android:id="@+id/community_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingRight="5dp"
+            android:src="@drawable/ic_message" />
+    </RelativeLayout>
+    <!-- community search -->
+
+    <RelativeLayout
+        android:id="@+id/community_search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/community_title"
+        android:background="@drawable/top_background"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
+
+        <ImageView
+            android:id="@+id/community_image_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/search_black"
+            android:gravity="center"
+            android:text="@string/search"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:id="@+id/search_community_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/community_image_search"
+            android:gravity="center_vertical" >
+
+            <EditText
+                android:id="@+id/community_etSearch"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/search_frame"
+                android:focusableInTouchMode="true"
+                android:hint="找社区"
+                android:paddingLeft="32dp"
+                android:singleLine="true"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/community_ivDeleteText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:paddingRight="20dp"
+                android:src="@drawable/delete"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <!-- popular posts -->
+
+    <TextView
+        android:id="@+id/popular_post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/community_search"
+        android:background="@android:color/darker_gray"
+        android:text="@string/popular_post"
+        android:color="@android:color/darker_gray" />
+
+    <ListView
+        android:id="@+id/listview_hot_post_community"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/popular_post"
+        android:layout_weight="1"
+        android:divider="@color/divider_color"
+        android:dividerHeight="1dip" >
+    </ListView>
+
+    <TextView
+        android:id="@+id/more_post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/listview_hot_post_community"
+        android:background="@android:color/darker_gray"
+        android:text="更多热门帖子" />
+    <!-- 推荐社区 -->
+
+    <TextView
+        android:id="@+id/text_recommend_community"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/more_post"
+        android:background="@android:color/darker_gray"
+        android:text="@string/recommend_community" />
+
+    <ListView
+        android:id="@+id/listview_recommend_community"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_recommend_community"
+        android:divider="@color/divider_color"
+        android:dividerHeight="1dip" >
+    </ListView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/listview_recommend_community"
+        android:background="@android:color/darker_gray"
+        android:text="查看全部社区" />
+
+</RelativeLayout>

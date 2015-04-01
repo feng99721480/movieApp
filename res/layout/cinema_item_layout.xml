@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:padding="5dp">
+
+    <LinearLayout
+        android:id="@+id/name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/cinema_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp" />
+
+        <TextView 
+            android:id="@+id/imax_hall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/imax_hall"
+            android:text="@string/imax_hall"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:visibility="gone" />
+
+        
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/second"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/name"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp" >
+
+        <TextView
+            android:id="@+id/select_seat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/seat"
+            android:background="@drawable/seat" 
+            android:textColor="@android:color/white"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:textSize="12sp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/group_pur"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:text="@string/tuan"
+            android:background="@drawable/tuan"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/lowest_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/preferential"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/preferential"
+            android:text="@string/preferential"
+            android:textColor="@color/preferential"
+            android:textSize="12sp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:layout_below="@id/second"
+        android:gravity="fill_horizontal"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp">
+
+        <TextView
+            android:id="@+id/cinema_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/cinema_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="15sp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"/>
+    </RelativeLayout>
+
+</RelativeLayout>

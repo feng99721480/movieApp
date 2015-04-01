@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+    <RadioGroup
+        android:id="@+id/cinema_radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="5dp" >
+
+        <RadioButton
+            android:id="@+id/cinema_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cinema_title_radio_all"
+            android:button="@null"
+            android:textColor="@color/color_text_re" 
+            android:text="@string/all"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/cinema_select_seat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cinema_title_radio_seat"
+            android:textColor="@color/color_text_re" 
+            android:text="@string/select_seat"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:button="@null" />
+
+        <RadioButton
+            android:id="@+id/cinema_group_purchase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cinema_title_radio_tuan"
+            android:textColor="@color/color_text_re" 
+            android:text="@string/group_purchase"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:button="@null" />
+    </RadioGroup>
+
+</LinearLayout>

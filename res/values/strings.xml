@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    
+    <string name="action_settings">Settings</string><string name="app_name">movie</string>
+    <string name="hello_world">Hello world!</string>
+    <!-- film -->
+    <string name="releasing">正在上映</string>
+    <string name="upcoming">即将上映</string>
+    <string name="buy_ticket">购票</string>
+    <string name="cinema">影院</string>
+    <string name="city">城市</string>
+    <string name="community">社区</string>
+    <string name="popular_post">热门帖子</string>
+    <string name="recommend_community">推荐社区</string>
+    <string name="edit_search_community">找社区</string>
+    <string name="search">搜索</string>
+    <string name="a">啊啊啊啊啊啊</string>
+    <string name="mine">我的</string>
+    
+    <!-- cinema -->
+	<string name="all">全部</string>
+	<string name="select_seat">选座</string>
+	<string name="group_purchase">团购</string>
+	<string name="seat">座</string>
+	<string name="tuan">团</string>
+	<string name="preferential">新用户专享</string>
+	<string name="imax_hall">iMax厅</string>
+	<string name="select_seat_buy_ticket">选座购票</string>
+	<string name="serverurl">http://127.0.0.1/E:/android_demo/movie/src/</string>
+</resources>

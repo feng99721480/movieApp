@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/select_seat_buy_ticket_title"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_alignParentTop="true"
+    android:background="@color/main_color" >
+
+    <RelativeLayout
+        android:id="@+id/cinema_film_title_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/cinema_film_title_back_bg"
+        >
+
+        <ImageView
+            android:id="@+id/cinema_film_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_back"
+            android:layout_alignParentLeft="true"
+             />
+
+        <TextView
+            android:id="@+id/cinema_film_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="影院名称"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" 
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/cinema_film_back"
+            />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/cinema_film_share"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/ic_movie_share"/>
+
+</RelativeLayout>

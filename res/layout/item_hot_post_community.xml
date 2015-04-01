@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <TextView 
+        android:id="@+id/post_title"
+        android:textSize="15sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+	<RelativeLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/post_title">
+	    <TextView 
+	        android:id="@+id/community_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="12sp"
+	        android:textColor="@android:color/darker_gray"
+	        android:layout_alignParentLeft="true"/>
+	    <!-- 评论数 -->
+	    <TextView
+	        android:id="@+id/post_reply_num"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="12sp"
+	        android:textColor="@android:color/darker_gray"
+	        android:layout_alignParentRight="true"
+	        />
+	    <!-- 评论的图标 -->
+	    <ImageView
+	        android:id="@+id/img_reply"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/ic_reply_num"
+	        android:layout_toLeftOf="@id/post_reply_num"/>
+	    <!-- 最近的回复时间 -->
+	    <TextView
+	        android:id="@+id/latest_reply_time"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="12sp"
+	        android:textColor="@android:color/darker_gray"
+	        android:layout_toLeftOf="@id/img_reply"
+	        />
+	    
+	    
+	</RelativeLayout>
+</RelativeLayout>

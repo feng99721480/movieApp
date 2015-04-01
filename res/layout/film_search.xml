@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    >
+<!-- android:descendantFocusability="blocksDescendants" -->
+    <RelativeLayout
+        android:id="@+id/film_search_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="#E02826" >
+
+        <ImageView
+            android:id="@+id/film_search_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:paddingLeft="5dp"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/film_search_back"
+            android:text="找电影"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+    <!-- search -->
+    <RelativeLayout
+        android:id="@+id/film_search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/film_search_title"
+        android:background="@drawable/top_background"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
+
+        <ImageView
+            android:id="@+id/image_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/search_black"
+            android:gravity="center"
+            android:text="@string/search"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:id="@+id/search_film_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/image_search"
+            android:gravity="center_vertical"
+             >
+
+            <EditText
+                android:id="@+id/film_etSearch"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/search_frame"
+                android:hint="输入电影名/导演/演员"
+                android:paddingLeft="32dp"
+                android:singleLine="true"
+                android:textSize="12sp" 
+                android:focusableInTouchMode="true"/>
+
+            <ImageView
+                android:id="@+id/film_ivDeleteText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerInParent="true"
+                android:paddingRight="20dp"
+                android:src="@drawable/delete"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </RelativeLayout>
+	<TextView 
+	    android:id="@+id/film_type_text"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="类型"
+	    android:textColor="@android:color/darker_gray"
+	    android:layout_below="@id/film_search"
+	    android:padding="10dp"/>
+	<GridView
+	    android:id="@+id/film_type_grid"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/film_type_text"
+	    android:numColumns="4"
+	    android:verticalSpacing="1pt"
+	    android:horizontalSpacing="1pt"
+	    android:padding="5dp"/>
+	<TextView 
+	    android:id="@+id/film_area_text"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="地区"
+	    android:textColor="@android:color/darker_gray"
+	    android:layout_below="@id/film_type_grid"
+	    android:padding="10dp"/>
+	<GridView
+	    android:id="@+id/film_area_grid"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_below="@id/film_area_text"
+	    android:numColumns="4"
+	     android:verticalSpacing="1pt"
+	    android:horizontalSpacing="1pt"
+	    android:padding="5dp"/>
+</RelativeLayout>
