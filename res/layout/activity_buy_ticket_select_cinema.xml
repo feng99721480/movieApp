@@ -7,13 +7,7 @@
     android:orientation="vertical"
     tools:context=".BuyTicketSelectCinemaFragment" >
 
-    <!-- <com.wiseweb.ui.BuyTicketTitlePanel
-        android:id="@+id/head_title_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" /> -->
-    <include 
-        layout="@layout/buy_ticket_title_panel"
-        />
+    <include layout="@layout/buy_ticket_title_panel" />
 
     <com.viewpagerindicator.TabPageIndicator
         android:id="@+id/page_indicator"
@@ -25,12 +19,14 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="wrap_content"
-        android:layout_height="1dp"/>
+        android:layout_height="1dp" />
 
-    <include layout="@layout/cinema_radio"
+    <include
+        android:id="@+id/radio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        layout="@layout/cinema_radio" />
 
     <ListView
         android:id="@+id/buy_ticket_select_cinema_list"

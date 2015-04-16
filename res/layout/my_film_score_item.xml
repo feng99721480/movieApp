@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp">
+    <ImageView 
+        android:id="@+id/film_image"
+        android:src="@drawable/runman"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+	<TextView 
+	    android:id="@+id/film_name"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:text="name"
+	    android:layout_gravity="center"
+	    android:paddingTop="5dp"/>
+	<RatingBar 
+	    android:id="@+id/my_rating"
+	    android:isIndicator="true"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:paddingTop="5dp"
+	    android:numStars="5"
+	    android:stepSize="0.5"
+	    style="?android:attr/ratingBarStyleSmall"/>
+</LinearLayout>

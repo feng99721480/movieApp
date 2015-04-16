@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.Time;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -29,7 +30,6 @@ public class CinemaSelectFilmActivity extends Activity {
 	private ListViewForScrollView cinemaFilmList;
 	private HorizontalListView hListView;
 	private HorizontalListViewAdapter hListViewAdapter;
-	//private ImageView previewImg;
 	private View olderSelectView = null;
 	private CinemaFilmAdapter cinemaFilmAdapter = null; 
 	private List<String> startList;
@@ -84,17 +84,51 @@ public class CinemaSelectFilmActivity extends Activity {
 			public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
 				// TODO Auto-generated method stub
 				if(checkedId==R.id.cinema1){
-					//System.out.println("cinema1");
+					
+					cinemaFilmAdapter = new CinemaFilmAdapter(startList,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
 				}
 				if(checkedId==R.id.cinema2){
-					//System.out.println("cinema2");
+					List<String> day2 = new ArrayList<String>();
+					day2.add("11:00");
+					day2.add("11:00");
+					day2.add("11:00");
+					cinemaFilmAdapter = new CinemaFilmAdapter(day2,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
 				}
 				if(checkedId==R.id.cinema3){
-					//System.out.println("cinema3");
+					List<String> day3 = new ArrayList<String>();
+					day3.add("13:00");
+					day3.add("13:00");
+					day3.add("13:00");
+					cinemaFilmAdapter = new CinemaFilmAdapter(day3,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
 				}
 				if(checkedId==R.id.cinema4){
-					//System.out.println("cinema4");
+					List<String> day2 = new ArrayList<String>();
+					day2.add("17:00");
+					day2.add("18:00");
+					day2.add("19:00");
+					cinemaFilmAdapter = new CinemaFilmAdapter(day2,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
 				}
+				if(checkedId==R.id.cinema5){
+					List<String> day2 = new ArrayList<String>();
+					day2.add("08:00");
+					day2.add("09:00");
+					day2.add("10:00");
+					cinemaFilmAdapter = new CinemaFilmAdapter(day2,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
+				}
+				if(checkedId==R.id.cinema6){
+					List<String> day2 = new ArrayList<String>();
+					day2.add("11:00");
+					day2.add("11:00");
+					day2.add("11:00");
+					cinemaFilmAdapter = new CinemaFilmAdapter(day2,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
+				}
+				
 				
 			}
 			
@@ -151,13 +185,78 @@ public class CinemaSelectFilmActivity extends Activity {
                 //hListView.scrollTo(wm.getDefaultDisplay().getWidth(),0);
                 //hListView.scrollTo(300);
                 hListViewAdapter.notifyDataSetChanged(); 
-                //
-                filmName.setText("电影名称");
-                //
-                filmProperty.setText("iMax3D");
-                filmProperty.setBackgroundResource(R.drawable.film_property_imax);
-                //
-                filmScore.setText("8.3分");
+                //不能这样写吧
+                switch(position){
+                case 0:
+                	filmName.setText("电影名称");
+                    filmProperty.setText("iMax3D");
+                    filmProperty.setBackgroundResource(R.drawable.film_property_imax);
+                    filmScore.setText("8.3分");
+                    cinemaFilmAdapter = new CinemaFilmAdapter(startList,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
+                    break;
+                case 1:
+                	filmName.setText("电影2");
+                    filmProperty.setText("iMax3D");
+                    filmProperty.setBackgroundResource(R.drawable.film_property_imax);
+                    filmScore.setText("8.3分");
+                    List<String> day2 = new ArrayList<String>();
+					day2.add("11:00");
+					day2.add("11:00");
+					day2.add("11:00");
+					cinemaFilmAdapter = new CinemaFilmAdapter(day2,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
+                    break;
+                case 2:
+                	filmName.setText("电影3");
+                    filmProperty.setText("iMax3D");
+                    filmProperty.setBackgroundResource(R.drawable.film_property_imax);
+                    filmScore.setText("8.3分");
+                    List<String> day3 = new ArrayList<String>();
+					day3.add("13:00");
+					day3.add("13:00");
+					day3.add("13:00");
+					cinemaFilmAdapter = new CinemaFilmAdapter(day3,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
+                    break;
+                case 3:
+                	filmName.setText("电影4");
+                    filmProperty.setText("iMax3D");
+                    filmProperty.setBackgroundResource(R.drawable.film_property_imax);
+                    filmScore.setText("8.3分");
+                    List<String> day4 = new ArrayList<String>();
+					day4.add("13:00");
+					day4.add("13:00");
+					day4.add("13:00");
+					cinemaFilmAdapter = new CinemaFilmAdapter(day4,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
+                    break;
+                case 4:
+                	filmName.setText("电影5");
+                    filmProperty.setText("iMax3D");
+                    filmProperty.setBackgroundResource(R.drawable.film_property_imax);
+                    filmScore.setText("8.3分");
+                    List<String> day5 = new ArrayList<String>();
+					day5.add("13:00");
+					day5.add("13:00");
+					day5.add("13:00");
+					cinemaFilmAdapter = new CinemaFilmAdapter(day5,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
+                    break;
+                case 5:
+                	filmName.setText("电影6");
+                    filmProperty.setText("iMax3D");
+                    filmProperty.setBackgroundResource(R.drawable.film_property_imax);
+                    filmScore.setText("8.3分");
+                    List<String> day6 = new ArrayList<String>();
+					day6.add("13:00");
+					day6.add("13:00");
+					day6.add("13:00");
+					cinemaFilmAdapter = new CinemaFilmAdapter(day6,CinemaSelectFilmActivity.this);
+					cinemaFilmList.setAdapter(cinemaFilmAdapter);
+                    break;
+                }
+                
             }  
         }); 
         cinemaFilmList = (ListViewForScrollView)findViewById(R.id.cinema_film_list);
@@ -171,6 +270,7 @@ public class CinemaSelectFilmActivity extends Activity {
 	}
 	public List<String> getData(){
 		List<String> list = new ArrayList<String>();
+		
 		list.add("17:25");
 		list.add("17:25");
 		list.add("17:25");

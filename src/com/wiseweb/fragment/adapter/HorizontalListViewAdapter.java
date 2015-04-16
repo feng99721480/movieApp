@@ -15,18 +15,18 @@ import android.widget.TextView;
 
 public class HorizontalListViewAdapter extends BaseAdapter{
 	private int[] mIconIDs;
-	private String[] mTitles;
+	//private String[] mTitles;
 	private Context mContext;
 	private LayoutInflater mInflater;
 	Bitmap iconBitmap;
 	private int selectIndex = -1;
 
-	public HorizontalListViewAdapter(Context context, String[] titles, int[] ids){
+	/*public HorizontalListViewAdapter(Context context, String[] titles, int[] ids){
 		this.mContext = context;
 		this.mIconIDs = ids;
 		this.mTitles = titles;
 		mInflater=(LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);//LayoutInflater.from(mContext);
-	}
+	}*/
 	
 	public HorizontalListViewAdapter(Context context, int[] ids){
 		this.mContext = context;
@@ -67,6 +67,7 @@ public class HorizontalListViewAdapter extends BaseAdapter{
 		}
 		
 		//holder.mTitle.setText(mTitles[position]);
+		//设置图片
 		iconBitmap = getPropThumnail(mIconIDs[position]);
 		holder.mImage.setImageBitmap(iconBitmap);
 

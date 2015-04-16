@@ -8,16 +8,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -28,45 +32,25 @@ import android.util.Xml;
 import android.widget.Toast;
 
 import com.wiseweb.activity.MainActivity;
-import com.wiseweb.bean.UpdataInfo;
+import com.wiseweb.bean.UpdateInfo;
 import com.wiseweb.movie.R;
 
-public class CheckUpdate extends Service {
-	private String TAG="SERVICE";
-	private static final int  UPDATA_CLIENT = 1;
-	private static final int GET_UNDATAINFO_ERROR = 2;
+public class CheckUpdate {
+	private String TAG = "SERVICE";
+	private static final int UPDATA_CLIENT = 1;
+	private static final int GET_UPDATAINFO_ERROR = 2;
 	private static final int DOWN_ERROR = 3;
-	private UpdataInfo info;
-	@Override
-	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	private UpdateInfo info;
+	private Context context;
 	
-	@Override
-	public void onCreate() {
-		// TODO Auto-generated method stub
-		super.onCreate();
-		System.out.println("service-------->onCreat()");
-		//CheckVersionTask check = new CheckVersionTask();
-		new Thread(new CheckVersionTask()).start();
-	}
-
-	@Override
-	public void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		System.out.println("service----->onDestroy");
-	}
-
 	/*
 	 * 获取当前程序的版本号
 	 */
 	private String getVersionName() throws Exception {
 		// 获取packagemanager的实例
-		PackageManager packageManager = getPackageManager();
+		PackageManager packageManager = context.getPackageManager();
 		// getPackageName()是你当前类的包名，0代表是获取版本信息
-		PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(),
+		PackageInfo packInfo = packageManager.getPackageInfo(context.getPackageName(),
 				0);
 		return packInfo.versionName;
 	}
@@ -74,11 +58,13 @@ public class CheckUpdate extends Service {
 	/*
 	 * 用pull解析器解析服务器返回的xml文件 (xml封装了版本号)
 	 */
-	public static UpdataInfo getUpdataInfo(InputStream is) throws Exception {
-		XmlPullParser parser = Xml.newPullParser();
+	public UpdateInfo getUpdataInfo(InputStream is) throws Exception {
+		 XmlPullParser parser = Xml.newPullParser();
+//		XmlPullParserFactory pullFactory = XmlPullParserFactory.newInstance();
+//		XmlPullParser parser = pullFactory.newPullParser();
 		parser.setInput(is, "utf-8");// 设置解析的数据源
 		int type = parser.getEventType();
-		UpdataInfo info = new UpdataInfo();// 实体
+		info = new UpdateInfo();// 实体
 		while (type != XmlPullParser.END_DOCUMENT) {
 			switch (type) {
 			case XmlPullParser.START_TAG:
@@ -132,38 +118,44 @@ public class CheckUpdate extends Service {
 	/*
 	 * 从服务器获取xml解析并进行比对版本号
 	 */
-	public class CheckVersionTask implements Runnable {
-
-		public void run() {
-			try {
-				// 从资源文件获取服务器 地址
-				String path = getResources().getString(R.string.serverurl);
-				// 包装成url的对象
-				URL url = new URL(path);
-				HttpURLConnection conn = (HttpURLConnection) url
-						.openConnection();
-				conn.setConnectTimeout(5000);
-				InputStream is = conn.getInputStream();
-				UpdataInfo info = CheckUpdate.getUpdataInfo(is);
-				String versionname = getVersionName();
-				if (info.getVersion().equals(versionname)) {
-					Log.i(TAG, "版本号相同无需升级");
-					LoginMain();
-				} else {
-					Log.i(TAG, "版本号不同 ,提示用户升级 ");
-					Message msg = new Message();
-					msg.what = UPDATA_CLIENT;
-					handler.sendMessage(msg);
-				}
-			} catch (Exception e) {
-				// 待处理
+	// public class CheckVersionTask implements Runnable {
+	public void checkUpdate() {
+		// public void run() {
+		try {
+			// 从资源文件获取服务器 地址
+			/*
+			 * String path = getResources().getString(R.string.serverurl); //
+			 * 包装成url的对象 URL url = new URL(path); HttpURLConnection conn =
+			 * (HttpURLConnection) url .openConnection();
+			 * conn.setConnectTimeout(5000); InputStream is =
+			 * conn.getInputStream();
+			 */
+			//InputStream input = context.getResources().openRawResource(R.xml.update);
+			AssetManager asset = context.getAssets();
+			InputStream input = asset.open("update.xml");
+			UpdateInfo info = getUpdataInfo(input);
+			System.out.println("info_____"+info.getDescription());
+			String versionname = getVersionName();
+			if (info.getVersion().equals(versionname)) {
+				Log.i(TAG, "版本号相同无需升级");
+				LoginMain();
+			} else {
+				Log.i(TAG, "版本号不同 ,提示用户升级 ");
 				Message msg = new Message();
-				msg.what = GET_UNDATAINFO_ERROR;
+				msg.what = UPDATA_CLIENT;
 				handler.sendMessage(msg);
-				e.printStackTrace();
 			}
+		} catch (Exception e) {
+			// 待处理
+			Message msg = new Message();
+			msg.what = GET_UPDATAINFO_ERROR;
+			handler.sendMessage(msg);
+			e.printStackTrace();
 		}
+		// }
 	}
+
+	// }
 
 	Handler handler = new Handler() {
 
@@ -176,22 +168,29 @@ public class CheckUpdate extends Service {
 				// 对话框通知用户升级程序
 				showUpdataDialog();
 				break;
-			case GET_UNDATAINFO_ERROR:
-				// 服务器超时
-				Toast.makeText(getApplicationContext(), "获取服务器更新信息失败", 1)
-						.show();
+			case GET_UPDATAINFO_ERROR:
+				// 服务器超时getApplicationContext()
+				Toast.makeText(context, "获取服务器更新信息失败", 1).show();
 				LoginMain();
 				break;
 			case DOWN_ERROR:
 				// 下载apk失败
-				Toast.makeText(getApplicationContext(), "下载新版本失败", 1).show();
+				Toast.makeText(context.getApplicationContext(), "下载新版本失败", 1).show();
 				LoginMain();
 				break;
 			}
 		}
 	};
 
-	/*
+	public CheckUpdate(Context context) {
+		this.context = context;
+	}
+
+	public CheckUpdate() {
+
+	}
+
+	/**
 	 * 
 	 * 弹出对话框通知用户更新程序
 	 * 
@@ -199,8 +198,9 @@ public class CheckUpdate extends Service {
 	 * 3.通过builder 创建一个对话框 4.对话框show()出来
 	 */
 	protected void showUpdataDialog() {
-		AlertDialog.Builder builer = new Builder(this);
+		AlertDialog.Builder builer = new Builder(context);
 		builer.setTitle("版本升级");
+		// info.getDescription()
 		builer.setMessage(info.getDescription());
 		// 当点确定按钮时从服务器上下载 新的apk 然后安装
 		builer.setPositiveButton("确定", new OnClickListener() {
@@ -213,7 +213,7 @@ public class CheckUpdate extends Service {
 		builer.setNegativeButton("取消", new OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO Auto-generated method stub
-				LoginMain();
+				 LoginMain();
 			}
 		});
 		AlertDialog dialog = builer.create();
@@ -225,7 +225,7 @@ public class CheckUpdate extends Service {
 	 */
 	protected void downLoadApk() {
 		final ProgressDialog pd; // 进度条对话框
-		pd = new ProgressDialog(this);
+		pd = new ProgressDialog(context);
 		pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		pd.setMessage("正在下载更新");
 		pd.show();
@@ -233,8 +233,7 @@ public class CheckUpdate extends Service {
 			@Override
 			public void run() {
 				try {
-					File file = getFileFromServer(
-							info.getUrl(), pd);
+					File file = getFileFromServer(info.getUrl(), pd);
 					sleep(3000);
 					installApk(file);
 					pd.dismiss(); // 结束掉进度条对话框
@@ -256,18 +255,19 @@ public class CheckUpdate extends Service {
 		// 执行的数据类型
 		intent.setDataAndType(Uri.fromFile(file),
 				"application/vnd.android.package-archive");
-		startActivity(intent);
+		context.startActivity(intent);
 	}
 
 	/*
 	 * 进入程序的主界面
 	 */
 	private void LoginMain() {
-		Intent intent = new Intent(this, MainActivity.class);
+		Intent intent = new Intent(context, MainActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(intent);
+		context.startActivity(intent);
+		
 		// 结束掉当前的activity
-		stopSelf();
-		//this.finish();
+		//stopSelf();
+		 
 	}
 }

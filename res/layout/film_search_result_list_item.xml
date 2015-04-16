@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp" >
+
+    <ImageView
+        android:id="@+id/film_image"
+        android:layout_width="64dip"
+        android:layout_height="64dip"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/runman" />
+
+    <RelativeLayout
+        android:id="@+id/film_base"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/film_image" >
+
+        <TextView
+            android:id="@+id/film_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:paddingLeft="3dp"
+             />
+
+        <TextView
+            android:id="@+id/onreleasing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp"
+            android:layout_alignParentRight="true"
+            />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/film_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="15dp"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        android:layout_toRightOf="@id/film_image" 
+        android:layout_below="@id/film_base"/>
+
+    <TextView
+        android:id="@+id/action_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="13sp"
+        android:layout_toRightOf="@id/film_image" 
+        android:layout_below="@id/film_type"
+         />
+
+</RelativeLayout>

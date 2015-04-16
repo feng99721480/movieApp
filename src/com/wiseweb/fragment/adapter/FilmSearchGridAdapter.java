@@ -1,15 +1,12 @@
 package com.wiseweb.fragment.adapter;
 
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
+import android.widget.Button;
 
-import com.wiseweb.constant.Constant;
 import com.wiseweb.movie.R;
 
 public class FilmSearchGridAdapter extends BaseAdapter {
@@ -46,9 +43,8 @@ public class FilmSearchGridAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		View v = mLayoutInflater.inflate(R.layout.film_search_grid_item, null);
-		TextView tv = (TextView) v.findViewById(R.id.film_type_text);
+		Button tv = (Button) v.findViewById(R.id.film_type_text);
 		tv.setText(listBean[position].toString());
 		return v;
 	}
-
 }

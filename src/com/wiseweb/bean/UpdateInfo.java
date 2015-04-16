@@ -1,6 +1,6 @@
 package com.wiseweb.bean;
 
-public class UpdataInfo {
+public class UpdateInfo {
 	private String version;  
     private String url;  
     private String description;  

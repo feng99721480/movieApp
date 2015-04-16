@@ -3,12 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="5dp"  >
+    android:padding="5dp" 
+    >
      <TextView
        android:id="@+id/city_list_item_text"
        android:layout_width="wrap_content"
        android:layout_height="fill_parent"
-       android:paddingLeft="5dip"
+       android:padding="10dp"
+       android:textColor="@android:color/black"
        android:gravity="center_vertical"/>
 
 </LinearLayout>

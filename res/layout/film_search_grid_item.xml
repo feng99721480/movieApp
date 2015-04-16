@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
        	android:background="@drawable/film_search_item_bg"
         android:gravity="center"
-        android:textColor="#808080" />
-<!-- android:background="@drawable/film_search_item_bg"  -->
+        android:textColor="#808080" 
+        android:focusable="false"
+        android:clickable="false"/>
 </LinearLayout>

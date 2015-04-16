@@ -149,7 +149,7 @@ public class CinemaFragment extends BaseFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		//����ݳ�ʼ��
+		//
 		cinemaInfo.add(new CinemaInfo("UME国际影城", true, true, false, false,
 				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
 

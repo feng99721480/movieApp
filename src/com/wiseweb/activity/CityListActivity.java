@@ -1,45 +1,63 @@
 package com.wiseweb.activity;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.wiseweb.fragment.adapter.CityListAdapter;
+import com.wiseweb.fragment.adapter.CitySearchAdapter;
+import com.wiseweb.json.City;
+import com.wiseweb.json.City.Group;
+import com.wiseweb.json.City.Group.CityList;
+import com.wiseweb.json.CityResult;
 import com.wiseweb.movie.R;
+import com.wiseweb.service.LocationService;
+import com.wiseweb.util.GetEnc;
 
 //import com.baidu.location.BDNotifyListener;//假如用到位置提醒功能，需要import该类
 
 public class CityListActivity extends Activity {
 	private CityListAdapter adapter = null;
 	private ListView cityList = null;
-	private List<String> list = new ArrayList<String>();
-	private List<String> listTag = new ArrayList<String>();
+	private ArrayList<String> list = new ArrayList<String>();
+	private ArrayList<String> listTag = new ArrayList<String>();
+	private ArrayList<String> listId = new ArrayList<String>();
 	private SharedPreferences cityPreferences;
 	// private SharedPreferences mflag; //
 	private View citySearchBack;
@@ -48,154 +66,107 @@ public class CityListActivity extends Activity {
 	public LocationClient mLocationClient = null;
 	public BDLocation location = new BDLocation();
 	// public BDLocationListener myListener = new MyLocationListenner();
-	private Button ding;
-	private Button positionCityName;
+	private TextView positionCityName;
 	private String city = null;
+	private String cityId = null;
+	private CitySearchAdapter searchAdapter;
+	private ImageView cityImageSearch;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.city_list_activity);
-		positionCityName = (Button) findViewById(R.id.position_city_name);
-		mLocationClient = new LocationClient(this); // 声明LocationClient类
-
-		// 设置参数
-		LocationClientOption option = new LocationClientOption();
-		option.setOpenGps(true); // 是否打开GPS
-		option.setCoorType("bd09ll"); // 设置返回值的坐标类型。
-		option.setPriority(LocationClientOption.NetWorkFirst);
-		// option.setPriority(LocationClientOption.NetWorkFirst); // 设置定位优先级
-		option.setProdName("LocationDemo"); // 设置产品线名称。强烈建议您使用自定义的产品线名称，方便我们以后为您提供更高效准确的定位服务。
-		option.setScanSpan(5000); // 设置定时定位的时间间隔。单位毫秒
-		option.setAddrType("detail");
-		mLocationClient.setLocOption(option);
-
-		mLocationClient.start();
-
-		mLocationClient.requestLocation();
-
-		// option.setIsNeedAddress(true);
-
-		// option.disableCache(true);// 禁止启用缓存定位
-		// option.setPoiNumber(5); // 最多返回POI个数
-		// option.setPoiDistance(1000); // poi查询距离
-		// option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息
-		// mLocationClient.setLocOption(option);
-		mLocationClient.registerLocationListener(new BDLocationListener() {
-			public void onReceiveLocation(BDLocation location) {
-				LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-				Location mlocation = locationManager
-						.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-				if (location == null)
-					return;
-				StringBuffer sb = new StringBuffer(256);
-				sb.append("time : ");
-				sb.append(location.getTime());
-				sb.append("\nerror code : ");
-				sb.append(location.getLocType());
-				sb.append("\nlatitude : ");
-				sb.append(location.getLatitude());
-				sb.append("\nlontitude : ");
-				sb.append(location.getLongitude());
-				sb.append("\nradius : ");
-				sb.append(location.getRadius());
-
-				sb.append("\naddr : ");
-				sb.append(location.getAddrStr());
-
-				if (location.getLocType() == BDLocation.TypeGpsLocation) {
-					sb.append("\nspeed : ");
-					sb.append(location.getSpeed());
-					sb.append("\nsatellite : ");
-					sb.append(location.getSatelliteNumber());
-				} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-					sb.append("\naddr : ");
-					sb.append(location.getAddrStr());
-
-				}
-				Geocoder geocoder = new Geocoder(CityListActivity.this, Locale
-						.getDefault());
-				List<Address> addresses = null;
-				try {
-					addresses = geocoder.getFromLocation(
-							location.getLatitude(), location.getLongitude(), 1);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				if (addresses != null && addresses.size() > 0) {
-					Address address = addresses.get(0);
-					city = address.getLocality();
-					System.out.println("city:" + city);
-					positionCityName.setText(city);
-				}
-
-			}
-
-			public void onReceivePoi(BDLocation poiLocation) {
-				if (poiLocation == null) {
-					return;
-				}
-				StringBuffer sb = new StringBuffer(256);
-				sb.append("Poi time : ");
-				sb.append(poiLocation.getTime());
-				sb.append("\nerror code : ");
-				sb.append(poiLocation.getLocType());
-				sb.append("\nlatitude : ");
-				sb.append(poiLocation.getLatitude());
-				sb.append("\nlontitude : ");
-				sb.append(poiLocation.getLongitude());
-				sb.append("\nradius : ");
-				sb.append(poiLocation.getRadius());
-				if (poiLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
-					sb.append("\naddr : ");
-					sb.append(poiLocation.getAddrStr());
-				}
-				if (poiLocation.hasPoi()) {
-					sb.append("\nPoi:");
-					sb.append(poiLocation.getPoi());
-				} else {
-					sb.append("noPoi information");
-				}
-				Log.d("Poi_sb", sb.toString());
-			}
-		}); // 注册监听函数
+		// positionCityName = (TextView) findViewById(R.id.position_city_name);
 		/*
-		 * ding = (Button) findViewById(R.id.ding); ding.setOnClickListener(new
-		 * OnClickListener() {
+		 * mLocationClient = new LocationClient(this); // 声明LocationClient类
 		 * 
-		 * @Override public void onClick(View arg0) { if (mLocationClient ==
-		 * null) { return; } if (mLocationClient.isStarted()) {
-		 * ding.setText("Start"); mLocationClient.stop(); } else {
-		 * ding.setText("Stop"); mLocationClient.start();
+		 * // 设置参数 LocationClientOption option = new LocationClientOption();
+		 * option.setOpenGps(true); // 是否打开GPS option.setCoorType("bd09ll"); //
+		 * 设置返回值的坐标类型。 option.setPriority(LocationClientOption.NetWorkFirst); //
+		 * option.setPriority(LocationClientOption.NetWorkFirst); // 设置定位优先级
+		 * option.setProdName("LocationDemo"); //
+		 * 设置产品线名称。强烈建议您使用自定义的产品线名称，方便我们以后为您提供更高效准确的定位服务。
+		 * option.setScanSpan(5000); // 设置定时定位的时间间隔。单位毫秒
+		 * option.setAddrType("detail");
 		 * 
-		 * 当所设的整数值大于等于1000（ms）时，定位SDK内部使用定时定位模式。调用requestLocation(
-		 * )后，每隔设定的时间，定位SDK就会进行一次定位。 如果定位SDK根据定位依据发现位置没有发生变化，就不会发起网络请求，
-		 * 返回上一次定位的结果；如果发现位置改变，就进行网络请求进行定位，得到新的定位结果。
-		 * 定时定位时，调用一次requestLocation，会定时监听到定位结果。
+		 * mLocationClient.setLocOption(option);
 		 * 
-		 * mLocationClient.requestLocation(); } // if (mLocationClient != null
-		 * && mLocationClient.isStarted()) // mLocationClient.requestLocation();
-		 * // else // Log.d("LocSDK_2.0_Demo1", //
-		 * "locClient is null or not started"); }
+		 * mLocationClient.start();
 		 * 
-		 * });
+		 * mLocationClient.requestLocation();
+		 * 
+		 * // option.setIsNeedAddress(true);
+		 * 
+		 * // option.disableCache(true);// 禁止启用缓存定位 // option.setPoiNumber(5);
+		 * // 最多返回POI个数 // option.setPoiDistance(1000); // poi查询距离 //
+		 * option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息 //
+		 * mLocationClient.setLocOption(option);
+		 * mLocationClient.registerLocationListener(new BDLocationListener() {
+		 * public void onReceiveLocation(BDLocation location) { LocationManager
+		 * locationManager = (LocationManager)
+		 * getSystemService(Context.LOCATION_SERVICE); Location mlocation =
+		 * locationManager .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		 * 
+		 * if (location == null) return; StringBuffer sb = new
+		 * StringBuffer(256); sb.append("time : ");
+		 * sb.append(location.getTime()); sb.append("\nerror code : ");
+		 * sb.append(location.getLocType()); sb.append("\nlatitude : ");
+		 * sb.append(location.getLatitude()); sb.append("\nlontitude : ");
+		 * sb.append(location.getLongitude()); sb.append("\nradius : ");
+		 * sb.append(location.getRadius());
+		 * 
+		 * sb.append("\naddr : "); sb.append(location.getAddrStr());
+		 * 
+		 * if (location.getLocType() == BDLocation.TypeGpsLocation) {
+		 * sb.append("\nspeed : "); sb.append(location.getSpeed());
+		 * sb.append("\nsatellite : ");
+		 * sb.append(location.getSatelliteNumber()); } else if
+		 * (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+		 * sb.append("\naddr : "); sb.append(location.getAddrStr());
+		 * 
+		 * } Geocoder geocoder = new Geocoder(CityListActivity.this, Locale
+		 * .getDefault()); List<Address> addresses = null; try { addresses =
+		 * geocoder.getFromLocation( location.getLatitude(),
+		 * location.getLongitude(), 1); } catch (IOException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } if (addresses !=
+		 * null && addresses.size() > 0) { Address address = addresses.get(0);
+		 * city = address.getLocality(); //System.out.println("city:" + city);
+		 * positionCityName.setText(city); }
+		 * 
+		 * }
+		 * 
+		 * public void onReceivePoi(BDLocation poiLocation) { if (poiLocation ==
+		 * null) { return; } StringBuffer sb = new StringBuffer(256);
+		 * sb.append("Poi time : "); sb.append(poiLocation.getTime());
+		 * sb.append("\nerror code : "); sb.append(poiLocation.getLocType());
+		 * sb.append("\nlatitude : "); sb.append(poiLocation.getLatitude());
+		 * sb.append("\nlontitude : "); sb.append(poiLocation.getLongitude());
+		 * sb.append("\nradius : "); sb.append(poiLocation.getRadius()); if
+		 * (poiLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
+		 * sb.append("\naddr : "); sb.append(poiLocation.getAddrStr()); } if
+		 * (poiLocation.hasPoi()) { sb.append("\nPoi:");
+		 * sb.append(poiLocation.getPoi()); } else {
+		 * sb.append("noPoi information"); } Log.d("Poi_sb", sb.toString()); }
+		 * }); // 注册监听函数
 		 */
-		// 请求
-		// if (mLocationClient != null && mLocationClient.isStarted())
-		// mLocationClient.requestLocation();
-		// else
-		// Log.d("LocSDK_2.0_Demo1", "locClient is null or not started");
-		// if (mLocationClient != null && mLocationClient.isStarted())
-		// mLocationClient.requestPoi();
 
-		setData();
-
-		adapter = new CityListAdapter(this, list, listTag);
+		// setData();
 		cityList = (ListView) findViewById(R.id.city_list);
-		cityList.setAdapter(adapter);
+		list.add("定位的城市");
+		list.add("定位中");
+		listTag.add("定位的城市");
+		new Thread(runnable).start();
+
+		// adapter = new CityListAdapter(this, list, listTag);
+		// cityList = (ListView) findViewById(R.id.city_list);
+		// cityList.setAdapter(adapter);
+
+		searchAdapter = new CitySearchAdapter(CityListActivity.this);
+		// searchAdapter.setDataSource(list);
+		// cityList.setAdapter(searchAdapter);
+		cityImageSearch = (ImageView) findViewById(R.id.city_image_search);
+
 		citySearchBack = (View) findViewById(R.id.city_search_title);
 		citySearchBack.setOnClickListener(new OnClickListener() {
 
@@ -216,6 +187,7 @@ public class CityListActivity extends Activity {
 					citySearchDelText.setVisibility(View.GONE);
 				} else {
 					citySearchDelText.setVisibility(View.VISIBLE);
+
 				}
 			}
 
@@ -231,6 +203,8 @@ public class CityListActivity extends Activity {
 					int arg3) {
 				// TODO Auto-generated method stub
 
+				// searchAdapter.searchData(citySearchEdit.getText().toString());
+
 			}
 
 		});
@@ -239,18 +213,25 @@ public class CityListActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				citySearchEdit.setText("");
+				cityList.setAdapter(adapter);
 			}
 
 		});
-		/*
-		 * mflag = getSharedPreferences("fragmentFlag",Context.MODE_PRIVATE);
-		 * SharedPreferences.Editor flagEditor = mflag.edit(); Intent intent =
-		 * getIntent(); String flag = intent.getStringExtra("flag");
-		 * System.out.println(flag==null); if(flag.equals("filmFragment")){
-		 * flagEditor.putString("flag", "filmFragment"); }else
-		 * if(flag.equals("cinemaFragment")){ flagEditor.putString("flag",
-		 * "cinemaFragment"); } flagEditor.commit();
-		 */
+		// 搜索按钮的点击事件
+		cityImageSearch.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				if (citySearchEdit.getText().toString() != null) {
+
+					searchAdapter.setDataSource(list);
+					cityList.setAdapter(searchAdapter);
+					searchAdapter.searchData(citySearchEdit.getText()
+							.toString());
+				}
+			}
+
+		});
 
 		cityList.setOnItemClickListener(new OnItemClickListener() {
 
@@ -258,31 +239,179 @@ public class CityListActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
+				if (position == 1) {
+					// 启动服务，执行定位
+					Intent intent = new Intent(CityListActivity.this,
+							LocationService.class);
+					startService(intent);
+
+				}
 				String city = null;
-				city = list.get(position).toString();
+				// city = list.get(position).toString();
+				city = cityList.getItemAtPosition(position).toString();
 				//
+				
 				cityPreferences = getSharedPreferences("city",
 						Context.MODE_PRIVATE);
 				SharedPreferences.Editor editor = cityPreferences.edit();
 				editor.putString("city", city);
+				//取得cityId
+				for(int i=0;i<list.size();i++){
+					if(list.get(i).equals(city))
+						cityId = listId.get(i);
+				}
+				editor.putString("cityId", cityId);
 				editor.commit();
-
 				// String str = cityPreferences.getString("city", null);
 				// System.out.println(str);
 
 				// Intent intent = new Intent();
 				// intent.setClass(CityListActivity.this, MainActivity.class);
 				// startActivity(intent);
+				Intent data = new Intent();
+				data.putExtra("city", city);
+				// 请求代码可以自己设置，这里设置成20
+				setResult(2, data);
 				finish();
+
 			}
 
 		});
 	}
 
+	Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			Bundle data = msg.getData();
+//			String val = data.getString("response");
+			//System.out.println("请求结果-->" + val);
+			adapter = new CityListAdapter(CityListActivity.this, list, listTag);
+
+			cityList.setAdapter(adapter);
+		}
+	};
+
+	Runnable runnable = new Runnable() {
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			String baseURL = "http://192.168.0.141:4000/appAPI";
+			HashMap<String, String> params = new HashMap<String, String>();
+			params.put("action", "city_Query");
+			Date date = new Date();
+			long time_stamp = date.getTime();
+			params.put("time_stamp", time_stamp + "");
+			String enc = GetEnc.getEnc(params, "wiseMovie");
+			HttpClient httpClient = new DefaultHttpClient();
+
+			HttpGet getMethod = new HttpGet(baseURL + "?" + "action="
+					+ params.get("action") + "&" + "enc=" + enc + "&"
+					+ "time_stamp=" + time_stamp);
+//			System.out.println(baseURL + "?" + "action=" + params.get("action")
+//					+ "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			HttpResponse httpResponse;
+
+			String result;
+
+			try {
+				httpResponse = httpClient.execute(getMethod);
+
+				if (httpResponse.getStatusLine().getStatusCode() == 200) {
+					
+					/*HttpEntity entity = httpResponse.getEntity();
+//					StringBuilder builder = new StringBuilder();
+					result = EntityUtils.toString(entity, "utf-8");
+					//result = removeBOM(result);
+					System.out.println("response" + result);
+					
+					// JSONObject jsonObject = new
+					// JSONObject(builder.toString()).getJSONObject("tab");
+					// JSONArray jsonArray = jsonObject.getJSONArray(name);
+					JSONObject js = new JSONObject(result).getJSONObject("action");
+					String action = js.getString("action");
+					System.out.println("action----"+action);
+					JSONArray jsonArray = new JSONObject("result").getJSONArray("citis");
+					//JSONArray json = entity.
+					//JSONArray jsonArray = new JSONArray("citis");
+					
+					
+					for (int i = 0; i < jsonArray.length(); i++) {
+						JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+						String tab = jsonObject.getString("tab");
+						listTag.add(tab);
+						JSONArray jsonArrayGroup = new JSONArray("group");
+						for (int j = 0; i < jsonArrayGroup.length(); j++) {
+							JSONArray jsonArray3 = new JSONArray("list");
+							// List<String> cityNameList = new
+							// ArrayList<String>();
+							for (int m = 0; m < jsonArray3.length(); m++) {
+								JSONObject jsonObject3 = jsonArray3
+										.getJSONObject(m);
+								String cityName = jsonObject3
+										.getString("cityName");
+								list.add(cityName);
+								
+							}
+						}
+					}*/
+					HttpEntity entity = httpResponse.getEntity();
+					result = EntityUtils.toString(entity, "utf-8");
+					Gson gson = new Gson();
+					CityResult cityResult = gson.fromJson(result, CityResult.class);
+					List<City> citys = cityResult.getCitis();
+					//i<citys.size();  后面的为空，只能先设为1
+					for(int i=0;i<1;i++){
+						List<Group> group = citys.get(i).getGroup();
+						System.out.println("group.size()"+group.size());
+						String text = citys.get(i).getText();
+						listTag.add(text);
+						list.add(text);
+						listId.add(text);
+						for(int j=0;j<group.size();j++){
+							List<CityList> cityList = group.get(j).getList();
+							for(int m=0;m<cityList.size();m++){
+								String cityName = cityList.get(m).getCityName();
+								list.add(cityName);
+								String cityId = cityList.get(m).getCityId();
+								listId.add(cityId);
+							}
+						}
+					}
+					Message msg = new Message();
+					Bundle data = new Bundle();
+					data.putStringArrayList("list", list);
+					data.putStringArrayList("listTag", listTag);
+					msg.setData(data);
+					handler.sendMessage(msg);
+
+				}
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	};
+
+	public static final String removeBOM(String data) {
+		if (TextUtils.isEmpty(data)) {
+			return data;
+		}
+
+		if (data.startsWith("\ufeff")) {
+			return data.substring(1);
+		} else {
+			return data;
+		}
+	}
+
 	public void setData() {
 		list.add("定位的城市");
 		listTag.add("定位的城市");
-		list.add(city);
+		list.add("定位中");
 		list.add("热门城市");
 		listTag.add("热门城市");
 		list.add("上海");

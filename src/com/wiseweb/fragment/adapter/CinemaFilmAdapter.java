@@ -51,7 +51,7 @@ public class CinemaFilmAdapter extends BaseAdapter {
 			convertView = View.inflate(mContext,R.layout.cinema_select_film_item,null);
 			holder = new CinemaFilmHolder();
 			holder.startTime = (TextView) convertView.findViewById(R.id.start_time);
-			holder.startTime.setText("19:20");//
+			holder.startTime.setText(start_time.get(position).toString());//
 			
 			holder.endTime = (TextView) convertView.findViewById(R.id.end_time);
 			holder.endTime.setText("19:20"); // 
@@ -66,7 +66,7 @@ public class CinemaFilmAdapter extends BaseAdapter {
 			holder.price.setText("35");
 			
 			holder.selectSeatBuyTicket = (TextView)convertView.findViewById(R.id.select_seat_buy_ticket);
-			//֧��ѡ��Ļ�����ʾѡ��Ʊ
+			
 			holder.selectSeatBuyTicket.setText("选座购票");
 		}
 		return convertView;
@@ -75,8 +75,8 @@ public class CinemaFilmAdapter extends BaseAdapter {
 	class CinemaFilmHolder{
 		TextView startTime;
 		TextView endTime;
-		TextView lanProperty; //����3D ԭ��3D֮���
-		TextView hall;   //��ӳ��
+		TextView lanProperty; //
+		TextView hall;   //
 		TextView price;
 		TextView selectSeatBuyTicket;
 	}

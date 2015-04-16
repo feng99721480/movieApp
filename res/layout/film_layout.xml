@@ -85,7 +85,8 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_search_white"
-            android:paddingRight="10dp" />
+            android:paddingRight="10dp"
+             />
     </RelativeLayout>
 
     <ListView
@@ -95,7 +96,7 @@
         android:divider="@color/divider_color"
         android:dividerHeight="1dip"
         android:layout_below="@id/film_title"
-         >
+        >
     </ListView>
 
 </RelativeLayout>

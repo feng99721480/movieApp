@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.wiseweb.constant.Constant;
 import com.wiseweb.fragment.BaseFragment;
 import com.wiseweb.movie.R;
+import com.wiseweb.service.LocationService;
 import com.wiseweb.ui.BottomControlPanel;
 import com.wiseweb.ui.BottomControlPanel.BottomPanelCallback;
 import com.wiseweb.ui.ImageText;
@@ -36,6 +37,8 @@ public class MainActivity extends Activity implements BottomPanelCallback {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		initUI();
+		
+		
 		cinema = (ImageText)findViewById(R.id.btn_cinema);
 		fragmentManager = getFragmentManager();
 		//mflag = getSharedPreferences("fragmentFlag", Context.MODE_PRIVATE);

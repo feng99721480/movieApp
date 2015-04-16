@@ -3,7 +3,7 @@ package com.wiseweb.bean;
 public class FilmInfo{
 
 	private String filmName; // 
-	private String genre; // 
+	private String genre; // 类型
 	private String director; // 
 	private String starring; // 
 	private String region; // 

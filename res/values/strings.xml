@@ -28,4 +28,8 @@
 	<string name="imax_hall">iMax厅</string>
 	<string name="select_seat_buy_ticket">选座购票</string>
 	<string name="serverurl">http://127.0.0.1/E:/android_demo/movie/src/</string>
+	
+	<string name="iwant">我想看的</string>
+	<string name="iscore">我评分的</string>
+	<string name="myfilm">我的电影</string>
 </resources>

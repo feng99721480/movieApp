@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include layout="@layout/my_film_title" />
+
+    <RadioGroup
+        android:id="@+id/my_film_radio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/iwant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cinema_title_radio_all"
+            android:button="@null"
+            android:checked="true"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:text="@string/iwant"
+            android:textColor="@color/color_text_re" />
+
+        <RadioButton
+            android:id="@+id/iscore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cinema_title_radio_tuan"
+            android:button="@null"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:text="@string/iscore"
+            android:textColor="@color/color_text_re" />
+    </RadioGroup>
+    
+    <GridView 
+        android:id="@+id/iwant_grid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:horizontalSpacing="1pt"
+        android:verticalSpacing="1pt"
+        android:numColumns="3"
+        android:gravity="center"/>
+
+</LinearLayout>
