@@ -94,7 +94,6 @@ public class BuyTicketSelectCinema extends FragmentActivity {
 					listview.setAdapter(cinemaAdapter);
 				}
 				String name = adapter.getPageTitle(position).toString();
-				System.out.println("titlename-------" + name);
 
 			}
 
@@ -108,10 +107,10 @@ public class BuyTicketSelectCinema extends FragmentActivity {
 
 			}
 		});
-		Time t = new Time("GMT+8");
-		t.setToNow();
-		int month = t.month+1;
-		int day = t.monthDay;
+//		Time t = new Time("GMT+8");
+//		t.setToNow();
+//		int month = t.month+1;
+//		int day = t.monthDay;
 		
 	}
 

@@ -2,7 +2,6 @@ package com.wiseweb.fragment;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,8 +19,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.wiseweb.activity.CinemaSelectFilmActivity;
 import com.wiseweb.activity.CinemaSearchActivity;
 import com.wiseweb.activity.CityListActivity;

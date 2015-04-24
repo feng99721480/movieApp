@@ -12,15 +12,15 @@ import java.util.Map.Entry;
 
 public class GetEnc {
 	
-	public static String getEnc(HashMap map, String key) {
+	public static String getEnc(HashMap<String, Object> map, String key) {
 		//排序
-		List<Map.Entry<String, String>> mHashMapEntryList;
-		mHashMapEntryList = new ArrayList<Map.Entry<String,String>>(map.entrySet());
-		Collections.sort(mHashMapEntryList,new Comparator<Map.Entry<String,String>>(){
+		List<Map.Entry<String, Object>> mHashMapEntryList;
+		mHashMapEntryList = new ArrayList<Map.Entry<String,Object>>(map.entrySet());
+		Collections.sort(mHashMapEntryList,new Comparator<Map.Entry<String,Object>>(){
 
 			@Override
-			public int compare(Entry<String, String> firstMapEntry,
-					Entry<String, String> secondMapEntry) {
+			public int compare(Entry<String, Object> firstMapEntry,
+					Entry<String, Object> secondMapEntry) {
 				return firstMapEntry.getKey().compareTo(secondMapEntry.getKey());
 			}
 			

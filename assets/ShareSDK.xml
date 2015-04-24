@@ -59,8 +59,8 @@
     <SinaWeibo
         Id="1"
         SortId="1"
-        AppKey="1212202080"
-        AppSecret="06dcd2fcdf3af3ff6818da8b1a251dfe"
+        AppKey="899550902"
+        AppSecret="d98602df690527dd615b65937d586dc8"
         RedirectUrl="http://movie.wiseweb.com.cn/authformweibo"
         ShareByAppClient="false"
         Enable="true" />

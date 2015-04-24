@@ -27,11 +27,11 @@ public class Splash extends Activity {
 		// startService(new Intent(this, CheckUpdate.class));
 		// //////
 		// 启动服务
-		Intent underService = new Intent(Splash.this,
-				LocationService.class);
-		/*underService.putExtra("TEXT_GPS", "haha");
-		underService.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);*/
-		//startService(underService);
+//		Intent underService = new Intent(Splash.this,
+//				LocationService.class);
+//		underService.putExtra("TEXT_GPS", "haha");
+//		underService.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//		startService(underService);
 		new Handler().postDelayed(new Runnable() {
 
 			@Override

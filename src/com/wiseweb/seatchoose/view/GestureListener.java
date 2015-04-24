@@ -56,14 +56,14 @@ class GestureListener extends GestureDetector.SimpleOnGestureListener {
 		
 		if(bool1){
 			int k = Math.round(x_scroll_distance);
-			//�޸�����x���ƫ����
+			//
 			SSView.c(mSsView, (float)k);
 //			Log.i("TAG", SSView.v(mSsView)+"");
-			//�޸���λ��������ĺ������
+			//
 			SSView.k(mSsView, k);
 //			Log.i("TAG", SSView.r(mSsView)+"");
 			if (SSView.r(mSsView) < 0) {
-				//��������
+				//
 				SSView.i(mSsView, 0);
 				SSView.a(mSsView, 0.0F);
 			}

@@ -5,12 +5,11 @@
     android:orientation="vertical" >
 
     <include layout="@layout/cinema_film_title" />
-	
+
     <ScrollView
         android:id="@+id/cinema_film_scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-         >
+        android:layout_height="match_parent" >
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -55,84 +54,89 @@
                     android:background="@drawable/ic_arrow_right" />
             </RelativeLayout>
 
-            <include layout="@layout/divider_view" />
+            <!-- <include layout="@layout/divider_view" /> -->
 
             <com.wiseweb.ui.HorizontalListView
                 android:id="@+id/horizon_listview"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:background="@android:color/darker_gray" 
                 android:layout_gravity="center_vertical|center"
-                >
+                android:background="@android:color/darker_gray" >
             </com.wiseweb.ui.HorizontalListView>
-			<RelativeLayout 
-			    android:id="@+id/cinema_film_detail"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:padding="10dp"
-			    android:paddingLeft="15dp"
-			    android:background="@drawable/cinema_film_detail_bg">
-			    <TextView
-			        android:id="@+id/film_name" 
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:textSize="15sp"
-			        android:layout_alignParentLeft="true"/>
-			    <TextView 
-			        android:id="@+id/film_property"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_toRightOf="@id/film_name"
-			        android:layout_marginLeft="10dp"/>
-			    <TextView 
-			        android:id="@+id/film_score"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:textColor="@color/color_film_score"
-			        android:layout_toRightOf="@id/film_property"
-			        android:layout_marginLeft="10dp"/>
-			    <ImageView 
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_alignParentRight="true"
-			        android:background="@drawable/icon_arrow"/>
-			</RelativeLayout>
-			<include layout="@layout/divider_view"/>
+
+            <RelativeLayout
+                android:id="@+id/cinema_film_detail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/cinema_film_detail_bg"
+                android:padding="10dp"
+                android:paddingLeft="15dp" >
+
+                <TextView
+                    android:id="@+id/film_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/film_property"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/film_name" />
+
+                <TextView
+                    android:id="@+id/film_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/film_property"
+                    android:textColor="@color/color_film_score" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/icon_arrow" />
+            </RelativeLayout>
+
+            <include layout="@layout/divider_view" />
+
             <HorizontalScrollView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:scrollbarAlwaysDrawHorizontalTrack="false" >
+                android:scrollbarAlwaysDrawHorizontalTrack="false"
+                android:scrollbars="none" >
 
                 <RadioGroup
                     android:id="@+id/cinema_film_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
-                    >
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal" >
 
                     <RadioButton
                         android:id="@+id/cinema1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
                         android:background="@drawable/cinema_film_date"
                         android:button="@null"
+                        android:checked="true"
                         android:padding="3dp"
                         android:text="今天3月11日"
-                        android:textColor="@drawable/cinema_film_date_textcolor"
-                        android:layout_margin="3dp"
-                        android:checked="true"
-                         />
+                        android:textColor="@drawable/cinema_film_date_textcolor" />
 
                     <RadioButton
                         android:id="@+id/cinema2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
                         android:background="@drawable/cinema_film_date"
                         android:button="@null"
                         android:padding="3dp"
-                        android:layout_margin="3dp"
                         android:text="今天3月11日"
                         android:textColor="@drawable/cinema_film_date_textcolor" />
 
@@ -140,10 +144,10 @@
                         android:id="@+id/cinema3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
                         android:background="@drawable/cinema_film_date"
                         android:button="@null"
                         android:padding="3dp"
-                        android:layout_margin="3dp"
                         android:text="今天3月11日"
                         android:textColor="@drawable/cinema_film_date_textcolor" />
 
@@ -151,34 +155,34 @@
                         android:id="@+id/cinema4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
                         android:background="@drawable/cinema_film_date"
                         android:button="@null"
                         android:padding="3dp"
-                        android:layout_margin="3dp"
-                        android:text="今天3月11日" 
-                        android:textColor="@drawable/cinema_film_date_textcolor"/>
+                        android:text="今天3月11日"
+                        android:textColor="@drawable/cinema_film_date_textcolor" />
 
                     <RadioButton
                         android:id="@+id/cinema5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
                         android:background="@drawable/cinema_film_date"
                         android:button="@null"
                         android:padding="3dp"
-                        android:layout_margin="3dp"
-                        android:text="今天3月11日" 
-                        android:textColor="@drawable/cinema_film_date_textcolor"/>
+                        android:text="今天3月11日"
+                        android:textColor="@drawable/cinema_film_date_textcolor" />
 
                     <RadioButton
                         android:id="@+id/cinema6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
                         android:background="@drawable/cinema_film_date"
                         android:button="@null"
                         android:padding="3dp"
-                        android:layout_margin="3dp"
-                        android:text="今天3月11日" 
-                        android:textColor="@drawable/cinema_film_date_textcolor"/>
+                        android:text="今天3月11日"
+                        android:textColor="@drawable/cinema_film_date_textcolor" />
                 </RadioGroup>
             </HorizontalScrollView>
 

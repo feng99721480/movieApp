@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" 
+    android:background="@android:color/white">
 
     <RelativeLayout
         android:id="@+id/cinema_search_title"
@@ -64,7 +65,7 @@
                 android:layout_marginRight="10dp"
                 android:background="@drawable/search_frame"
                 android:focusableInTouchMode="true"
-                android:hint="输入电影名/导演/演员"
+                android:hint="输入影院名称"
                 android:paddingLeft="32dp"
                 android:singleLine="true"
                 android:textSize="12sp" />

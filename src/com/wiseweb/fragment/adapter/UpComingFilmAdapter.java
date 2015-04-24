@@ -67,9 +67,9 @@ public class UpComingFilmAdapter extends BaseAdapter {
 			holder.imageView = (ImageView) convertView
 					.findViewById(R.id.img_film_item);
 
-			holder.imageView.setImageResource(mListFilmBean.get(position)
+			holder.imageView.setImageBitmap(mListFilmBean.get(position)
 					.getImgId());
-
+			//holder.imageView.setBackgroundResource(R.drawable.runman);
 			holder.nameFilm = (TextView) convertView
 					.findViewById(R.id.name_film_item);
 			holder.nameFilm.setText(mListFilmBean.get(position).getFilmName());
