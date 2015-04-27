@@ -1,7 +1,9 @@
 package com.wiseweb.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -35,7 +37,9 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 	private RelativeLayout cinemaPhone;
 	private String phoneNum;
 	private TextView phoneNumText;
-	private RelativeLayout cinemaAddress;
+	private RelativeLayout cinemaAddressLayout;
+	private TextView addressText;
+	private SharedPreferences cinemaAddressPreferences;  //保存影院地址
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +73,7 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 		// }else{
 		// mShowMore.setVisibility(View.VISIBLE);
 		// }
-		// 设置颜色
+		// 设置颜色，显示的是灰色，没有达到预期的效果
 		visualEffect = (TextView) findViewById(R.id.visual_effect);
 		cinemaEnvironment = (TextView) findViewById(R.id.cinema_envrionment);
 		surrondingRestaurants = (TextView) findViewById(R.id.surronding_restaurants);
@@ -108,20 +112,27 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 			}
 
 		});
-		cinemaAddress = (RelativeLayout)findViewById(R.id.cinema_address);
-		cinemaAddress.setOnClickListener(new OnClickListener(){
+		cinemaAddressLayout = (RelativeLayout) findViewById(R.id.cinema_address);
+		cinemaAddressLayout.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-//				Intent intent = new Intent();
-////				intent.setClass(CinemaDetailActivity.this, PoiSearchDemo.class);
-//				intent.setClass(CinemaDetailActivity.this, new DemoInfo(R.string.demo_title_poi, R.string.demo_desc_poi,
-//						PoiSearchDemo.class).demoClass);
-//				CinemaDetailActivity.this.startActivity(intent);
+				Intent intent = new Intent();
+				intent.setClass(CinemaDetailActivity.this,
+						ViewCinemaLocationActivity.class);
+				// intent.setClass(CinemaDetailActivity.this, new
+				// DemoInfo(R.string.demo_title_poi, R.string.demo_desc_poi,
+				// PoiSearchDemo.class).demoClass);
+				CinemaDetailActivity.this.startActivity(intent);
 			}
-			
+
 		});
+		addressText = (TextView)findViewById(R.id.address_text);
+		cinemaAddressPreferences = this.getSharedPreferences("cinemaAddress",Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = cinemaAddressPreferences.edit();
+		editor.putString("cinemaAddress", addressText.getText().toString());
+		editor.commit();
 	}
 
 	@Override
@@ -142,26 +153,14 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 				mImageSpread.setVisibility(View.GONE);
 				mState = SPREAD_STATE;
 			}
-//		case R.id.cinema_address:
-//			Intent intent = new Intent();
-//			intent.setClass(this, PoiSearchDemo.class);
-//			startActivity(intent);
-//			break;
+			// case R.id.cinema_address:
+			// Intent intent = new Intent();
+			// intent.setClass(CinemaDetailActivity.this, PoiSearchDemo.class);
+			// startActivity(intent);
+			// break;
 		default: {
 			break;
 		}
 		}
 	}
-//	private static class DemoInfo {
-//		private final int title;
-//		private final int desc;
-//		private final Class<? extends android.app.Activity> demoClass;
-//
-//		public DemoInfo(int title, int desc,
-//				Class<? extends android.app.Activity> demoClass) {
-//			this.title = title;
-//			this.desc = desc;
-//			this.demoClass = demoClass;
-//		}
-//	}
 }

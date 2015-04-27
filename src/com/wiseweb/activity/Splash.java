@@ -8,6 +8,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import cn.sharesdk.framework.ShareSDK;
 
+import com.baidu.mapapi.SDKInitializer;
 import com.wiseweb.movie.R;
 import com.wiseweb.service.CheckUpdate;
 import com.wiseweb.service.LocationService;
@@ -21,6 +22,9 @@ public class Splash extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		//在使用SDK各组件之前初始化context信息，传入ApplicationContext  
+        //注意该方法要再setContentView方法之前实现 
+		SDKInitializer.initialize(getApplicationContext());  
 		setContentView(R.layout.splash1);
 		// /////////
 		//
