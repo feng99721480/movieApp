@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -20,12 +21,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -37,7 +43,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
+
+import com.baidu.location.LocationClientOption;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.wiseweb.fragment.adapter.CityListAdapter;
@@ -46,6 +55,7 @@ import com.wiseweb.json.City;
 import com.wiseweb.json.City.Group;
 import com.wiseweb.json.City.Group.CityList;
 import com.wiseweb.json.CityResult;
+import com.wiseweb.listener.MyLocationListenner;
 import com.wiseweb.movie.R;
 import com.wiseweb.service.LocationService;
 import com.wiseweb.util.GetEnc;
@@ -65,7 +75,7 @@ public class CityListActivity extends Activity {
 	private ImageView citySearchDelText;
 	public LocationClient mLocationClient = null;
 	public BDLocation location = new BDLocation();
-	// public BDLocationListener myListener = new MyLocationListenner();
+	public BDLocationListener myListener = new MyLocationListenner();
 	private TextView positionCityName;
 	private String city = null;
 	private String cityId = null;
@@ -78,78 +88,115 @@ public class CityListActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.city_list_activity);
 		// positionCityName = (TextView) findViewById(R.id.position_city_name);
-		/*
-		 * mLocationClient = new LocationClient(this); // 声明LocationClient类
-		 * 
-		 * // 设置参数 LocationClientOption option = new LocationClientOption();
-		 * option.setOpenGps(true); // 是否打开GPS option.setCoorType("bd09ll"); //
-		 * 设置返回值的坐标类型。 option.setPriority(LocationClientOption.NetWorkFirst); //
-		 * option.setPriority(LocationClientOption.NetWorkFirst); // 设置定位优先级
-		 * option.setProdName("LocationDemo"); //
-		 * 设置产品线名称。强烈建议您使用自定义的产品线名称，方便我们以后为您提供更高效准确的定位服务。
-		 * option.setScanSpan(5000); // 设置定时定位的时间间隔。单位毫秒
-		 * option.setAddrType("detail");
-		 * 
-		 * mLocationClient.setLocOption(option);
-		 * 
-		 * mLocationClient.start();
-		 * 
-		 * mLocationClient.requestLocation();
-		 * 
-		 * // option.setIsNeedAddress(true);
-		 * 
-		 * // option.disableCache(true);// 禁止启用缓存定位 // option.setPoiNumber(5);
-		 * // 最多返回POI个数 // option.setPoiDistance(1000); // poi查询距离 //
-		 * option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息 //
-		 * mLocationClient.setLocOption(option);
-		 * mLocationClient.registerLocationListener(new BDLocationListener() {
-		 * public void onReceiveLocation(BDLocation location) { LocationManager
-		 * locationManager = (LocationManager)
-		 * getSystemService(Context.LOCATION_SERVICE); Location mlocation =
-		 * locationManager .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-		 * 
-		 * if (location == null) return; StringBuffer sb = new
-		 * StringBuffer(256); sb.append("time : ");
-		 * sb.append(location.getTime()); sb.append("\nerror code : ");
-		 * sb.append(location.getLocType()); sb.append("\nlatitude : ");
-		 * sb.append(location.getLatitude()); sb.append("\nlontitude : ");
-		 * sb.append(location.getLongitude()); sb.append("\nradius : ");
-		 * sb.append(location.getRadius());
-		 * 
-		 * sb.append("\naddr : "); sb.append(location.getAddrStr());
-		 * 
-		 * if (location.getLocType() == BDLocation.TypeGpsLocation) {
-		 * sb.append("\nspeed : "); sb.append(location.getSpeed());
-		 * sb.append("\nsatellite : ");
-		 * sb.append(location.getSatelliteNumber()); } else if
-		 * (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-		 * sb.append("\naddr : "); sb.append(location.getAddrStr());
-		 * 
-		 * } Geocoder geocoder = new Geocoder(CityListActivity.this, Locale
-		 * .getDefault()); List<Address> addresses = null; try { addresses =
-		 * geocoder.getFromLocation( location.getLatitude(),
-		 * location.getLongitude(), 1); } catch (IOException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } if (addresses !=
-		 * null && addresses.size() > 0) { Address address = addresses.get(0);
-		 * city = address.getLocality(); //System.out.println("city:" + city);
-		 * positionCityName.setText(city); }
-		 * 
-		 * }
-		 * 
-		 * public void onReceivePoi(BDLocation poiLocation) { if (poiLocation ==
-		 * null) { return; } StringBuffer sb = new StringBuffer(256);
-		 * sb.append("Poi time : "); sb.append(poiLocation.getTime());
-		 * sb.append("\nerror code : "); sb.append(poiLocation.getLocType());
-		 * sb.append("\nlatitude : "); sb.append(poiLocation.getLatitude());
-		 * sb.append("\nlontitude : "); sb.append(poiLocation.getLongitude());
-		 * sb.append("\nradius : "); sb.append(poiLocation.getRadius()); if
-		 * (poiLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
-		 * sb.append("\naddr : "); sb.append(poiLocation.getAddrStr()); } if
-		 * (poiLocation.hasPoi()) { sb.append("\nPoi:");
-		 * sb.append(poiLocation.getPoi()); } else {
-		 * sb.append("noPoi information"); } Log.d("Poi_sb", sb.toString()); }
-		 * }); // 注册监听函数
-		 */
+
+		mLocationClient = new LocationClient(this); // 声明LocationClient类
+
+		// 设置参数
+		LocationClientOption option = new LocationClientOption();
+		option.setOpenGps(true); // 是否打开GPS
+		option.setCoorType("bd09ll"); //
+		// 设置返回值的坐标类型。
+//		option.setPriority(LocationClientOption.NetWorkFirst); // 设置定位优先级
+		option.setProdName("LocationDemo"); //
+		// 设置产品线名称。强烈建议您使用自定义的产品线名称，方便我们以后为您提供更高效准确的定位服务。
+		option.setScanSpan(5000); // 设置定时定位的时间间隔。单位毫秒
+		option.setAddrType("detail");
+
+		mLocationClient.setLocOption(option);
+
+		mLocationClient.start();
+
+		mLocationClient.requestLocation();
+
+		// option.setIsNeedAddress(true);
+
+		// option.disableCache(true);
+		// 禁止启用缓存定位
+		// option.setPoiNumber(5);
+		// 最多返回POI个数
+		// option.setPoiDistance(1000);
+		// poi查询距离 //
+//		option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息 //
+		mLocationClient.setLocOption(option);
+		mLocationClient.registerLocationListener(new BDLocationListener() {
+			public void onReceiveLocation(BDLocation location) {
+				LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+				Location mlocation = locationManager
+						.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+				if (location == null)
+					return;
+				StringBuffer sb = new StringBuffer(256);
+				sb.append("time : ");
+				sb.append(location.getTime());
+				sb.append("\nerror code : ");
+				sb.append(location.getLocType());
+				sb.append("\nlatitude : ");
+				sb.append(location.getLatitude());
+				sb.append("\nlontitude : ");
+				sb.append(location.getLongitude());
+				sb.append("\nradius : ");
+				sb.append(location.getRadius());
+
+				sb.append("\naddr : ");
+				sb.append(location.getAddrStr());
+
+				if (location.getLocType() == BDLocation.TypeGpsLocation) {
+					sb.append("\nspeed : ");
+					sb.append(location.getSpeed());
+					sb.append("\nsatellite : ");
+					sb.append(location.getSatelliteNumber());
+				} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+					sb.append("\naddr : ");
+					sb.append(location.getAddrStr());
+
+				}
+				Geocoder geocoder = new Geocoder(CityListActivity.this, Locale
+						.getDefault());
+				List<Address> addresses = null;
+				try {
+					addresses = geocoder.getFromLocation(
+							location.getLatitude(), location.getLongitude(), 1);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				if (addresses != null && addresses.size() > 0) {
+					Address address = addresses.get(0);
+					city = address.getLocality(); //
+					System.out.println("city:" + city);
+					positionCityName.setText(city);
+				}
+
+			}
+
+			public void onReceivePoi(BDLocation poiLocation) {
+				if (poiLocation == null) {
+					return;
+				}
+				StringBuffer sb = new StringBuffer(256);
+				sb.append("Poi time : ");
+				sb.append(poiLocation.getTime());
+				sb.append("\nerror code : ");
+				sb.append(poiLocation.getLocType());
+				sb.append("\nlatitude : ");
+				sb.append(poiLocation.getLatitude());
+				sb.append("\nlontitude : ");
+				sb.append(poiLocation.getLongitude());
+				sb.append("\nradius : ");
+				sb.append(poiLocation.getRadius());
+				if (poiLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
+					sb.append("\naddr : ");
+					sb.append(poiLocation.getAddrStr());
+				}
+//				if (poiLocation.hasPoi()) {
+//					sb.append("\nPoi:");
+//					sb.append(poiLocation.getPoi());
+//				} else {
+//					sb.append("noPoi information");
+//				}
+				Log.d("Poi_sb", sb.toString());
+			}
+		}); // 注册监听函数
 
 		// setData();
 		cityList = (ListView) findViewById(R.id.city_list);
@@ -158,9 +205,9 @@ public class CityListActivity extends Activity {
 		listTag.add("定位的城市");
 		new Thread(runnable).start();
 
-		// adapter = new CityListAdapter(this, list, listTag);
-		// cityList = (ListView) findViewById(R.id.city_list);
-		// cityList.setAdapter(adapter);
+		adapter = new CityListAdapter(this, list, listTag);
+		cityList = (ListView) findViewById(R.id.city_list);
+		cityList.setAdapter(adapter);
 
 		searchAdapter = new CitySearchAdapter(CityListActivity.this);
 		// searchAdapter.setDataSource(list);
@@ -250,14 +297,14 @@ public class CityListActivity extends Activity {
 				// city = list.get(position).toString();
 				city = cityList.getItemAtPosition(position).toString();
 				//
-				
+
 				cityPreferences = getSharedPreferences("city",
 						Context.MODE_PRIVATE);
 				SharedPreferences.Editor editor = cityPreferences.edit();
 				editor.putString("city", city);
-				//取得cityId
-				for(int i=0;i<list.size();i++){
-					if(list.get(i).equals(city))
+				// 取得cityId
+				for (int i = 0; i < list.size(); i++) {
+					if (list.get(i).equals(city))
 						cityId = listId.get(i);
 				}
 				editor.putString("cityId", cityId);
@@ -284,8 +331,8 @@ public class CityListActivity extends Activity {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			Bundle data = msg.getData();
-//			String val = data.getString("response");
-			//System.out.println("请求结果-->" + val);
+			// String val = data.getString("response");
+			// System.out.println("请求结果-->" + val);
 			adapter = new CityListAdapter(CityListActivity.this, list, listTag);
 
 			cityList.setAdapter(adapter);
@@ -298,7 +345,7 @@ public class CityListActivity extends Activity {
 		public void run() {
 			// TODO Auto-generated method stub
 			String baseURL = "http://192.168.0.141:4000/appAPI";
-			HashMap<String, String> params = new HashMap<String, String>();
+			HashMap<String, Object> params = new HashMap<String, Object>();
 			params.put("action", "city_Query");
 			Date date = new Date();
 			long time_stamp = date.getTime();
@@ -309,8 +356,8 @@ public class CityListActivity extends Activity {
 			HttpGet getMethod = new HttpGet(baseURL + "?" + "action="
 					+ params.get("action") + "&" + "enc=" + enc + "&"
 					+ "time_stamp=" + time_stamp);
-//			System.out.println(baseURL + "?" + "action=" + params.get("action")
-//					+ "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			System.out.println(baseURL + "?" + "action=" + params.get("action")
+					+ "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 
 			String result;
@@ -319,60 +366,23 @@ public class CityListActivity extends Activity {
 				httpResponse = httpClient.execute(getMethod);
 
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
-					
-					/*HttpEntity entity = httpResponse.getEntity();
-//					StringBuilder builder = new StringBuilder();
-					result = EntityUtils.toString(entity, "utf-8");
-					//result = removeBOM(result);
-					System.out.println("response" + result);
-					
-					// JSONObject jsonObject = new
-					// JSONObject(builder.toString()).getJSONObject("tab");
-					// JSONArray jsonArray = jsonObject.getJSONArray(name);
-					JSONObject js = new JSONObject(result).getJSONObject("action");
-					String action = js.getString("action");
-					System.out.println("action----"+action);
-					JSONArray jsonArray = new JSONObject("result").getJSONArray("citis");
-					//JSONArray json = entity.
-					//JSONArray jsonArray = new JSONArray("citis");
-					
-					
-					for (int i = 0; i < jsonArray.length(); i++) {
-						JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-						String tab = jsonObject.getString("tab");
-						listTag.add(tab);
-						JSONArray jsonArrayGroup = new JSONArray("group");
-						for (int j = 0; i < jsonArrayGroup.length(); j++) {
-							JSONArray jsonArray3 = new JSONArray("list");
-							// List<String> cityNameList = new
-							// ArrayList<String>();
-							for (int m = 0; m < jsonArray3.length(); m++) {
-								JSONObject jsonObject3 = jsonArray3
-										.getJSONObject(m);
-								String cityName = jsonObject3
-										.getString("cityName");
-								list.add(cityName);
-								
-							}
-						}
-					}*/
 					HttpEntity entity = httpResponse.getEntity();
 					result = EntityUtils.toString(entity, "utf-8");
 					Gson gson = new Gson();
-					CityResult cityResult = gson.fromJson(result, CityResult.class);
+					CityResult cityResult = gson.fromJson(result,
+							CityResult.class);
 					List<City> citys = cityResult.getCitis();
-					//i<citys.size();  后面的为空，只能先设为1
-					for(int i=0;i<1;i++){
+					// i<citys.size(); 后面的为空，只能先设为1
+					for (int i = 0; i < 1; i++) {
 						List<Group> group = citys.get(i).getGroup();
-						System.out.println("group.size()"+group.size());
+						System.out.println("group.size()" + group.size());
 						String text = citys.get(i).getText();
 						listTag.add(text);
 						list.add(text);
 						listId.add(text);
-						for(int j=0;j<group.size();j++){
+						for (int j = 0; j < group.size(); j++) {
 							List<CityList> cityList = group.get(j).getList();
-							for(int m=0;m<cityList.size();m++){
+							for (int m = 0; m < cityList.size(); m++) {
 								String cityName = cityList.get(m).getCityName();
 								list.add(cityName);
 								String cityId = cityList.get(m).getCityId();
@@ -396,17 +406,8 @@ public class CityListActivity extends Activity {
 		}
 	};
 
-	public static final String removeBOM(String data) {
-		if (TextUtils.isEmpty(data)) {
-			return data;
-		}
-
-		if (data.startsWith("\ufeff")) {
-			return data.substring(1);
-		} else {
-			return data;
-		}
-	}
+	
+	
 
 	public void setData() {
 		list.add("定位的城市");

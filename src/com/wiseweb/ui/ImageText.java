@@ -72,16 +72,16 @@ public class ImageText extends LinearLayout{
 		int checkDrawableId = -1;
 		switch (itemID){
 		case Constant.BTN_FLAG_FILM:
-			checkDrawableId = R.drawable.icon_film_sel;
+			checkDrawableId = R.drawable.ic_tab_movie_active;
 			break;
 		case Constant.BTN_FLAG_CINEMA:
-			checkDrawableId = R.drawable.icon_cinema_sel;
+			checkDrawableId = R.drawable.ic_tab_cinema_active;
 			break;
 		case Constant.BTN_FLAG_COMMUNITY:
-			checkDrawableId = R.drawable.icon_community_sel;
+			checkDrawableId = R.drawable.ic_tab_community_active;
 			break;
 		case Constant.BTN_FLAG_MINE:
-			checkDrawableId = R.drawable.icon_mine_sel;
+			checkDrawableId = R.drawable.ic_tab_mine_active;
 			break;
 		default:break;
 		}

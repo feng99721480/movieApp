@@ -18,4 +18,7 @@
   <color name="imax_hall">#1490F0</color>
   <color name="transparentblue">#0000FF</color>
   <color name="color_film_score">#FFA41C</color>
+  <!-- submit order -->
+  <color name="color_count_down">#FFF3CB</color>
+  <color name="color_text_bg">#F5F5F5</color>
 </resources>

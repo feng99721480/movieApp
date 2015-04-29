@@ -1,5 +1,7 @@
 package com.wiseweb.bean;
 
+import android.graphics.Bitmap;
+
 public class FilmInfo{
 
 	private String filmName; // 
@@ -11,7 +13,7 @@ public class FilmInfo{
 	private String outline;  //
 	private String summary; // 
 	private String actionTime; // 
-	private int imgId;         //
+	private Bitmap imgId;         //
 	private String score;      //
 	private String iMax;       //iMax3D,iMax2D,3D
 	private boolean newMovie;   // 
@@ -20,9 +22,12 @@ public class FilmInfo{
 	/*
 	 * constructor
 	 */
+	public FilmInfo(){
+		
+	}
 	public FilmInfo(String filmName, String genre, String director,
 			String starring, String region, String duration, String outline,
-			String summary, String actionTime, int imgId, String score,
+			String summary, String actionTime, Bitmap imgId, String score,
 			String iMax, boolean newMovie, String show) {
 		super();
 		this.filmName = filmName;
@@ -41,7 +46,7 @@ public class FilmInfo{
 		this.show = show;
 	}
 	
-	public FilmInfo(String filmName, String outline, int imgId, String score,
+	public FilmInfo(String filmName, String outline, Bitmap imgId, String score,
 			String show) {
 		super();
 		this.filmName = filmName;
@@ -132,14 +137,14 @@ public class FilmInfo{
 	/**
 	 * @return the imgId
 	 */
-	public int getImgId() {
+	public Bitmap getImgId() {
 		return imgId;
 	}
 
 	/**
 	 * @param imgId the imgId to set
 	 */
-	public void setImgId(int imgId) {
+	public void setImgId(Bitmap imgId) {
 		this.imgId = imgId;
 	}
 

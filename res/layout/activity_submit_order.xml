@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        layout="@layout/submit_order_title" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/count_down"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:background="@color/color_count_down"
+                android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
+                android:paddingTop="@dimen/submit_order_paddingbottom_gray" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_text_bg"
+                android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="@dimen/submit_order_paddingtop"
+                android:text="影票信息"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="18sp" />
+            <!-- 影院 -->
+
+            <TextView
+                android:id="@+id/order_cinema_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/submit_order_paddingbottom"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="@dimen/submit_order_paddingtop" />
+            <!-- 电影 -->
+
+            <TextView
+                android:id="@+id/order_movie_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/submit_order_paddingbottom"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="@dimen/submit_order_paddingtop" />
+            <!-- 场次 -->
+
+            <TextView
+                android:id="@+id/order_event"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/submit_order_paddingbottom"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="@dimen/submit_order_paddingtop" />
+            <!-- 座位 -->
+
+            <TextView
+                android:id="@+id/order_seat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/submit_order_paddingbottom"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="@dimen/submit_order_paddingtop" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_text_bg"
+                android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="@dimen/submit_order_paddingtop"
+                android:text="购票手机号"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/order_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="@dimen/submit_order_paddingtop" />
+            <!-- 结算信息 -->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_text_bg"
+                android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="@dimen/submit_order_paddingtop"
+                android:text="结算信息"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/order_total_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/submit_order_paddingbottom"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="@dimen/submit_order_paddingtop" />
+
+            <TextView
+                android:id="@+id/order_total_payment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/submit_order_paddingbottom"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="@dimen/submit_order_paddingtop" />
+
+            <Button
+                android:id="@+id/order_pay_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_film_score" 
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"/>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

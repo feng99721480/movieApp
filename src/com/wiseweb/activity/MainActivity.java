@@ -170,7 +170,7 @@ public class MainActivity extends Activity implements BottomPanelCallback {
 	}
 
 	/**
-	 * �л�fragment
+	 *
 	 * 
 	 * @param tag
 	 */
@@ -178,7 +178,7 @@ public class MainActivity extends Activity implements BottomPanelCallback {
 		if (TextUtils.equals(tag, currFragTag)) {
 			return;
 		}
-		// ����һ��fragment detach��
+		// 
 		if (currFragTag != null && !currFragTag.equals("")) {
 			detachFragment(getFragment(currFragTag));
 		}
@@ -187,7 +187,7 @@ public class MainActivity extends Activity implements BottomPanelCallback {
 	}
 
 	/**
-	 * ����ѡ�е�Tag
+	 * 
 	 * 
 	 * @param tag
 	 */

@@ -53,6 +53,7 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="0Gdz0HEyeNNHpKVeWigG9nrx" />
+        
 
         <activity android:name="com.wiseweb.activity.MainActivity" >
         </activity>
@@ -118,7 +119,8 @@
         </activity>
         <activity android:name="com.wiseweb.activity.FilmSearchResultActivity" >
         </activity>
-        <activity android:name="com.wiseweb.activity.PoiSearchDemo" />
+        <activity android:name="com.wiseweb.activity.ViewCinemaLocationActivity" />
+        <activity android:name="com.wiseweb.activity.SubmitOrderActivity"/>
         <!-- 百度定位 -->
         <service
             android:name="com.baidu.location.f"

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.FontMetricsInt;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -206,10 +207,12 @@ public class SSView extends View {
 		try {
 			Rect localRect = new Rect(this.h + seatNum
 					* this.ss_seat_current_width + this.L, this.j + rowNum
-					* this.ss_seat_current_height + this.L, this.h
-					+ (seatNum + 1) * this.ss_seat_current_width - this.L,
+					* this.ss_seat_current_height + this.L
+					+ (this.j + this.ss_seat_current_height) / 2, this.h + 
+					(seatNum + 1) * this.ss_seat_current_width  ,
 					this.j + (rowNum + 1) * this.ss_seat_current_height
-							- this.L);
+							- this.L + (this.j + this.ss_seat_current_height)
+							/ 2);
 			return localRect;
 		} catch (Exception localException) {
 			localException.printStackTrace();
@@ -220,13 +223,15 @@ public class SSView extends View {
 	private Rect d(int seatNum, int rowNum) {
 		try {
 			Rect localRect = new Rect(5 + (int) (this.T * (this.h + seatNum
-					* this.ss_seat_current_width + this.L)),
-					5 + (int) (this.T * (this.j + rowNum
-							* this.ss_seat_current_height + this.L)),
+					* this.ss_seat_current_width + this.L)), 5
+					+ (int) (this.T * (this.j + rowNum
+							* this.ss_seat_current_height + this.L))
+					+ (this.j + this.ss_seat_current_height) / 2,
 					5 + (int) (this.T * (this.h + (seatNum + 1)
-							* this.ss_seat_current_width - this.L)),
-					5 + (int) (this.T * (this.j + (rowNum + 1)
-							* this.ss_seat_current_height - this.L)));
+							* this.ss_seat_current_width )), 5
+							+ (int) (this.T * (this.j + (rowNum + 1)
+									* this.ss_seat_current_height - this.L))
+							+ (this.j + this.ss_seat_current_height) / 2);
 			return localRect;
 		} catch (Exception localException) {
 			localException.printStackTrace();
@@ -352,15 +357,38 @@ public class SSView extends View {
 			}
 			// cond_d - 2538
 		}
-
+		// 画屏幕中央
+		Paint localPaint4 = new Paint();
+		localPaint4.setTextSize(0.4F * this.ss_seat_current_height);
+		localPaint4.setColor(-1308622848);
+		Rect targetRect = new Rect((this.r + this.ss_seat_current_width) / 2 - this.ss_seat_current_width,
+				this.j, (this.r + this.ss_seat_current_width) / 2 + this.ss_seat_current_width,
+				(this.j + this.ss_seat_current_height) / 2);
+		paramCanvas.drawRect(targetRect, localPaint4);
+		localPaint4.setColor(-1);
+		FontMetricsInt fontMetrics = localPaint4.getFontMetricsInt();
+		// 文字垂直居中
+		int baseline = targetRect.top
+				+ (targetRect.bottom - targetRect.top - fontMetrics.bottom + fontMetrics.top)
+				/ 2 - fontMetrics.top;
+		// 文字水平居中
+		localPaint4.setTextAlign(Paint.Align.CENTER);
+		paramCanvas.drawText("屏幕中央", targetRect.centerX(), baseline,
+				localPaint4);
+		
 		// 画排数
 		localPaint2.setTextSize(0.4F * this.ss_seat_current_height);
 		for (int i1 = 0; i1 < this.mListSeatInfos.size(); i1++) {
 			localPaint2.setColor(-1308622848);
-			paramCanvas.drawRect(new Rect((int) Math.abs(this.n), this.j + i1
-					* this.ss_seat_current_height, (int) Math.abs(this.n)
-					+ this.ss_seat_current_width / 2, this.j + (i1 + 1)
-					* this.ss_seat_current_height), localPaint2);
+			paramCanvas.drawRect(
+					new Rect((int) Math.abs(this.n), this.j + i1
+							* this.ss_seat_current_height
+							+ (this.j + this.ss_seat_current_height) / 2,
+							(int) Math.abs(this.n) + this.ss_seat_current_width
+									/ 2, this.j + (i1 + 1)
+									* this.ss_seat_current_height
+									+ (this.j + this.ss_seat_current_height)
+									/ 2), localPaint2);
 			localPaint2.setColor(-1);
 			paramCanvas
 					.drawText(
@@ -368,24 +396,28 @@ public class SSView extends View {
 							(int) Math.abs(this.n) + this.ss_seat_current_width
 									/ 2 / 2, this.j + i1
 									* this.ss_seat_current_height
-									+ this.ss_seat_current_height / 2 + this.k
-									/ 2, localPaint2);
+									+ this.ss_seat_current_height / 2 + this.k 
+									/ 2
+									+ (this.j + this.ss_seat_current_height)
+									/ 2+(this.j + this.ss_seat_current_height)
+									/ 5, localPaint2);
 		}
+
 		// 画中线
 		Paint localPaint3 = new Paint();
 		localPaint3.setColor(-16777216);
-		paramCanvas.drawLine(this.r / 2, 0, this.r / 2, this.s ,
+		paramCanvas.drawLine((this.r + this.ss_seat_current_width)/ 2,
+				(this.j + this.ss_seat_current_height) / 2, (this.r + this.ss_seat_current_width) / 2, this.s
+						+ (this.j + this.ss_seat_current_height) / 2,
 				localPaint3);
-//		RectF rect = new RectF();
-//		rect.left = this.r/2-50;
-//		rect.right = this.r/2+50;
-//		rect.top = 0;
-//		rect.bottom = 30;
-//		localPaint3.setColor(Color.GRAY);
-		//paramCanvas.drawRoundRect(rect, 1, 1, localPaint3);
-		
-		
-		
+		// RectF rect = new RectF();
+		// rect.left = this.r/2-50;
+		// rect.right = this.r/2+50;
+		// rect.top = 0;
+		// rect.bottom = 30;
+		// localPaint3.setColor(Color.GRAY);
+		// paramCanvas.drawRoundRect(rect, 1, 1, localPaint3);
+
 		if (this.U) {
 			// 画缩略图的黄色框
 			localPaint2.setColor(-739328);
