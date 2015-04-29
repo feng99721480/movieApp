@@ -18,6 +18,12 @@
   <color name="imax_hall">#1490F0</color>
   <color name="transparentblue">#0000FF</color>
   <color name="color_film_score">#FFA41C</color>
+  <!-- pay right now btn -->
+  <color name="color_btn_pay_now_normal">#FF9A00</color>
+  <color name="color_btn_pay_now_pressed">#E48A00</color>
+  <!-- submit order btn  -->
+  <color name="color_btn_submit_order_normal">#FF9A00</color>
+  <color name="color_btn_submit_order_pressed">#E48A00</color>
   <!-- submit order -->
   <color name="color_count_down">#FFF3CB</color>
   <color name="color_text_bg">#F5F5F5</color>

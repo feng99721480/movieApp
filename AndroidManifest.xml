@@ -121,6 +121,7 @@
         </activity>
         <activity android:name="com.wiseweb.activity.ViewCinemaLocationActivity" />
         <activity android:name="com.wiseweb.activity.SubmitOrderActivity"/>
+        <activity android:name="com.wiseweb.activity.MyCinemaTicketActivity"/>
         <!-- 百度定位 -->
         <service
             android:name="com.baidu.location.f"

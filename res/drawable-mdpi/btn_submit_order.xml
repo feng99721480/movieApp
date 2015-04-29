@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android" >
-  <item android:state_pressed="false">
-      <shape >
-          <corners android:radius="3dp"/>
-          <solid android:color="#FF9A00"/>
-          <padding android:left="20dp"
-              
-              android:right="20dp"
-              />
-      </shape>
-  </item>  
-  
-  <item android:state_pressed="true">
-      <shape >
-          <corners android:radius="3dp"/>
-          <solid android:color="#E48A00"/>
-          <padding android:left="20dp"
-              
-              android:right="20dp"
-              />
-      </shape>
-  </item>  
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="false"><shape>
+            <corners android:radius="3dp" />
+
+            <solid android:color="@color/color_btn_submit_order_normal" />
+
+            <padding android:left="20dp" android:right="20dp" />
+        </shape></item>
+    <item android:state_pressed="true"><shape>
+            <corners android:radius="3dp" />
+
+            <solid android:color="@color/color_btn_submit_order_pressed" />
+
+            <padding android:left="20dp" android:right="20dp" />
+        </shape></item>
 
 </selector>

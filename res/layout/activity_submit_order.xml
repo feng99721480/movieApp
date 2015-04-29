@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingBottom="20dp" >
 
     <include
         android:layout_width="match_parent"
@@ -92,7 +93,8 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
                 android:paddingLeft="@dimen/submit_order_paddingleft"
-                android:paddingTop="@dimen/submit_order_paddingtop" />
+                android:paddingTop="@dimen/submit_order_paddingtop"
+                android:inputType="number" />
             <!-- 结算信息 -->
 
             <TextView
@@ -126,10 +128,12 @@
                 android:id="@+id/order_pay_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/color_film_score" 
+                android:textColor="@android:color/white"
+                android:background="@drawable/btn_pay_now_bg"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                />
         </LinearLayout>
     </ScrollView>
 

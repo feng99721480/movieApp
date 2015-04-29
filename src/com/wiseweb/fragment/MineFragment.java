@@ -10,6 +10,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import cn.sharesdk.framework.Platform;
@@ -18,6 +19,7 @@ import cn.sharesdk.sina.weibo.SinaWeibo;
 
 import com.wiseweb.activity.LoginActivity;
 import com.wiseweb.activity.MainActivity;
+import com.wiseweb.activity.MyCinemaTicketActivity;
 import com.wiseweb.activity.MyFilmActivity;
 import com.wiseweb.constant.Constant;
 import com.wiseweb.movie.R;
@@ -29,6 +31,7 @@ public class MineFragment extends BaseFragment {
 	private ImageView mineHeader;
 	private RelativeLayout myTicket;
 	private RelativeLayout mineInfo;
+	private LinearLayout myCinemaTicket;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,6 +41,8 @@ public class MineFragment extends BaseFragment {
 				false);
 		mMainActivity = (MainActivity) getActivity();
 		mineName = (TextView) mineLayout.findViewById(R.id.mine_name);
+		myCinemaTicket = (LinearLayout) mineLayout
+				.findViewById(R.id.my_cinema_ticket_layout);
 
 		SharedPreferences s = mMainActivity.getSharedPreferences("user",
 				Context.MODE_PRIVATE);
@@ -47,6 +52,15 @@ public class MineFragment extends BaseFragment {
 		} else {
 			mineName.setText("登录");
 		}
+		myCinemaTicket.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(mMainActivity, MyCinemaTicketActivity.class);
+				startActivity(intent);
+			}
+		});
 		// ShareSDK.initSDK(mMainActivity);
 		mFragmentManager = getActivity().getFragmentManager();
 		// sinaWeibo = ShareSDK.getPlatform(mMainActivity, SinaWeibo.NAME);
@@ -91,9 +105,9 @@ public class MineFragment extends BaseFragment {
 			String name = b.getString("userName");
 			mineName.setText(name);
 			break;
-		/*case 1:
-			mineName.setText("登录");
-			break;*/
+		/*
+		 * case 1: mineName.setText("登录"); break;
+		 */
 		default:
 			break;
 
