@@ -85,6 +85,9 @@ public class FilmFragment extends BaseFragment {
 		city = (TextView) filmLayout.findViewById(R.id.city_title);
 		cityPreferences = mMainActivity.getSharedPreferences("city",
 				Context.MODE_PRIVATE);
+//		SharedPreferences.Editor editor = cityPreferences.edit();
+//		editor.putString("city", "北京");
+//		editor.commit();
 		city.setText(cityPreferences.getString("city", null));
 
 		mListView = (ListView) filmLayout.findViewById(R.id.listview_film);

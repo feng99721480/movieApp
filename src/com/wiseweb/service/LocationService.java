@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,6 +17,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.baidu.location.LocationClient;
 
@@ -27,7 +29,7 @@ public class LocationService extends Service {
 	private double latitude = 0;
 	private double longitude = 0;
 	private SharedPreferences cityPreferences;
-	
+
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
@@ -41,8 +43,11 @@ public class LocationService extends Service {
 		System.out.println("LocationService OnCreate()");
 		// 获取经纬度
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
 		Location location = locationManager
 				.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+		// location为空
 		if (location != null) {
 			latitude = location.getLatitude();
 			longitude = location.getLongitude();
@@ -64,14 +69,47 @@ public class LocationService extends Service {
 			Address address = addresses.get(0);
 			city = address.getLocality();
 			System.out.println("city:" + city);
-			//定位的城市
-			cityPreferences = getSharedPreferences("locationCity", Context.MODE_PRIVATE);
+			// 定位的城市
+			cityPreferences = getSharedPreferences("locationCity",
+					Context.MODE_PRIVATE);
 			// String str = cityPreferences.getString("city", null);
 			SharedPreferences.Editor editor = cityPreferences.edit();
 			editor.putString("locationCity", city);
 			editor.commit();
 		}
+
 	}
+
+	// 创建位置监听器
+	private LocationListener locationListener = new LocationListener() {
+		// 位置发生改变时调用
+		@Override
+		public void onLocationChanged(Location location) {
+			Log.d("Location", "onLocationChanged");
+			Log.d("Location",
+					"onLocationChanged Latitude" + location.getLatitude());
+			Log.d("Location",
+					"onLocationChanged location" + location.getLongitude());
+		}
+
+		// provider失效时调用
+		@Override
+		public void onProviderDisabled(String provider) {
+			Log.d("Location", "onProviderDisabled");
+		}
+
+		// provider启用时调用
+		@Override
+		public void onProviderEnabled(String provider) {
+			Log.d("Location", "onProviderEnabled");
+		}
+
+		// 状态改变时调用
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			Log.d("Location", "onStatusChanged");
+		}
+	};
 
 	@Override
 	public void onDestroy() {

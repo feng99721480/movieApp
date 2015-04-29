@@ -56,22 +56,22 @@ public class BottomControlPanel extends RelativeLayout implements
 
 	}
 
-	// ����ÿ�����ӵ�ͼƬ������
+	// 
 	public void initBottomPanel() {
 		if (filmBtn != null) {
-			filmBtn.setImage(R.drawable.icon_film_nor);
+			filmBtn.setImage(R.drawable.ic_tab_movie);
 			filmBtn.setText("电影");
 		}
 		if (cinemaBtn != null) {
-			cinemaBtn.setImage(R.drawable.icon_cinema_nor);
+			cinemaBtn.setImage(R.drawable.ic_tab_cinema);
 			cinemaBtn.setText("影院");
 		}
 		if (communityBtn != null) {
-			communityBtn.setImage(R.drawable.icon_community_nor);
+			communityBtn.setImage(R.drawable.ic_tab_community);
 			communityBtn.setText("社区");
 		}
 		if (mineBtn != null) {
-			mineBtn.setImage(R.drawable.icon_mine_nor);
+			mineBtn.setImage(R.drawable.ic_tab_mine);
 			mineBtn.setText("我的");
 		}
 		setBtnListener();
@@ -156,7 +156,7 @@ public class BottomControlPanel extends RelativeLayout implements
 	}
 
 	/**
-	 * ����ߺ����ұߵ�view��ĸ���ֵ�padding���п���λ�á�������Ե�2��3��view��λ����������
+	 * 
 	 * 
 	 * @param left
 	 * @param top
@@ -182,7 +182,7 @@ public class BottomControlPanel extends RelativeLayout implements
 			// Log.i("2222", "v.getWidth() = " + v.getWidth());
 			allViewWidth += v.getWidth();
 		}
-		// ��view�Ŀ��-������view�Ŀ��-paddingֵ�������пյ��Ŀ��
+		// 
 		int blankWidth = (width - allViewWidth - paddingLeft - paddingRight)
 				/ (n - 1);
 		// Log.i("1111", "blankV = " + blankWidth );
