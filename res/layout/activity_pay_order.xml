@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:paddingBottom="10dp">
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        layout="@layout/pay_order_title" />
+
+    <ScrollView
+        android:id="@+id/sv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <!-- 支付倒计时 -->
+
+            <TextView
+                android:id="@+id/pay_order_count_down"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/color_count_down"
+                android:gravity="center"
+                android:paddingBottom="@dimen/submit_order_paddingbottom"
+                android:paddingTop="@dimen/submit_order_paddingbottom_gray" />
+            <!-- 订单名称 -->
+
+            <TextView
+                android:id="@+id/order_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="10dp" />
+            <!-- 订单总价 -->
+
+            <TextView
+                android:id="@+id/order_total_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="10dp" />
+            <!-- 余额 -->
+
+            <TextView
+                android:id="@+id/remaining_money"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="10dp" />
+            <!-- 还需支付 -->
+
+            <TextView
+                android:id="@+id/order_need_pay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingLeft="@dimen/submit_order_paddingleft"
+                android:paddingTop="10dp" />
+
+            <com.wiseweb.ui.ListViewForScrollView
+                android:id="@+id/pay_way_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@color/divider_color"
+                android:dividerHeight="1dp" >
+            </com.wiseweb.ui.ListViewForScrollView>
+
+            <Button
+                android:id="@+id/pay_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/btn_pay_now_bg"
+                android:text="@string/confirm_pay"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

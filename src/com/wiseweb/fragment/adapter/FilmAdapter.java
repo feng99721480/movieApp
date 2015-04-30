@@ -127,17 +127,15 @@ public class FilmAdapter extends BaseAdapter {
 			listener = new OnClick();//
 			holder.buyTicket.setOnClickListener(listener);
 			convertView.setTag(holder);
-			convertView.setTag(holder.buyTicket.getId(), listener);// �Լ�����󱣴�
+			convertView.setTag(holder.buyTicket.getId(), listener);// 
 		} else {
 			holder = (ViewHolder) convertView.getTag();
-			listener = (OnClick) convertView.getTag(holder.buyTicket.getId());// ���»�ü������
+			listener = (OnClick) convertView.getTag(holder.buyTicket.getId());// 
 		}
-		FilmInfo value = mListFilmBean.get(position);// ���ü�������ֵ
+		FilmInfo value = mListFilmBean.get(position);//ֵ
 		// holder.no.setText(value);
 		listener.setPosition(position);
-		// Log.d("haha",
-		// "position is " + position + " listener is "
-		// + listener.toString());
+	
 		return convertView;
 		// // TODO Auto-generated method stub
 		// View v = mInflater.inflate(R.layout.film_item_layout, null);
