@@ -1,9 +1,6 @@
 package com.wiseweb.fragment;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,7 +19,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -50,11 +46,13 @@ import com.wiseweb.bean.FilmInfo;
 import com.wiseweb.constant.Constant;
 import com.wiseweb.fragment.adapter.FilmAdapter;
 import com.wiseweb.fragment.adapter.UpComingFilmAdapter;
+import com.wiseweb.json.MovieComingResult;
+import com.wiseweb.json.MovieComingResult.MovieComing;
 import com.wiseweb.json.MovieResult;
 import com.wiseweb.json.MovieResult.Movie;
 import com.wiseweb.movie.R;
-import com.wiseweb.movie.R.drawable;
 import com.wiseweb.util.GetEnc;
+import com.wiseweb.util.Util;
 
 public class FilmFragment extends BaseFragment {
 
@@ -85,9 +83,9 @@ public class FilmFragment extends BaseFragment {
 		city = (TextView) filmLayout.findViewById(R.id.city_title);
 		cityPreferences = mMainActivity.getSharedPreferences("city",
 				Context.MODE_PRIVATE);
-//		SharedPreferences.Editor editor = cityPreferences.edit();
-//		editor.putString("city", "北京");
-//		editor.commit();
+		// SharedPreferences.Editor editor = cityPreferences.edit();
+		// editor.putString("city", "北京");
+		// editor.commit();
 		city.setText(cityPreferences.getString("city", null));
 
 		mListView = (ListView) filmLayout.findViewById(R.id.listview_film);
@@ -152,7 +150,7 @@ public class FilmFragment extends BaseFragment {
 					mListView.setAdapter(upComingFilmAdapter);
 				} else {
 					// mFilmInfo.clear();
-					new Thread(onReleasingRunnable).start();
+					// new Thread(onReleasingRunnable).start();
 					mFilmAdapter = new FilmAdapter(mFilmInfo, mMainActivity);
 					mListView.setAdapter(mFilmAdapter);
 
@@ -160,7 +158,7 @@ public class FilmFragment extends BaseFragment {
 			}
 
 		});
-		new Thread(runnable).start();
+		// new Thread(runnable).start();
 		bd = (BitmapDrawable) (mMainActivity.getResources()
 				.getDrawable(R.drawable.runman));
 		Bitmap runman = bd.getBitmap();
@@ -193,40 +191,36 @@ public class FilmFragment extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-//		bd = (BitmapDrawable) (mMainActivity.getResources()
-//				.getDrawable(R.drawable.runman));
-//		Bitmap runman = bd.getBitmap();
-//		mFilmInfo.add(new FilmInfo("奔跑吧，兄弟", "超级喜剧", "导演", "邓超，李晨", "大陆",
-//				"88分钟", "超级好看的电影", "很好看的电影啊", "2015-01-30", runman, "6.8分",
-//				"2D", true, "今天127家影院上映102场"));
-//
-//		mOnFilmInfo.add(new FilmInfo("RUNNING", "超级喜剧", "导演", "邓超，李晨", "大陆",
-//				"88分钟", "超级好看的电影", "很好看的电影啊", "2015-01-30", runman, "6.8分",
-//				"iMax3D", true, "今天127家影院上映102场"));
-
-		// getData();
-
 	}
 
-	Handler handler = new Handler() {
+	private Handler handler = new Handler(new Handler.Callback() {
 
 		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-			Bundle data = msg.getData();
-			// String val = data.getString("result");
-			mFilmAdapter = new FilmAdapter(mFilmInfo, mMainActivity);
-			mListView.setAdapter(mFilmAdapter);
+		public boolean handleMessage(Message msg) {
+
+			switch (msg.what) {
+			case 0:
+				// Bundle data = msg.getData();
+				// String val = data.getString("result");
+				mFilmAdapter = new FilmAdapter(mFilmInfo, mMainActivity);
+				mListView.setAdapter(mFilmAdapter);
+				mFilmAdapter.notifyDataSetChanged();
+			case 1:
+				upComingFilmAdapter = new UpComingFilmAdapter(mOnFilmInfo,
+						mMainActivity);
+				mListView.setAdapter(upComingFilmAdapter);
+				upComingFilmAdapter.notifyDataSetChanged();
+			}
+			return false;
 		}
-	};
+	});
+
 	Runnable runnable = new Runnable() {
 
 		@Override
 		public void run() {
-			String baseURL = "http://192.168.0.141:4000/appAPI";
 			HashMap<String, Object> params = new HashMap<String, Object>();
-			params.put("action", "movie_Query");
+			params.put("action", "movie_on");
 			Date date = new Date();
 			long time_stamp = date.getTime();
 			params.put("time_stamp", time_stamp + "");
@@ -236,12 +230,12 @@ public class FilmFragment extends BaseFragment {
 			params.put("city_id", cityId);
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet getMethod = new HttpGet(baseURL + "?" + "action="
+			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
 					+ params.get("action") + "&" + "city_id=" + cityId + "&"
 					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
-			System.out.println(baseURL + "?" + "action=" + params.get("action")
-					+ "&" + "city_id=" + cityId + "&" + "enc=" + enc + "&"
-					+ "time_stamp=" + time_stamp);
+			System.out.println(Constant.baseURL + "action="
+					+ params.get("action") + "&" + "city_id=" + cityId + "&"
+					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 			String result;
 			try {
@@ -264,11 +258,11 @@ public class FilmFragment extends BaseFragment {
 						String movieProperty;
 						String actionTime = "无数据";
 						String posterPath;
-						if (!(movies.get(i).getMovieName() == null)) {
+						if (!(movies.get(i).getMovieName().equals(null))) {
 							movieName = movies.get(i).getMovieName();
 							film.setFilmName(movieName);
 						}
-						if (!(movies.get(i).getScore() == null)) {
+						if (!(movies.get(i).getScore().equals(null))) {
 							movieScore = movies.get(i).getScore();
 
 						} else {
@@ -288,22 +282,22 @@ public class FilmFragment extends BaseFragment {
 							movieProperty = "";
 						}
 						film.setiMax(movieProperty);
-						if (!(movies.get(i).getPublishTime() == null)) {
+						if (!(movies.get(i).getPublishTime().equals(null))) {
 							actionTime = movies.get(i).getPublishTime();
 						}
 						film.setActionTime(actionTime);
 						posterPath = movies.get(i).getPosterPath();
-						if (posterPath != null) {
-							Bitmap filmImage = getBitmap(posterPath);
+						if (!posterPath.equals(null)) {
+							Bitmap filmImage = Util.getBitmap(posterPath);
 							film.setImgId(filmImage);
 						}
 
 						mFilmInfo.add(film);
 					}
 					Message msg = new Message();
-					Bundle data = new Bundle();
-
-					msg.setData(data);
+					// Bundle data = new Bundle();
+					// msg.setData(data);
+					msg.what = 0;
 					handler.sendMessage(msg);
 				}
 			} catch (ClientProtocolException e) {
@@ -321,20 +315,29 @@ public class FilmFragment extends BaseFragment {
 		@Override
 		public void run() {
 			HashMap<String, Object> params = new HashMap<String, Object>();
-			params.put("action", "movie_Query");
+			// 动作
+			params.put("action", "movie_coming");
+			// 时间戳参数
 			Date date = new Date();
 			long time_stamp = date.getTime();
 			params.put("time_stamp", time_stamp + "");
-			int count = 10;
+			// 数量参数
+			int count = 12;
 			params.put("count", count);
+			// 开始位置，默认为0
+			int startTime = 0;
+			params.put("startTime", startTime);
+			// 获得enc参数
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet getMethod = new HttpGet(Constant.baseURL + "?" + "action="
+			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
 					+ params.get("action") + "&" + "count=" + count + "&"
-					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
-			System.out.println(Constant.baseURL + "?" + "action="
+					+ "startTime=" + startTime + "&" + "enc=" + enc + "&"
+					+ "time_stamp=" + time_stamp);
+			System.out.println(Constant.baseURL + "action="
 					+ params.get("action") + "&" + "count=" + count + "&"
-					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+					+ "startTime=" + startTime + "&" + "enc=" + enc + "&"
+					+ "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 			String result;
 			try {
@@ -342,66 +345,65 @@ public class FilmFragment extends BaseFragment {
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					HttpEntity entity = httpResponse.getEntity();
 					result = EntityUtils.toString(entity, "utf-8");
-					System.out.println("即将上映++++++++" + result);
-					// Gson gson = new Gson();
-					// MovieResult movieResult = gson.fromJson(result,
-					// MovieResult.class);
-					// List<Movie> movies = movieResult.getMovies();
-					// mFilmInfo.clear();
-					// for (int i = 0; i < movies.size(); i++) {
-					// FilmInfo film = new FilmInfo();
-					// String movieName = "";
-					// String movieScore = "";
-					// Boolean has2D;
-					// Boolean has3D;
-					// Boolean hasImax;
-					// String movieProperty;
-					// String actionTime = "无数据";
-					// String posterPath;
-					// if (!(movies.get(i).getMovieName() == null)) {
-					// movieName = movies.get(i).getMovieName();
-					// film.setFilmName(movieName);
-					// }
-					// if (!(movies.get(i).getScore() == null)) {
-					// movieScore = movies.get(i).getScore();
-					//
-					// } else {
-					// movieScore = "无评分";
-					// }
-					// film.setScore(movieScore);
-					// has2D = movies.get(i).getHas2D();
-					// has3D = movies.get(i).getHas3D();
-					// hasImax = movies.get(i).getHasImax();
-					// if (has2D && hasImax == true) {
-					// movieProperty = "Imax2D";
-					// } else if (has3D && hasImax == true) {
-					// movieProperty = "Imax3D";
-					// } else if (hasImax == false && has3D == true) {
-					// movieProperty = "3D";
-					// } else {
-					// movieProperty = "";
-					// }
-					// film.setiMax(movieProperty);
-					// if (!(movies.get(i).getPublishTime() == null)) {
-					// actionTime = movies.get(i).getPublishTime();
-					// }
-					// film.setActionTime(actionTime);
-					// posterPath = movies.get(i).getPosterPath();
-					// if(posterPath != null){
-					// Bitmap filmImage = getBitmap(posterPath);
-					// film.setImgId(filmImage);
-					// }
-					//
-					// mFilmInfo.add(film);
-					// // properties.add(movieProperty);
-					// // names.add(movieName);
-					// // scores.add(movieScore);
+					// System.out.println("即将上映++++++++" + result);
+					Gson gson = new Gson();
+					MovieComingResult movieComingResult = gson.fromJson(result,
+							MovieComingResult.class);
+					List<MovieComing> movies = movieComingResult.getMovies();
+					mOnFilmInfo.clear();
+					for (int i = 0; i < movies.size(); i++) {
+						FilmInfo film = new FilmInfo();
+						String movieName = "";
+						String movieScore = "";
+						Boolean has2D;
+						Boolean has3D;
+						Boolean hasImax;
+						String movieProperty;
+						String actionTime = "无数据";
+						String posterPath;
 
-					// }
+						if (!(movies.get(i).getMovieName().equals(null))) {
+							movieName = movies.get(i).getMovieName();
+							film.setFilmName(movieName);
+						}
+						if (!(movies.get(i).getScore().equals(null))) {
+							movieScore = movies.get(i).getScore();
+
+						} else {
+							movieScore = "无评分";
+						}
+						film.setScore(movieScore);
+						has2D = movies.get(i).getHas2D();
+						has3D = movies.get(i).getHas3D();
+						hasImax = movies.get(i).getHasImax();
+						if (has2D && hasImax == true) {
+							movieProperty = "Imax2D";
+						} else if (has3D && hasImax == true) {
+							movieProperty = "Imax3D";
+						} else if (hasImax == false && has3D == true) {
+							movieProperty = "3D";
+						} else {
+							movieProperty = "";
+						}
+						film.setiMax(movieProperty);
+						if (!(movies.get(i).getPublishTime().equals(null))) {
+							actionTime = movies.get(i).getPublishTime();
+						}
+						film.setActionTime(actionTime);
+						posterPath = movies.get(i).getPathSquare();
+						if (posterPath != null) {
+							Bitmap filmImage = Util.getBitmap(posterPath);
+							film.setImgId(filmImage);
+						}
+						mOnFilmInfo.add(film);
+						// properties.add(movieProperty);
+						// names.add(movieName);
+						// scores.add(movieScore);
+					}
 					Message msg = new Message();
-					Bundle data = new Bundle();
-
-					msg.setData(data);
+					msg.what = 1;
+					// Bundle data = new Bundle();
+					// msg.setData(data);
 					handler.sendMessage(msg);
 				}
 			} catch (ClientProtocolException e) {
@@ -413,99 +415,44 @@ public class FilmFragment extends BaseFragment {
 
 	};
 
-	// 取得图片
-	public static Bitmap getBitmap(String path) throws IOException {
-		URL url = new URL(path);
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		conn.setConnectTimeout(5000);
-		conn.setRequestMethod("GET");
-		if (conn.getResponseCode() == 200) {
-			InputStream inputStream = conn.getInputStream();
-			Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-			return bitmap;
-		}
-		return null;
-	}
-
-	// 获取数据
-	public String getData() {
-		String city = "";
-		String baseURL = "";
-		HashMap<String, Object> params = new HashMap<String, Object>();
-		params.put("city", city);
-		params.put("releasing", "正在上映");
-		String enc = GetEnc.getEnc(params, "key");
-		HttpClient httpClient = new DefaultHttpClient();
-		Date date = new Date();
-		long time_stamp = date.getTime();
-		// String param=URLEncodedUtils.format(p, "utf-8");
-		String param = "";
-		// 将URL与参数拼接
-		HttpGet getMethod = new HttpGet(baseURL + "?" + param);
-		HttpResponse httpResponse;
-		String response = "";
-		try {
-			httpResponse = httpClient.execute(getMethod);
-			if (httpResponse.getStatusLine().getStatusCode() == 200) {
-				HttpEntity entity = httpResponse.getEntity();
-				response = EntityUtils.toString(entity, "utf-8");
-			}
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return response;
-
-	}
-
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onActivityCreated(savedInstanceState);
 	}
 
 	@Override
 	public void onStart() {
-		// TODO Auto-generated method stub
 		super.onStart();
 	}
 
 	@Override
 	public void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
 		MainActivity.currFragTag = Constant.FRAGMENT_FLAG_FILM;
 	}
 
 	@Override
 	public void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 	}
 
 	@Override
 	public void onStop() {
-		// TODO Auto-generated method stub
 		super.onStop();
 	}
 
 	@Override
 	public void onDestroyView() {
-		// TODO Auto-generated method stub
 		super.onDestroyView();
 	}
 
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
 	}
 
 	@Override
 	public void onDetach() {
-		// TODO Auto-generated method stub
 		super.onDetach();
 
 	}

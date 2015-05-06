@@ -29,7 +29,7 @@
             android:layout_toRightOf="@id/cinema_detail_back_img"
             android:text="影院详情"
             android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp" />
     </RelativeLayout>
 
     <ImageView

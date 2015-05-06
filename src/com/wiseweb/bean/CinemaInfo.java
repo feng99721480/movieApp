@@ -13,6 +13,9 @@ public class CinemaInfo {
 	/*
 	 * constructor
 	 */
+	public CinemaInfo(){
+		
+	}
 	public CinemaInfo(String cinemaName, boolean preferential, boolean imax,
 			boolean seat, boolean groupPurchase, double lowestPrice,
 			String cinemaAddress, String distance) {

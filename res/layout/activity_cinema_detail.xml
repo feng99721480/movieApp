@@ -211,6 +211,7 @@
                     android:src="@drawable/ic_cinema_feature_ticket" />
 
                 <TextView
+                    android:id="@+id/cinema_feature_ticket_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
@@ -250,6 +251,7 @@
                     android:src="@drawable/ic_cinema_feature_imax" />
 
                 <TextView
+                    android:id="@+id/cinema_feature_imax_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -272,6 +274,7 @@
                     android:src="@drawable/ic_cinema_feature_3dglass" />
 
                 <TextView
+                    android:id="@+id/cinema_feature_3dglass_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -294,6 +297,7 @@
                     android:src="@drawable/ic_cinema_feature_park" />
 
                 <TextView
+                    android:id="@+id/cinema_feature_park_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -316,6 +320,7 @@
                     android:src="@drawable/ic_cinema_feature_lovers" />
 
                 <TextView
+                    android:id="@+id/cinema_feature_lovers_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -338,6 +343,7 @@
                     android:src="@drawable/ic_cinema_feature_children" />
 
                 <TextView
+                    android:id="@+id/cinema_feature_children_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -360,6 +366,7 @@
                     android:src="@drawable/ic_cinema_feature_card" />
 
                 <TextView
+                    android:id="@+id/cinema_feature_card_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -382,6 +389,7 @@
                     android:src="@drawable/ic_cinema_feature_wifi" />
 
                 <TextView
+                    android:id="@+id/cinema_feature_wifi_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -404,6 +412,7 @@
                     android:src="@drawable/ic_cinema_feature_rest" />
 
                 <TextView
+                    android:id="@+id/cinema_feature_rest_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -424,6 +433,7 @@
                     android:src="@drawable/ic_cinema_feature_refund" />
 
                 <TextView
+                    android:id="@+id/cinema_feature_refund_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"

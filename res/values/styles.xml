@@ -17,9 +17,15 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     <item name="android:windowNoTitle">true</item>
     </style>
-    
+    <style name="Theme.PageIndicatorDefaults" parent="android:Theme">
+        <item name="vpiIconPageIndicatorStyle">@style/Widget.IconPageIndicator</item>
+        <item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
+    </style>
+
+    <style name="Widget">
+    </style>
     <style name="MyTheme" parent="AppBaseTheme">  
-        <item name="vpiTabPageIndicatorStyle">@style/MyWidget.TabPageIndicator</item>  
+        <item name="vpiTabPageIndicatorStyle">@style/MyWidget.TabPageIndicator</item>
         <!-- <item name="android:windowBackground">@drawable/runman</item> -->
         <item name="android:windowNoTitle">true</item>  
         <item name="android:animationDuration">5000</item>  

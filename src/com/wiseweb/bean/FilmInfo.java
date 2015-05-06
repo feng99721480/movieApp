@@ -143,6 +143,7 @@ public class FilmInfo{
 
 	/**
 	 * @param imgId the imgId to set
+	 * 参数为Bitmap类型
 	 */
 	public void setImgId(Bitmap imgId) {
 		this.imgId = imgId;

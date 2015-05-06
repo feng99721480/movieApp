@@ -94,6 +94,7 @@ public class BuyTicketSelectCinema extends FragmentActivity {
 					listview.setAdapter(cinemaAdapter);
 				}
 				String name = adapter.getPageTitle(position).toString();
+				System.out.println("name-----"+name);
 
 			}
 

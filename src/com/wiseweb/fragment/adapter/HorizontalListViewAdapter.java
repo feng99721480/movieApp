@@ -1,7 +1,10 @@
 package com.wiseweb.fragment.adapter;
 
+import java.util.List;
+
 import com.wiseweb.movie.R;
 import com.wiseweb.ui.BitmapUtil;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -13,30 +16,54 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class HorizontalListViewAdapter extends BaseAdapter{
+public class HorizontalListViewAdapter extends BaseAdapter {
 	private int[] mIconIDs;
-	//private String[] mTitles;
+	private List<Bitmap> bps;
+	// private String[] mTitles;
 	private Context mContext;
 	private LayoutInflater mInflater;
-	Bitmap iconBitmap;
+	private Bitmap iconBitmap;
 	private int selectIndex = -1;
 
-	/*public HorizontalListViewAdapter(Context context, String[] titles, int[] ids){
+	/*
+	 * public HorizontalListViewAdapter(Context context, String[] titles, int[]
+	 * ids){ this.mContext = context; this.mIconIDs = ids; this.mTitles =
+	 * titles; mInflater=(LayoutInflater)mContext.getSystemService(Context.
+	 * LAYOUT_INFLATER_SERVICE);//LayoutInflater.from(mContext); }
+	 */
+	/**
+	 * 构造函数
+	 * 
+	 * @param context
+	 * @param bps
+	 *            Bitmap元素
+	 */
+	public HorizontalListViewAdapter(Context context, List<Bitmap> bps) {
 		this.mContext = context;
-		this.mIconIDs = ids;
-		this.mTitles = titles;
-		mInflater=(LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);//LayoutInflater.from(mContext);
-	}*/
-	
-	public HorizontalListViewAdapter(Context context, int[] ids){
-		this.mContext = context;
-		this.mIconIDs = ids;
-		mInflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		this.bps = bps;
+		mInflater = (LayoutInflater) mContext
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 	}
+
+	/**
+	 * 构造函数
+	 * 
+	 * @param context
+	 * @param ids
+	 *            图片的id
+	 */
+	public HorizontalListViewAdapter(Context context, int[] ids) {
+		this.mContext = context;
+		this.mIconIDs = ids;
+		mInflater = (LayoutInflater) mContext
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+	}
+
 	@Override
 	public int getCount() {
 		return mIconIDs.length;
 	}
+
 	@Override
 	public Object getItem(int position) {
 		return position;
@@ -51,45 +78,51 @@ public class HorizontalListViewAdapter extends BaseAdapter{
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		ViewHolder holder;
-		if(convertView==null){
+		if (convertView == null) {
 			holder = new ViewHolder();
-			convertView = mInflater.inflate(R.layout.horizontal_list_item, null);
-			holder.mImage=(ImageView)convertView.findViewById(R.id.img_list_item);
-			//holder.mTitle=(TextView)convertView.findViewById(R.id.text_list_item);
+			convertView = mInflater
+					.inflate(R.layout.horizontal_list_item, null);
+			holder.mImage = (ImageView) convertView
+					.findViewById(R.id.img_list_item);
+			// holder.mTitle=(TextView)convertView.findViewById(R.id.text_list_item);
 			convertView.setTag(holder);
-		}else{
-			holder=(ViewHolder)convertView.getTag();
+		} else {
+			holder = (ViewHolder) convertView.getTag();
 		}
-		if(position == selectIndex){
+		if (position == selectIndex) {
 			convertView.setSelected(true);
-		}else{
+		} else {
 			convertView.setSelected(false);
 		}
-		
-		//holder.mTitle.setText(mTitles[position]);
-		//设置图片
-		iconBitmap = getPropThumnail(mIconIDs[position]);
-		holder.mImage.setImageBitmap(iconBitmap);
+
+		// holder.mTitle.setText(mTitles[position]);
+		// 设置图片
+		// iconBitmap = getPropThumnail(mIconIDs[position]);
+		holder.mImage.setImageBitmap(bps.get(position));
 
 		return convertView;
 	}
 
 	private static class ViewHolder {
-		//private TextView mTitle ;
+		// private TextView mTitle ;
 		private ImageView mImage;
 	}
-	private Bitmap getPropThumnail(int id){
+
+	private Bitmap getPropThumnail(int id) {
 		Drawable d = mContext.getResources().getDrawable(id);
 		Bitmap b = BitmapUtil.drawableToBitmap(d);
-//		Bitmap bb = BitmapUtil.getRoundedCornerBitmap(b, 100);
-		int w = mContext.getResources().getDimensionPixelOffset(R.dimen.thumnail_default_width);
-		int h = mContext.getResources().getDimensionPixelSize(R.dimen.thumnail_default_height);
-		
+		// Bitmap bb = BitmapUtil.getRoundedCornerBitmap(b, 100);
+		int w = mContext.getResources().getDimensionPixelOffset(
+				R.dimen.thumnail_default_width);
+		int h = mContext.getResources().getDimensionPixelSize(
+				R.dimen.thumnail_default_height);
+
 		Bitmap thumBitmap = ThumbnailUtils.extractThumbnail(b, w, h);
-		
+
 		return thumBitmap;
 	}
-	public void setSelectIndex(int i){
+
+	public void setSelectIndex(int i) {
 		selectIndex = i;
 	}
 }
