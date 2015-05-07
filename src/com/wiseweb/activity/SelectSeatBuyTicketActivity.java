@@ -1,12 +1,28 @@
 package com.wiseweb.activity;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,12 +35,19 @@ import android.widget.Toast;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
+import com.google.gson.Gson;
 import com.wiseweb.bean.Seat;
 import com.wiseweb.bean.SeatInfo;
+import com.wiseweb.constant.Constant;
+import com.wiseweb.json.MovieResult;
+import com.wiseweb.json.MovieResult.Movie;
+import com.wiseweb.json.SeatResult;
 import com.wiseweb.movie.R;
 import com.wiseweb.seatchoose.view.OnSeatClickListener;
 import com.wiseweb.seatchoose.view.SSThumView;
 import com.wiseweb.seatchoose.view.SSView;
+import com.wiseweb.util.GetEnc;
+import com.wiseweb.util.Util;
 
 public class SelectSeatBuyTicketActivity extends Activity {
 
@@ -54,7 +77,55 @@ public class SelectSeatBuyTicketActivity extends Activity {
 		// ShareSDK.initSDK(this);
 		init();
 	}
+	Runnable runnable = new Runnable() {
+		
+		@Override
+		public void run() {
+			HashMap<String, Object> params = new HashMap<String, Object>();
+			// action
+			params.put("action", "seat_info");
+			// time_stamp
+			Date date = new Date();
+			long time_stamp = date.getTime();
+			params.put("time_stamp", time_stamp + "");
+			//从CinemaSelectFilmActivity获取planid
+			SharedPreferences sp = getSharedPreferences("planid", MODE_PRIVATE);
+			long planId = sp.getLong("plan_id", 0);
+			String enc = GetEnc.getEnc(params, "wiseMovie");
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
+					+ params.get("action") + "&" + "planId=" + planId
+					+  "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			System.out.println(Constant.baseURL + "action="
+					+ params.get("action") + "&" + "planId=" + planId
+					+  "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			HttpResponse httpResponse;
+			String result;
+			try {
+				httpResponse = httpClient.execute(getMethod);
+				if (httpResponse.getStatusLine().getStatusCode() == 200) {
+					HttpEntity entity = httpResponse.getEntity();
+					result = EntityUtils.toString(entity, "utf-8");
+					Gson gson = new Gson();
+					SeatResult seatResult = gson.fromJson(result,
+							SeatResult.class);
+					List<SeatResult> seats = seatResult.getSeats();
+					
+					
+//					Message msg = new Message();
+//					// Bundle data = new Bundle();
+//					// msg.setData(data);
+//					msg.what = LIST_OF_MOVIES_IN_CINEMA;
+//					handler.sendMessage(msg);
+				}
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
+		}
+	};
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub

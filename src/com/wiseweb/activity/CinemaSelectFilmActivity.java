@@ -16,7 +16,10 @@ import org.apache.http.util.EntityUtils;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -390,6 +393,11 @@ public class CinemaSelectFilmActivity extends Activity {
 							featureTime = plans.get(i).getFeatureTime();
 						}
 						moviePlan.setFeatureTime(featureTime);
+						//获取planid用于SelectSeatBuyTicketActivity的请求码
+						SharedPreferences sp = getSharedPreferences("planid", Context.MODE_PRIVATE);
+						Editor editor = sp.edit();
+						editor.putLong("plan_id", moviePlan.getPlanId());
+						editor.commit();
 						//屏幕类型
 						String screenType = "";
 						if(!plans.get(i).getScreenType().equals(null)){
