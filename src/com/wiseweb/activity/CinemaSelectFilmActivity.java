@@ -283,6 +283,11 @@ public class CinemaSelectFilmActivity extends Activity {
 						String posterPath;
 						if (!(movies.get(i).getMovieName().equals(null))) {
 							movieName = movies.get(i).getMovieName();
+							//保存movieName用于SelectSeatBuyTicketActivity
+							SharedPreferences sp = getSharedPreferences("movieInfo", MODE_PRIVATE);
+							Editor editor = sp.edit();
+							editor.putString("movieName", movieName);
+							editor.commit();
 							// film.setFilmName(movieName);
 						}
 						names.add(movieName);
@@ -391,6 +396,11 @@ public class CinemaSelectFilmActivity extends Activity {
 						String featureTime = "";
 						if (!plans.get(i).getFeatureTime().equals(null)) {
 							featureTime = plans.get(i).getFeatureTime();
+							//获取featureTime用于SelectSeatBuyTicket的显示时间组件
+							SharedPreferences sp = getSharedPreferences("moviePlan", MODE_PRIVATE);
+							Editor editor = sp.edit();
+							editor.putString("featureTime", featureTime);
+							editor.commit();
 						}
 						moviePlan.setFeatureTime(featureTime);
 						//获取planid用于SelectSeatBuyTicketActivity的请求码

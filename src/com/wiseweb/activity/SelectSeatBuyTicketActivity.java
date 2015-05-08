@@ -13,6 +13,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -22,6 +25,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
 import android.view.View;
@@ -67,6 +71,9 @@ public class SelectSeatBuyTicketActivity extends Activity {
 	private String d;
 	private double price;
 	private Button submitOrder;
+	private TextView cinameName;
+	private TextView movieName;
+	private TextView movieTime;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +84,25 @@ public class SelectSeatBuyTicketActivity extends Activity {
 		// ShareSDK.initSDK(this);
 		init();
 	}
+	
+	Handler handler = new Handler(){
+		public void handleMessage(Message msg) {
+			//从CinameDetailActivity获取影院名称
+			SharedPreferences sp1 = getSharedPreferences("cinemaInfo", MODE_PRIVATE);
+			String cinameNameStr = sp1.getString("cinameName", "");
+			cinameName.setText(cinameNameStr);
+			//从CienmaSelectFilmActivity获取电影名称
+			SharedPreferences sp2 = getSharedPreferences("movieInfo", MODE_PRIVATE);
+			String movieNameStr = sp2.getString("movieName", "");
+			movieName.setText(movieNameStr);
+			//从CinemaSelectFileActivity获取时间
+			SharedPreferences sp3 = getSharedPreferences("moviePlan", MODE_PRIVATE);
+			String featureTime = sp3.getString("featureTime", "");
+			movieTime.setText(featureTime);
+		};
+	};
+	
+	//获取座位数据
 	Runnable runnable = new Runnable() {
 		
 		@Override
@@ -106,10 +132,13 @@ public class SelectSeatBuyTicketActivity extends Activity {
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					HttpEntity entity = httpResponse.getEntity();
 					result = EntityUtils.toString(entity, "utf-8");
-					Gson gson = new Gson();
-					SeatResult seatResult = gson.fromJson(result,
-							SeatResult.class);
-					List<SeatResult> seats = seatResult.getSeats();
+					try {
+						JSONArray jsonArray = new JSONObject(result).getJSONArray("seats");
+						
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					
 //					Message msg = new Message();
@@ -135,6 +164,9 @@ public class SelectSeatBuyTicketActivity extends Activity {
 	}
 
 	private void init() {
+		movieTime = (TextView) findViewById(R.id.movie_time_tv);
+		movieName = (TextView) findViewById(R.id.movie_name_tv);
+		cinameName = (TextView) findViewById(R.id.cinema_film_name);
 		mSSView = (SSView) this.findViewById(R.id.mSSView);
 		mSSThumView = (SSThumView) this.findViewById(R.id.ss_ssthumview);
 		// mSSView.setXOffset(20);

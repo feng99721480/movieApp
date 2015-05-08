@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -193,7 +194,13 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 				// 设置影院名称
 				CinemaDetail detail = (CinemaDetail) msg.obj;
 				if (!(detail.getCinemaName().equals(null))) {
-					cinemaName.setText(detail.getCinemaName());
+					//保存影院名称用于SelectSeatBuyTicketActivity获取数据
+					SharedPreferences sp = getSharedPreferences("cinemaInfo", Context.MODE_PRIVATE);
+					Editor editor = sp.edit();
+					String nameStr = detail.getCinemaName();
+					editor.putString("cinameName", nameStr);
+					editor.commit();
+					cinemaName.setText(nameStr);
 				}
 				// 设置影院评分
 				if (!(detail.getScoreCount().equals(null))) {
