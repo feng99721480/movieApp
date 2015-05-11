@@ -149,8 +149,8 @@ public class CinemaFragment extends BaseFragment {
 					// 开启线程获取所有电影院数据
 					 new Thread(runnable).start();
 					
-					cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
-					cinemaList.setAdapter(cinemaAdapter);
+//					cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
+//					cinemaList.setAdapter(cinemaAdapter);
 				}
 			}
 
@@ -170,7 +170,8 @@ public class CinemaFragment extends BaseFragment {
 			}
 
 		});
-		
+		// 默认界面 开启线程获取所有电影院数据
+		 new Thread(runnable).start();
 		return cinemaLayout;
 	}
 
@@ -209,6 +210,7 @@ public class CinemaFragment extends BaseFragment {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
 			case ALL_CINEMA:
+				//List<CinemaInfo> infos = (List<CinemaInfo>) msg.obj;
 				cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
 				cinemaList.setAdapter(cinemaAdapter);
 				cinemaAdapter.notifyDataSetChanged();
@@ -289,9 +291,9 @@ public class CinemaFragment extends BaseFragment {
 						boolean hasImax;
 						boolean hasSeat;
 						boolean hasGroupPurchase;
-						double cinemaLowestPrice;
-						String cinemaAddress;
-						String cinameDistance;
+						double cinemaLowestPrice = 0.0;
+						String cinemaAddress = "";
+						String cinameDistance = "";
 						SharedPreferences sp =mMainActivity.getSharedPreferences("cinemaConfig", Context.MODE_PRIVATE);
 						Editor editor = sp.edit();
 						editor.putInt("cinemaId", cinemas.get(i).getCinemaId());
@@ -303,36 +305,62 @@ public class CinemaFragment extends BaseFragment {
 						}
 						hasPreferential = cinemas.get(i).isPreferential();
 						if (hasPreferential == true) {
+							
 							info.setPreferential(hasPreferential);
+						}else{
+							System.out.println("hasPreferential============="+hasPreferential);
 						}
 						hasImax = cinemas.get(i).isImax();
 						if (hasImax == true) {
+							
 							info.setImax(hasImax);
+						}else{
+							System.out.println("hasImax============="+hasImax);
 						}
 						hasSeat = cinemas.get(i).isSeat();
 						if (hasSeat == true) {
+							
 							info.setSeat(hasSeat);
+						}else{
+							System.out.println("hasSeat============="+hasSeat);
 						}
 						hasGroupPurchase = cinemas.get(i).isGroupPurchase();
 						if (hasGroupPurchase == true) {
+							
 							info.setGroupPurchase(hasGroupPurchase);
+						}else{
+							System.out.println("hasGroupPurchase============="+hasGroupPurchase);
 						}
-						if (cinemas.get(i).getLowestPrice() > 0.001) {
+						if (cinemas.get(i).getLowestPrice() == 0.0) {
 							cinemaLowestPrice = cinemas.get(i).getLowestPrice();
+							System.out.println("cinemaLowestPrice============="+cinemaLowestPrice);
 							info.setLowestPrice(cinemaLowestPrice);
+						}else{
+							System.out.println("cinemaLowestPrice============="+cinemaLowestPrice);
 						}
 						if (!(cinemas.get(i).getCinemaAddress().equals(null))) {
 							cinemaAddress = cinemas.get(i).getCinemaAddress();
+							System.out.println("cinemaAddress============="+cinemaAddress);
 							info.setCinemaAddress(cinemaAddress);
 						}
-						if (!(cinemas.get(i).getDistance().equals(null))) {
+//						if (!(cinemas.get(i).getDistance().equals(null))) {
+//							cinameDistance = cinemas.get(i).getDistance();
+//							info.setDistance(cinameDistance);
+//						}else{
+//							System.out.println("cinameDistance=="+cinameDistance);
+//						}
+						if(cinemas.get(i).getDistance() != null){
 							cinameDistance = cinemas.get(i).getDistance();
 							info.setDistance(cinameDistance);
+						}else{
+							System.out.println("cinameDistance=="+cinameDistance);
 						}
+						
 						cinemaInfo.add(info);
 					}
 					Message msg = new Message();
 					msg.what = ALL_CINEMA;
+					//cinemaInfo = (List<CinemaInfo>) msg.obj;
 					handler.sendMessage(msg);
 
 				}else{
