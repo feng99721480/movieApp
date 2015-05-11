@@ -46,6 +46,8 @@ import com.wiseweb.constant.Constant;
 import com.wiseweb.json.MovieResult;
 import com.wiseweb.json.MovieResult.Movie;
 import com.wiseweb.json.SeatResult;
+import com.wiseweb.json.SeatResult.AllSeat;
+import com.wiseweb.json.SeatResult.LoverSeat;
 import com.wiseweb.movie.R;
 import com.wiseweb.seatchoose.view.OnSeatClickListener;
 import com.wiseweb.seatchoose.view.SSThumView;
@@ -74,6 +76,8 @@ public class SelectSeatBuyTicketActivity extends Activity {
 	private TextView cinameName;
 	private TextView movieName;
 	private TextView movieTime;
+	private SeatResult.AllSeat allSeat;
+	private SeatResult.LoverSeat loverSeat;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,28 +87,32 @@ public class SelectSeatBuyTicketActivity extends Activity {
 		// 初始化shareSDK
 		// ShareSDK.initSDK(this);
 		init();
+		//new Thread(runnable).start();
 	}
 	
-	Handler handler = new Handler(){
+	Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
-			//从CinameDetailActivity获取影院名称
-			SharedPreferences sp1 = getSharedPreferences("cinemaInfo", MODE_PRIVATE);
+			// 从CinameDetailActivity获取影院名称
+			SharedPreferences sp1 = getSharedPreferences("cinemaInfo",
+					MODE_PRIVATE);
 			String cinameNameStr = sp1.getString("cinameName", "");
 			cinameName.setText(cinameNameStr);
-			//从CienmaSelectFilmActivity获取电影名称
-			SharedPreferences sp2 = getSharedPreferences("movieInfo", MODE_PRIVATE);
+			// 从CienmaSelectFilmActivity获取电影名称
+			SharedPreferences sp2 = getSharedPreferences("movieInfo",
+					MODE_PRIVATE);
 			String movieNameStr = sp2.getString("movieName", "");
 			movieName.setText(movieNameStr);
-			//从CinemaSelectFileActivity获取时间
-			SharedPreferences sp3 = getSharedPreferences("moviePlan", MODE_PRIVATE);
+			// 从CinemaSelectFileActivity获取时间
+			SharedPreferences sp3 = getSharedPreferences("moviePlan",
+					MODE_PRIVATE);
 			String featureTime = sp3.getString("featureTime", "");
 			movieTime.setText(featureTime);
 		};
 	};
-	
-	//获取座位数据
+
+	// 获取座位数据
 	Runnable runnable = new Runnable() {
-		
+
 		@Override
 		public void run() {
 			HashMap<String, Object> params = new HashMap<String, Object>();
@@ -114,17 +122,17 @@ public class SelectSeatBuyTicketActivity extends Activity {
 			Date date = new Date();
 			long time_stamp = date.getTime();
 			params.put("time_stamp", time_stamp + "");
-			//从CinemaSelectFilmActivity获取planid
+			// 从CinemaSelectFilmActivity获取planid
 			SharedPreferences sp = getSharedPreferences("planid", MODE_PRIVATE);
 			long planId = sp.getLong("plan_id", 0);
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "planId=" + planId
-					+  "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+					+ params.get("action") + "&" + "planId=" + planId + "&"
+					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
 			System.out.println(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "planId=" + planId
-					+  "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+					+ params.get("action") + "&" + "planId=" + planId + "&"
+					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 			String result;
 			try {
@@ -132,29 +140,92 @@ public class SelectSeatBuyTicketActivity extends Activity {
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					HttpEntity entity = httpResponse.getEntity();
 					result = EntityUtils.toString(entity, "utf-8");
-					try {
-						JSONArray jsonArray = new JSONObject(result).getJSONArray("seats");
-						
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+
+					JSONArray jsonArray = new JSONObject(result)
+							.getJSONArray("seats");
+					// 取得第i个座位
+					for (int i = 0; i < jsonArray.length(); i++) {
+						// 获取所有座位信息
+						JSONObject seatObj = jsonArray.getJSONObject(i);
+						allSeat = new AllSeat();
+						String graphCol = (String) seatObj.get("graphCol");
+						String graphRow = (String) seatObj.get("graphRow");
+						String hallId = (String) seatObj.get("hallId");
+						String seatCol = (String) seatObj.get("seatCol");
+						String seatNo = (String) seatObj.get("seatNo");
+						String seatPieceName = (String) seatObj
+								.get("seatPieceName");
+						String seatPieceNo = (String) seatObj
+								.get("seatPieceNo");
+						String seatRow = (String) seatObj.get("seatRow");
+						int seatState = (Integer) seatObj.get("seatState");
+						int seatType = (Integer) seatObj.get("seatType");
+						allSeat.setGraphCol(graphCol);
+						allSeat.setGraphRow(graphRow);
+						allSeat.setHallId(hallId);
+						allSeat.setSeatCol(seatCol);
+						allSeat.setSeatNo(seatNo);
+						allSeat.setSeatPieceName(seatPieceName);
+						allSeat.setSeatPieceNo(seatPieceNo);
+						allSeat.setSeatRow(seatRow);
+						allSeat.setSeatState(seatState);
+						allSeat.setSeatType(seatType);
+						System.out.println("所有座位信息"+allSeat.toString());
+						// 获取情侣座信息
+
+						JSONObject loverObj = jsonArray.getJSONObject(i + 1);
+						loverSeat = new LoverSeat();
+						String loverGraphCol = (String) loverObj
+								.get("graphCol");
+						String loverGraphRow = (String) loverObj
+								.get("graphRow");
+						String loverHallId = (String) loverObj.get("hallId");
+						boolean isLoverL = (Boolean) loverObj.get("isLoverL");
+						String loverSeatCol = (String) loverObj.get("seatCol");
+						String loverSeatNo = (String) loverObj.get("seatNo");
+						String loverSeatPieceName = (String) loverObj
+								.get("seatPieceName");
+						String loverSeatPieceNo = (String) loverObj
+								.get("seatPieceNo");
+						String loverSeatRow = (String) loverObj.get("seatRow");
+						int loverSeatState = (Integer) loverObj
+								.get("seatState");
+						int loverSeatType = (Integer) loverObj.get("seatType");
+						loverSeat.setGraphCol(loverGraphCol);
+						loverSeat.setGraphRow(loverGraphRow);
+						loverSeat.setHallId(loverHallId);
+						loverSeat.setLoverL(isLoverL);
+						loverSeat.setSeatCol(loverSeatCol);
+						loverSeat.setSeatNo(loverSeatNo);
+						loverSeat.setSeatPieceName(loverSeatPieceName);
+						loverSeat.setSeatPieceNo(loverSeatPieceNo);
+						loverSeat.setSeatRow(loverSeatRow);
+						loverSeat.setSeatState(loverSeatState);
+						loverSeat.setSeatType(loverSeatType);
+						System.out.println("情侣座位信息"+loverSeat.toString());
+
 					}
-					
-					
-//					Message msg = new Message();
-//					// Bundle data = new Bundle();
-//					// msg.setData(data);
-//					msg.what = LIST_OF_MOVIES_IN_CINEMA;
-//					handler.sendMessage(msg);
+
+					// Message msg = new Message();
+					// // Bundle data = new Bundle();
+					// // msg.setData(data);
+					// msg.what = LIST_OF_MOVIES_IN_CINEMA;
+					// handler.sendMessage(msg);
+				}else{
+					Toast.makeText(SelectSeatBuyTicketActivity.this, "没有获取到数据", 0).show();
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
 		}
 	};
+
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
@@ -301,16 +372,17 @@ public class SelectSeatBuyTicketActivity extends Activity {
 			}
 
 		});
-		submitOrder = (Button)findViewById(R.id.submit_order);
-		submitOrder.setOnClickListener(new OnClickListener(){
+		submitOrder = (Button) findViewById(R.id.submit_order);
+		submitOrder.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent();
-				intent.setClass(SelectSeatBuyTicketActivity.this, SubmitOrderActivity.class);
+				intent.setClass(SelectSeatBuyTicketActivity.this,
+						SubmitOrderActivity.class);
 				SelectSeatBuyTicketActivity.this.startActivity(intent);
 			}
-			
+
 		});
 
 	}
@@ -381,8 +453,8 @@ public class SelectSeatBuyTicketActivity extends Activity {
 					}
 
 				}
-				mSeat.setSeatState("");
-				mSeat.setLoveInd("0");
+				mSeat.setSeatState(allSeat.getSeatState() + "");
+				mSeat.setLoveInd(allSeat.getSeatType() + "");
 				mSeatList.add(mSeat);
 			}
 			mSeatInfo.setDesc(String.valueOf(i + 1));

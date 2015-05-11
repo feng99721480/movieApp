@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
@@ -40,6 +41,7 @@ import com.wiseweb.activity.CinemaSelectFilmActivity;
 import com.wiseweb.activity.CinemaSearchActivity;
 import com.wiseweb.activity.CityListActivity;
 import com.wiseweb.activity.MainActivity;
+import com.wiseweb.activity.SelectSeatBuyTicketActivity;
 import com.wiseweb.bean.CinemaInfo;
 import com.wiseweb.constant.Constant;
 import com.wiseweb.fragment.adapter.CinemaAdapter;
@@ -145,7 +147,7 @@ public class CinemaFragment extends BaseFragment {
 					cinemaList.setAdapter(cinemaAdapter);
 				} else {
 					// 开启线程获取所有电影院数据
-					// new Thread(runnable).start();
+					 new Thread(runnable).start();
 					
 					cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
 					cinemaList.setAdapter(cinemaAdapter);
@@ -168,6 +170,7 @@ public class CinemaFragment extends BaseFragment {
 			}
 
 		});
+		
 		return cinemaLayout;
 	}
 
@@ -180,26 +183,26 @@ public class CinemaFragment extends BaseFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		cinemaInfo.add(new CinemaInfo("UME国际影城", true, true, false, false,
-				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
-
-		cinemaInfo.add(new CinemaInfo("UME国际影城", true, false, false, false,
-				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
-
-		cinemaInfo.add(new CinemaInfo("UME国际影城", false, true, false, false,
-				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
-
-		cinemaInfo.add(new CinemaInfo("UME国际影城", false, false, true, false,
-				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
-
-		cinemaInfo.add(new CinemaInfo("UME国际影城", true, false, true, true, 19.9,
-				"海淀区双榆树科学院南路44号", "1.5KM"));
-
-		cinemaInfo.add(new CinemaInfo("UME国际影城", false, false, true, false,
-				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
-
-		cinemaInfo.add(new CinemaInfo("UME国际影城", true, false, true, false,
-				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
+//		cinemaInfo.add(new CinemaInfo("UME国际影城", true, true, false, false,
+//				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
+//
+//		cinemaInfo.add(new CinemaInfo("UME国际影城", true, false, false, false,
+//				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
+//
+//		cinemaInfo.add(new CinemaInfo("UME国际影城", false, true, false, false,
+//				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
+//
+//		cinemaInfo.add(new CinemaInfo("UME国际影城", false, false, true, false,
+//				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
+//
+//		cinemaInfo.add(new CinemaInfo("UME国际影城", true, false, true, true, 19.9,
+//				"海淀区双榆树科学院南路44号", "1.5KM"));
+//
+//		cinemaInfo.add(new CinemaInfo("UME国际影城", false, false, true, false,
+//				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
+//
+//		cinemaInfo.add(new CinemaInfo("UME国际影城", true, false, true, false,
+//				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
 	}
 
 	private Handler handler = new Handler() {
@@ -240,31 +243,44 @@ public class CinemaFragment extends BaseFragment {
 			params.put("count", count);
 			int start = 0;// 从第几个开始
 			params.put("start", start);
-			SharedPreferences s = mMainActivity.getSharedPreferences("city",
-					Context.MODE_PRIVATE);
-			String cityId = s.getString("cityId", null);
+//			SharedPreferences s = mMainActivity.getSharedPreferences("city",
+//					Context.MODE_PRIVATE);
+//			String cityId = s.getString("cityId", null);
+			String cityId = "209";
 			params.put("city_id", cityId);
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet getMethod = new HttpGet(Constant.baseURL + "?" + "action="
+			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
 					+ params.get("action") + "&" + "city_id=" + cityId + "&"
 					+ "start=" + start + "&" + "count=" + count + "&" + "enc="
 					+ enc + "&" + "time_stamp" + time_stamp);
-			System.out.println(Constant.baseURL + "?" + "action="
+			System.out.println(Constant.baseURL + "action="
 					+ params.get("action") + "&" + "city_id=" + cityId + "&"
 					+ "start=" + start + "&" + "count=" + count + "&" + "enc="
-					+ enc + "&" + "time_stamp" + time_stamp);
+					+ enc + "&" + "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 			String result;
 			try {
 				httpResponse = httpClient.execute(getMethod);
+				System.out.println("应答码="+httpResponse.getStatusLine().getStatusCode());
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					HttpEntity entity = httpResponse.getEntity();
 					result = EntityUtils.toString(entity, "utf-8");
+					if(result == null){
+						System.out.println("result为空");
+					}else{
+						System.out.println("result===="+result);
+					}
+					
 					Gson gson = new Gson();
 					CinemaResult cinemaResult = gson.fromJson(result,
 							CinemaResult.class);
 					List<Cinema> cinemas = cinemaResult.getCinemas();
+					if(cinemaResult == null ){
+						System.out.println("--------");
+					}else{
+						System.out.println("cinemaResult==="+cinemaResult.toString());
+					}
 					cinemaInfo.clear();
 					for (int i = 0; i < cinemas.size(); i++) {
 						CinemaInfo info = new CinemaInfo();
@@ -282,6 +298,7 @@ public class CinemaFragment extends BaseFragment {
 						editor.commit();
 						if (!(cinemas.get(i).getCinemaName().equals(null))) {
 							cinemaName = cinemas.get(i).getCinemaName();
+							System.out.println("cinemaName============="+cinemaName);
 							info.setCinemaName(cinemaName);
 						}
 						hasPreferential = cinemas.get(i).isPreferential();
@@ -318,6 +335,8 @@ public class CinemaFragment extends BaseFragment {
 					msg.what = ALL_CINEMA;
 					handler.sendMessage(msg);
 
+				}else{
+					Toast.makeText(mMainActivity, "没有获取到数据", 0).show();
 				}
 
 			} catch (ClientProtocolException e) {

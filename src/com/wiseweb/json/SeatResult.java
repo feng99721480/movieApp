@@ -8,8 +8,8 @@ public class SeatResult {
 	
 	private String action;
 	private String status;
-	private CommonSeat comSeat;
-	private LoversSeat lovSeat;
+	private AllSeat allSeat;
+	private LoverSeat lovSeat;
 	private List<SeatResult> seats;
 
 	public String getAction() {
@@ -28,19 +28,21 @@ public class SeatResult {
 		this.status = status;
 	}
 
-	public CommonSeat getComSeat() {
-		return comSeat;
+	
+
+	public AllSeat getAllSeat() {
+		return allSeat;
 	}
 
-	public void setComSeat(CommonSeat comSeat) {
-		this.comSeat = comSeat;
+	public void setAllSeat(AllSeat allSeat) {
+		this.allSeat = allSeat;
 	}
 
-	public LoversSeat getLovSeat() {
+	public LoverSeat getLovSeat() {
 		return lovSeat;
 	}
 
-	public void setLovSeat(LoversSeat lovSeat) {
+	public void setLovSeat(LoverSeat lovSeat) {
 		this.lovSeat = lovSeat;
 	}
 
@@ -52,7 +54,7 @@ public class SeatResult {
 		this.seats = seats;
 	}
 
-	public static class CommonSeat {
+	public static class AllSeat {
 		
 		private String graphCol;// 相对于屏幕的列号
 		private String graphRow;// 相对于屏幕排号
@@ -64,6 +66,24 @@ public class SeatResult {
 		private String seatRow;// 影厅排号
 		private int seatState;// 座位状态
 		private int seatType;// 座位类型
+		public AllSeat(){
+			
+		}
+		public AllSeat(String graphCol, String graphRow, String hallId,
+				String seatCol, String seatNo, String seatPieceName,
+				String seatPieceNo, String seatRow, int seatState, int seatType) {
+			super();
+			this.graphCol = graphCol;
+			this.graphRow = graphRow;
+			this.hallId = hallId;
+			this.seatCol = seatCol;
+			this.seatNo = seatNo;
+			this.seatPieceName = seatPieceName;
+			this.seatPieceNo = seatPieceNo;
+			this.seatRow = seatRow;
+			this.seatState = seatState;
+			this.seatType = seatType;
+		}
 
 		public String getGraphCol() {
 			return graphCol;
@@ -144,10 +164,19 @@ public class SeatResult {
 		public void setSeatType(int seatType) {
 			this.seatType = seatType;
 		}
+		@Override
+		public String toString() {
+			return "AllSeat [graphCol=" + graphCol + ", graphRow=" + graphRow
+					+ ", hallId=" + hallId + ", seatCol=" + seatCol
+					+ ", seatNo=" + seatNo + ", seatPieceName=" + seatPieceName
+					+ ", seatPieceNo=" + seatPieceNo + ", seatRow=" + seatRow
+					+ ", seatState=" + seatState + ", seatType=" + seatType
+					+ "]";
+		}
 
 	}
 
-	public static class LoversSeat {
+	public static class LoverSeat {
 		
 		private String graphCol;// 相对于屏幕的列号
 		private String graphRow;// 相对于屏幕排号
@@ -160,6 +189,27 @@ public class SeatResult {
 		private String seatRow;// 影厅排号
 		private int seatState;// 座位状态
 		private int seatType;// 座位类型
+		
+		public LoverSeat(){
+			
+		}
+		public LoverSeat(String graphCol, String graphRow, String hallId,
+				boolean isLoverL, String seatCol, String seatNo,
+				String seatPieceName, String seatPieceNo, String seatRow,
+				int seatState, int seatType) {
+			super();
+			this.graphCol = graphCol;
+			this.graphRow = graphRow;
+			this.hallId = hallId;
+			this.isLoverL = isLoverL;
+			this.seatCol = seatCol;
+			this.seatNo = seatNo;
+			this.seatPieceName = seatPieceName;
+			this.seatPieceNo = seatPieceNo;
+			this.seatRow = seatRow;
+			this.seatState = seatState;
+			this.seatType = seatType;
+		}
 
 		public String getGraphCol() {
 			return graphCol;
@@ -247,6 +297,15 @@ public class SeatResult {
 
 		public void setSeatType(int seatType) {
 			this.seatType = seatType;
+		}
+		@Override
+		public String toString() {
+			return "LoverSeat [graphCol=" + graphCol + ", graphRow=" + graphRow
+					+ ", hallId=" + hallId + ", isLoverL=" + isLoverL
+					+ ", seatCol=" + seatCol + ", seatNo=" + seatNo
+					+ ", seatPieceName=" + seatPieceName + ", seatPieceNo="
+					+ seatPieceNo + ", seatRow=" + seatRow + ", seatState="
+					+ seatState + ", seatType=" + seatType + "]";
 		}
 
 	}

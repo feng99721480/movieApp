@@ -203,6 +203,7 @@ public class CityListActivity extends Activity {
 		list.add("定位的城市");
 		list.add("定位中");
 		listTag.add("定位的城市");
+		System.out.println("---------------");
 		new Thread(runnable).start();
 
 		adapter = new CityListAdapter(this, list, listTag);
@@ -210,8 +211,8 @@ public class CityListActivity extends Activity {
 		cityList.setAdapter(adapter);
 
 		searchAdapter = new CitySearchAdapter(CityListActivity.this);
-		// searchAdapter.setDataSource(list);
-		// cityList.setAdapter(searchAdapter);
+		 searchAdapter.setDataSource(list);
+		 cityList.setAdapter(searchAdapter);
 		cityImageSearch = (ImageView) findViewById(R.id.city_image_search);
 
 		citySearchBack = (View) findViewById(R.id.city_search_title);
