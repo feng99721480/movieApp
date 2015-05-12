@@ -161,9 +161,13 @@ public class CinemaFragment extends BaseFragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// Toast.makeText(mMainActivity,
-				// cinemaInfo.get(position).toString(), Toast.LENGTH_SHORT)
-				// .show();
+				
+				//保存cinemaId用于CinemaDetailActivity获取数据
+				SharedPreferences sp =mMainActivity.getSharedPreferences("cinemaConfig", Context.MODE_PRIVATE);
+				Editor editor = sp.edit();
+				editor.putInt("cinemaId", cinemaInfo.get(position).getCinemaId());
+				editor.commit();
+				
 				Intent intent = new Intent();
 				intent.setClass(mMainActivity, CinemaSelectFilmActivity.class);
 				startActivity(intent);
@@ -210,7 +214,6 @@ public class CinemaFragment extends BaseFragment {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
 			case ALL_CINEMA:
-				//List<CinemaInfo> infos = (List<CinemaInfo>) msg.obj;
 				cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
 				cinemaList.setAdapter(cinemaAdapter);
 				cinemaAdapter.notifyDataSetChanged();
@@ -256,6 +259,7 @@ public class CinemaFragment extends BaseFragment {
 					+ params.get("action") + "&" + "city_id=" + cityId + "&"
 					+ "start=" + start + "&" + "count=" + count + "&" + "enc="
 					+ enc + "&" + "time_stamp" + time_stamp);
+			System.out.println("*******************CinemaFragment*************************");
 			System.out.println(Constant.baseURL + "action="
 					+ params.get("action") + "&" + "city_id=" + cityId + "&"
 					+ "start=" + start + "&" + "count=" + count + "&" + "enc="
@@ -286,6 +290,7 @@ public class CinemaFragment extends BaseFragment {
 					cinemaInfo.clear();
 					for (int i = 0; i < cinemas.size(); i++) {
 						CinemaInfo info = new CinemaInfo();
+						int cinemaId ;
 						String cinemaName = "";
 						boolean hasPreferential;
 						boolean hasImax;
@@ -294,10 +299,10 @@ public class CinemaFragment extends BaseFragment {
 						double cinemaLowestPrice = 0.0;
 						String cinemaAddress = "";
 						String cinameDistance = "";
-						SharedPreferences sp =mMainActivity.getSharedPreferences("cinemaConfig", Context.MODE_PRIVATE);
-						Editor editor = sp.edit();
-						editor.putInt("cinemaId", cinemas.get(i).getCinemaId());
-						editor.commit();
+						if(cinemas.get(i).getCinemaId() != 0){
+							cinemaId = cinemas.get(i).getCinemaId();
+							info.setCinemaId(cinemaId);
+						}
 						if (!(cinemas.get(i).getCinemaName().equals(null))) {
 							cinemaName = cinemas.get(i).getCinemaName();
 							System.out.println("cinemaName============="+cinemaName);
@@ -343,6 +348,7 @@ public class CinemaFragment extends BaseFragment {
 							System.out.println("cinemaAddress============="+cinemaAddress);
 							info.setCinemaAddress(cinemaAddress);
 						}
+						//这样写报空指针异常 数据本身就为空
 //						if (!(cinemas.get(i).getDistance().equals(null))) {
 //							cinameDistance = cinemas.get(i).getDistance();
 //							info.setDistance(cinameDistance);
@@ -360,7 +366,6 @@ public class CinemaFragment extends BaseFragment {
 					}
 					Message msg = new Message();
 					msg.what = ALL_CINEMA;
-					//cinemaInfo = (List<CinemaInfo>) msg.obj;
 					handler.sendMessage(msg);
 
 				}else{

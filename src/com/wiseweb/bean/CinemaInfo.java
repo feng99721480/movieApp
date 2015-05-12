@@ -1,6 +1,7 @@
 package com.wiseweb.bean;
 
 public class CinemaInfo {
+	private int cinemaId;
 	private String cinemaName; // 
 	private boolean preferential; // 
 	private boolean imax; // 
@@ -31,10 +32,17 @@ public class CinemaInfo {
 	}
 
 	// Getters and Setters
+	
 	public String getCinemaName() {
 		return cinemaName;
 	}
 
+	public int getCinemaId() {
+		return cinemaId;
+	}
+	public void setCinemaId(int cinemaId) {
+		this.cinemaId = cinemaId;
+	}
 	public void setCinemaName(String cinemaName) {
 		this.cinemaName = cinemaName;
 	}

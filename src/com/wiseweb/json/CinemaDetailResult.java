@@ -6,7 +6,7 @@ import java.util.List;
 public class CinemaDetailResult {
 	private String action;
 	private String status;
-	private CinemaDetail cinemaDetail;
+	private CinemaDetail cinema;
 
 	public String getAction() {
 		return action;
@@ -24,19 +24,25 @@ public class CinemaDetailResult {
 		this.status = status;
 	}
 	
-	public CinemaDetail getCinemaDetail() {
-		return cinemaDetail;
+	
+
+	public CinemaDetail getCinema() {
+		return cinema;
 	}
 
-	public void setCinemaDetail(CinemaDetail cinemaDetail) {
-		this.cinemaDetail = cinemaDetail;
+	public void setCinema(CinemaDetail cinema) {
+		this.cinema = cinema;
 	}
+
+
 
 	@Override
 	public String toString() {
 		return "CinemaDetailResult [action=" + action + ", status=" + status
-				+ ", cinemaDetail=" + cinemaDetail + "]";
+				+ ", cinema=" + cinema + "]";
 	}
+
+
 
 	public static class CinemaDetail {
 		private String cinemaAddress;// 影院地址
@@ -56,7 +62,7 @@ public class CinemaDetailResult {
 		private String longitude;// 经度
 		private int machineType;// 取票机类型
 		private String openTime;// 营业时间
-		private String scoreCount;// 评分
+		private String[] score;// 评分
 		private String visualEffect;//视听效果
 		private String cinemaEnvrionment;//影院环境
 		private String surrondingRestaurants;//周边餐饮
@@ -232,12 +238,14 @@ public class CinemaDetailResult {
 			this.openTime = openTime;
 		}
 
-		public String getScoreCount() {
-			return scoreCount;
+		
+
+		public String[] getScore() {
+			return score;
 		}
 
-		public void setScoreCount(String scoreCount) {
-			this.scoreCount = scoreCount;
+		public void setScore(String[] score) {
+			this.score = score;
 		}
 
 		public String getFetchTicket() {
@@ -339,8 +347,8 @@ public class CinemaDetailResult {
 					+ ", galleries=" + Arrays.toString(galleries) + ", hot="
 					+ hot + ", latitude=" + latitude + ", logo=" + logo
 					+ ", longitude=" + longitude + ", machineType="
-					+ machineType + ", openTime=" + openTime + ", scoreCount="
-					+ scoreCount + ", visualEffect=" + visualEffect
+					+ machineType + ", openTime=" + openTime + ", score="
+					+ Arrays.toString(score) + ", visualEffect=" + visualEffect
 					+ ", cinemaEnvrionment=" + cinemaEnvrionment
 					+ ", surrondingRestaurants=" + surrondingRestaurants
 					+ ", fetchTicket=" + fetchTicket + ", imax=" + imax
@@ -349,6 +357,8 @@ public class CinemaDetailResult {
 					+ ", wifi=" + wifi + ", rest=" + rest + ", refund="
 					+ refund + ", coupon=" + coupon + "]";
 		}
+
+		
 
 		
 

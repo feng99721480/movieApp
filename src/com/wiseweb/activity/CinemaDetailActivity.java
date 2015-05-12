@@ -3,6 +3,7 @@ package com.wiseweb.activity;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,6 +24,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils.TruncateAt;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -67,6 +69,13 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 	private RelativeLayout ticketLayout;
 	private LinearLayout imaxLayout, glassLayout, parkLayout, loversLayout,
 			childrenLayout, cardLayout, wifiLayout, restLayout, refundLayout;
+	private TextView businessHours;
+	private TextView drivePath;
+	private RelativeLayout cinemaDrivePath;
+	private ImageView drivePathMoreImg;
+	private TextView cinemaInfoTv;
+	private RelativeLayout cinemaInfo;
+	private ImageView infoMoreImg;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +84,17 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_cinema_detail);
 		initUI();
 		// 从服务端获取影院详情数据
-		// new Thread(runnable).start();
+		new Thread(runnable).start();
 	}
 
 	void initUI() {
+		infoMoreImg = (ImageView) findViewById(R.id.info_more_img);
+		cinemaInfo = (RelativeLayout) findViewById(R.id.cinema_info);
+		cinemaInfoTv = (TextView) findViewById(R.id.view_cinema_info);
+		drivePathMoreImg = (ImageView) findViewById(R.id.drivePath_more_img);
+		cinemaDrivePath = (RelativeLayout) findViewById(R.id.cinema_drivePath);
+		drivePath = (TextView) findViewById(R.id.view_drivePath);
+		businessHours = (TextView) findViewById(R.id.view_business_hours);
 		cinemaName = (TextView) findViewById(R.id.cinema_name);
 		scoreCount = (TextView) findViewById(R.id.score_count);
 		fetchTicketTv = (TextView) findViewById(R.id.cinema_feature_ticket_tv);
@@ -110,6 +126,46 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 				finish();
 			}
 
+		});
+		//控制影院详情的展开和收缩
+		cinemaInfo.setOnClickListener(new OnClickListener() {
+			boolean flag = true;
+			@Override
+			public void onClick(View v) {
+				if(flag){
+					flag = false;
+					cinemaInfoTv.setEllipsize(null);//展开
+					cinemaInfoTv.setSingleLine(flag);
+					cinemaInfoTv.setTextSize(10);
+					infoMoreImg.setVisibility(View.INVISIBLE);
+				}else{
+					flag = true;
+					cinemaInfoTv.setEllipsize(TruncateAt.END);//收缩
+					cinemaInfoTv.setSingleLine(flag);
+					cinemaInfoTv.setTextSize(18);
+					infoMoreImg.setVisibility(View.VISIBLE);
+				}
+			}
+		});
+		//控制公交线路的展开和收缩
+		cinemaDrivePath.setOnClickListener(new OnClickListener() {
+			boolean flag = true;
+			@Override
+			public void onClick(View v) {
+				if(flag){
+					flag = false;
+					drivePath.setEllipsize(null);//展开
+					drivePath.setSingleLine(flag);
+					drivePath.setTextSize(10);
+					drivePathMoreImg.setVisibility(View.INVISIBLE);
+				}else{
+					flag = true;
+					drivePath.setEllipsize(TruncateAt.END);//收缩
+					drivePath.setSingleLine(flag);
+					drivePath.setTextSize(18);
+					drivePathMoreImg.setVisibility(View.VISIBLE);
+				}
+			}
 		});
 		mContentText = (TextView) findViewById(R.id.text_content);
 
@@ -201,170 +257,159 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 					editor.putString("cinameName", nameStr);
 					editor.commit();
 					cinemaName.setText(nameStr);
+					System.out.println("nameStr--------"+nameStr);
 				}
 				// 设置影院评分
-				if (!(detail.getScoreCount().equals(null))) {
-					scoreCount.setText(detail.getScoreCount());
+				if (!(detail.getScore().equals(null))) {
+					scoreCount.setText(detail.getScore().length+"人评分");
+				}else{
+					scoreCount.setText("0人评分");
 				}
 				// 设置影院视听效果
-				if (!(detail.getVisualEffect().equals(null))) {
+				if(detail.getVisualEffect() != null){
 					visualEffect.setText(detail.getVisualEffect());
+				}else{
+					System.out.println("视觉效果无数据");
+					visualEffect.setText("视觉效果：出色");
 				}
 				// 设置影院环境
-				if (!(detail.getCinemaEnvrionment().equals(null))) {
+				if (detail.getCinemaEnvrionment() != null) {
 					cinemaEnvironment.setText(detail.getCinemaEnvrionment());
+				}else{
+					System.out.println("影院环境无数据");
+					cinemaEnvironment.setText("影院环境：舒适");
 				}
 				// 设置影院周边餐饮
-				if (!(detail.getSurrondingRestaurants().equals(null))) {
+				if (detail.getSurrondingRestaurants() != null) {
 					surrondingRestaurants.setText(detail
 							.getSurrondingRestaurants());
+				}else{
+					System.out.println("周边餐饮无数据");
+					surrondingRestaurants.setText("周边餐饮：热闹");
 				}
 				// 设置影院电话
 				if (!(detail.getCinemaTel().equals(null))) {
 					phoneNumText.setText(detail.getCinemaTel());
+					System.out.println("影院电话---------"+detail.getCinemaTel());
+				}else{
+					phoneNumText.setText("无电话信息");
 				}
 				// 设置影院地址
 				if (!(detail.getCinemaAddress().equals(null))) {
+					System.out.println("影院地址----------"+detail.getCinemaAddress());
 					addressText.setText(detail.getCinemaAddress());
+				}else{
+					addressText.setText("无地址信息");
+				}
+				//设置营业时间
+				if(!(detail.getOpenTime().equals(null))){
+					System.out.println("营业时间---------"+detail.getOpenTime());
+					businessHours.setText(detail.getOpenTime());
+				}else{
+					businessHours.setText("无营业时间信息");
+				}
+				//设置公交线路
+				if(!(detail.getDrivePath().equals(null))){
+					System.out.println("公交线路---------"+detail.getOpenTime());
+					drivePath.setText(detail.getDrivePath());
+				}else{
+					drivePath.setText("无公交线路信息");
+				}
+				//设置影院详情
+				if(!(detail.getCinemaIntro().equals(null))){
+					System.out.println("影院详情---------"+detail.getOpenTime());
+					cinemaInfoTv.setText(detail.getCinemaIntro());
+				}else{
+					cinemaInfoTv.setText("无影院详情信息");
 				}
 				// 设置取票信息
-				if (!(detail.getFetchTicket().equals(null))) {
+				if (detail.getFetchTicket() != null) {
 					fetchTicketTv.setText(detail.getFetchTicket());
 				} else {
-					ticketLayout.setVisibility(View.INVISIBLE);
+					System.out.println("无取票信息数据");
+					fetchTicketTv.setText("无取票信息数据");
+					//ticketLayout.setVisibility(View.GONE);
 				}
 				// 设置IMAX信息
-				if (!(detail.getImax().equals(null))) {
+				if (detail.getImax() != null) {
 					imaxTv.setText(detail.getImax());
 				} else {
-					imaxLayout.setVisibility(View.INVISIBLE);
+					System.out.println("无IMAX信息数据");
+					imaxTv.setText("无IMAX信息数据");
+					//imaxLayout.setVisibility(View.GONE);
 				}
 				// 设置3D眼镜信息
-				if (!(detail.getGlass().equals(null))) {
+				if (detail.getGlass() != null) {
 					glassTv.setText(detail.getGlass());
 				} else {
-					glassLayout.setVisibility(View.INVISIBLE);
+					System.out.println("无3D眼镜信息数据");
+					glassTv.setText("无3D眼镜信息数据");
+					//glassLayout.setVisibility(View.GONE);
 				}
 				// 设置停车信息
-				if (!(detail.getPark().equals(null))) {
+				if (detail.getPark() != null) {
 					parkTv.setText(detail.getPark());
 				} else {
-					parkLayout.setVisibility(View.INVISIBLE);
+					System.out.println("无停车信息数据");
+					parkTv.setText("无停车信息数据");
+					//parkLayout.setVisibility(View.GONE);
 				}
 				// 设置情侣座信息
-				if (!(detail.getLovers().equals(null))) {
+				if (detail.getLovers() != null) {
 					loversTv.setText(detail.getLovers());
 				} else {
-					loversLayout.setVisibility(View.INVISIBLE);
+					System.out.println("无情侣座信息数据");
+					loversTv.setText("无情侣座信息数据");
+					//loversLayout.setVisibility(View.GONE);
 				}
 				// 获取儿童优惠信息
-				if (!(detail.getChildren().equals(null))) {
+				if (detail.getChildren() != null) {
 					childrenTv.setText(detail.getChildren());
 				} else {
-					childrenLayout.setVisibility(View.INVISIBLE);
+					System.out.println("无儿童优惠座信息数据");
+					childrenTv.setText("无儿童优惠座信息数据");
+					//childrenLayout.setVisibility(View.GONE);
 				}
 				// 设置刷卡信息
-				if (!(detail.getCard().equals(null))) {
+				if (detail.getCard() != null) {
 					cardTv.setText(detail.getCard());
 				} else {
-					cardLayout.setVisibility(View.INVISIBLE);
+					System.out.println("无刷卡信息数据");
+					cardTv.setText("无刷卡信息数据");
+					//cardLayout.setVisibility(View.GONE);
 				}
 				// 设置wifi信息
-				if (!(detail.getWifi().equals(null))) {
+				if (detail.getWifi() != null) {
 					wifiTv.setText(detail.getWifi());
 				} else {
-					wifiLayout.setVisibility(View.INVISIBLE);
+					System.out.println("无wifi信息数据");
+					wifiTv.setText("无wifi信息数据");
+					//wifiLayout.setVisibility(View.GONE);
 				}
 				// 获取休息区信息
-				if (!(detail.getRest().equals(null))) {
+				if (detail.getRest() != null) {
 					restTv.setText(detail.getRest());
 				} else {
-					restLayout.setVisibility(View.INVISIBLE);
+					System.out.println("无休息区信息数据");
+					restTv.setText("无休息区信息数据");
+					//restLayout.setVisibility(View.GONE);
 				}
 				// 获取退票退款信息
-				if (!(detail.getRefund().equals(null))) {
+				if (detail.getRefund() != null) {
 					refundTv.setText(detail.getRefund());
 				} else {
-					refundLayout.setVisibility(View.INVISIBLE);
+					System.out.println("无退票退款信息数据");
+					refundTv.setText("无退票退款信息数据");
+					//refundLayout.setVisibility(View.GONE);
 				}
 				// 获取优惠信息
-				if (!(detail.getCoupon().equals(null))) {
+				if (detail.getCoupon() != null) {
 					mContentText.setText(detail.getCoupon());
+				}else{
+					System.out.println("无优惠信息数据");
+					mContentText.setText("无优惠信息");
 				}
 
-				// if (msg.what == 0) {
-				// String nameStr = (String) msg.obj;
-				// cinemaName.setText(nameStr);
-				// }
-				//
-				// if (msg.what == 1) {
-				// String scoreStr = (String) msg.obj;
-				// scoreCount.setText(scoreStr);
-				// }
-				// if (msg.what == 2) {
-				// String visualStr = (String) msg.obj;
-				// visualEffect.setText(visualStr);
-				// }
-				// if (msg.what == 3) {
-				// String environmentStr = (String) msg.obj;
-				// cinemaEnvironment.setText(environmentStr);
-				// }
-				// if (msg.what == 4) {
-				// String restaurantsStr = (String) msg.obj;
-				// surrondingRestaurants.setText(restaurantsStr);
-				// }
-				// if (msg.what == 5) {
-				// String telStr = (String) msg.obj;
-				// phoneNumText.setText(telStr);
-				// }
-				// if (msg.what == 6) {
-				// String addressStr = (String) msg.obj;
-				// addressText.setText(addressStr);
-				// }
-				//
-				// if (msg.what == 7) {
-				// String fetchTicketStr = (String) msg.obj;
-				// fetchTicketTv.setText(fetchTicketStr);
-				// }
-				// if (msg.what == 8) {
-				// String imaxStr = (String) msg.obj;
-				// imaxTv.setText(imaxStr);
-				// }
-				// if (msg.what == 9) {
-				// String glassStr = (String) msg.obj;
-				// glassTv.setText(glassStr);
-				// }
-				// if (msg.what == 10) {
-				// String parkStr = (String) msg.obj;
-				// parkTv.setText(parkStr);
-				// }
-				// if (msg.what == 11) {
-				// String loversStr = (String) msg.obj;
-				// loversTv.setText(loversStr);
-				// }
-				// if (msg.what == 12) {
-				// String childrenStr = (String) msg.obj;
-				// childrenTv.setText(childrenStr);
-				// }
-				// if (msg.what == 13) {
-				// String cardStr = (String) msg.obj;
-				// cardTv.setText(cardStr);
-				// }
-				// if (msg.what == 14) {
-				// String wifiStr = (String) msg.obj;
-				// wifiTv.setText(wifiStr);
-				// }
-				// if (msg.what == 15) {
-				// String restStr = (String) msg.obj;
-				// restTv.setText(restStr);
-				// }
-				// if (msg.what == 16) {
-				// String refundStr = (String) msg.obj;
-				// refundTv.setText(refundStr);
-				// }
-				// if (msg.what == 17) {
-				// String couponStr = (String) msg.obj;
-				// mContentText.setText(couponStr);
 
 			}
 		};
@@ -383,169 +428,48 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 			// 从cinameFragment里得到cinameId
 			SharedPreferences sp = getSharedPreferences("cinemaConfig",
 					MODE_PRIVATE);
-			int cinema_id = sp.getInt("cinemaId", 0);
-			params.put("ciname_id", cinema_id);
+			int cinemaId = sp.getInt("cinemaId", 0);
+			//int cinema_id = 35;
+			params.put("cinemaId", cinemaId);
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "cinema_id=" + cinema_id
+					+ params.get("action") + "&" + "cinemaId=" + cinemaId
 					+ "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			System.out.println("*******************CinemaDetailActivity*********************");
 			System.out.println(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "cinema_id=" + cinema_id
+					+ params.get("action") + "&" + "cinemaId=" + cinemaId
 					+ "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 			String result;
 			try {
 				httpResponse = httpClient.execute(getMethod);
+				System.out.println("应答码="+httpResponse.getStatusLine().getStatusCode());
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					HttpEntity entity = httpResponse.getEntity();
 					result = EntityUtils.toString(entity, "utf-8");
+					System.out.println("result="+result);
 					Gson gson = new Gson();
 					CinemaDetailResult cinemaDetailResult = gson.fromJson(
 							result, CinemaDetailResult.class);
-					CinemaDetail cinemaDetail = cinemaDetailResult
-							.getCinemaDetail();
+					CinemaDetail cinema = cinemaDetailResult
+							.getCinema();
+					
+					System.out.println("cinemaDetailResult="+cinemaDetailResult.toString());
 					Message msg = null;
-					if (cinemaDetail != null) {
-						msg = handler.obtainMessage(0, cinemaDetail);
-						handler.sendMessage(msg);
-					} else {
-						Toast.makeText(CinemaDetailActivity.this,
-								"cinemaDetail为空，无可用信息", 0).show();
-					}
-					// // 获取影院名称
-					// if (!(cinemaDetail.getCinemaName().equals(null))) {
-					// String name = cinemaDetail.getCinemaName();
-					// msg = handler.obtainMessage(0, name);
-					// handler.sendMessage(msg);
-					// }
-					// // 获取影院评分
-					// if (!(cinemaDetail.getScoreCount().equals(null))) {
-					// String score = cinemaDetail.getScoreCount();
-					// msg = handler.obtainMessage(1, score);
-					// handler.sendMessage(msg);
-					// }
-					// // 获取影院视听效果
-					// if (!(cinemaDetail.getVisualEffect().equals(null))) {
-					// String visual = cinemaDetail.getVisualEffect();
-					// msg = handler.obtainMessage(2, visual);
-					// handler.sendMessage(msg);
-					// }
-					// // 获取影院环境
-					// if (!(cinemaDetail.getCinemaEnvrionment().equals(null)))
-					// {
-					// String envrionment = cinemaDetail
-					// .getCinemaEnvrionment();
-					// msg = handler.obtainMessage(3, envrionment);
-					// handler.sendMessage(msg);
-					// }
-					// // 获取影院周边餐饮
-					// if
-					// (!(cinemaDetail.getSurrondingRestaurants().equals(null)))
-					// {
-					// String restaurants = cinemaDetail
-					// .getSurrondingRestaurants();
-					// msg = handler.obtainMessage(4, restaurants);
-					// handler.sendMessage(msg);
-					// }
-					// // 获取影院电话
-					// if (!(cinemaDetail.getCinemaTel().equals(null))) {
-					// String tel = cinemaDetail.getCinemaTel();
-					// msg = handler.obtainMessage(5, tel);
-					// handler.sendMessage(msg);
-					// }
-					// // 获取影院地址
-					// if (!(cinemaDetail.getCinemaAddress().equals(null))) {
-					// String address = cinemaDetail.getCinemaAddress();
-					// msg = handler.obtainMessage(6, address);
-					// handler.sendMessage(msg);
-					// }
-					// // 获取取票信息
-					// if (!(cinemaDetail.getFetchTicket().equals(null))) {
-					// String fetchTicket = cinemaDetail.getFetchTicket();
-					// msg = handler.obtainMessage(7, fetchTicket);
-					// handler.sendMessage(msg);
-					// } else {
-					// ticketLayout.setVisibility(View.INVISIBLE);
-					// }
-					// // 获取IMAX信息
-					// if (!(cinemaDetail.getImax().equals(null))) {
-					// String imax = cinemaDetail.getImax();
-					// msg = handler.obtainMessage(8, imax);
-					// handler.sendMessage(msg);
-					// } else {
-					// imaxLayout.setVisibility(View.INVISIBLE);
-					// }
-					// // 获取3D眼镜信息
-					// if (!(cinemaDetail.getGlass().equals(null))) {
-					// String glass = cinemaDetail.getGlass();
-					// msg = handler.obtainMessage(9, glass);
-					// handler.sendMessage(msg);
-					// } else {
-					// glassLayout.setVisibility(View.INVISIBLE);
-					// }
-					// // 获取停车信息
-					// if (!(cinemaDetail.getPark().equals(null))) {
-					// String park = cinemaDetail.getPark();
-					// msg = handler.obtainMessage(10, park);
-					// handler.sendMessage(msg);
-					// } else {
-					// parkLayout.setVisibility(View.INVISIBLE);
-					// }
-					// // 获取情侣座信息
-					// if (!(cinemaDetail.getLovers().equals(null))) {
-					// String lovers = cinemaDetail.getLovers();
-					// msg = handler.obtainMessage(11, lovers);
-					// handler.sendMessage(msg);
-					// } else {
-					// loversLayout.setVisibility(View.INVISIBLE);
-					// }
-					// // 获取儿童优惠信息
-					// if (!(cinemaDetail.getChildren().equals(null))) {
-					// String children = cinemaDetail.getChildren();
-					// msg = handler.obtainMessage(12, children);
-					// handler.sendMessage(msg);
-					// } else {
-					// childrenLayout.setVisibility(View.INVISIBLE);
-					// }
-					// // 获取刷卡信息
-					// if (!(cinemaDetail.getCard().equals(null))) {
-					// String card = cinemaDetail.getCard();
-					// msg = handler.obtainMessage(13, card);
-					// handler.sendMessage(msg);
-					// } else {
-					// cardLayout.setVisibility(View.INVISIBLE);
-					// }
-					// // 获取wifi信息
-					// if (!(cinemaDetail.getWifi().equals(null))) {
-					// String wifi = cinemaDetail.getWifi();
-					// msg = handler.obtainMessage(14, wifi);
-					// handler.sendMessage(msg);
-					// } else {
-					// wifiLayout.setVisibility(View.INVISIBLE);
-					// }
-					// // 获取休息区信息
-					// if (!(cinemaDetail.getRest().equals(null))) {
-					// String rest = cinemaDetail.getRest();
-					// msg = handler.obtainMessage(15, rest);
-					// handler.sendMessage(msg);
-					// } else {
-					// restLayout.setVisibility(View.INVISIBLE);
-					// }
-					// // 获取退票退款信息
-					// if (!(cinemaDetail.getRefund().equals(null))) {
-					// String refund = cinemaDetail.getRefund();
-					// msg = handler.obtainMessage(16, refund);
-					// handler.sendMessage(msg);
-					// } else {
-					// refundLayout.setVisibility(View.INVISIBLE);
-					// }
-					// // 获取优惠信息
-					// if (!(cinemaDetail.getCoupon().equals(null))) {
-					// String coupon = cinemaDetail.getCoupon();
-					// msg = handler.obtainMessage(17, coupon);
-					// handler.sendMessage(msg);
-					// }
+					
+						if (cinema != null) {
+							System.out.println("cinema==="+cinema);
+							msg = handler.obtainMessage(0, cinema);
+							handler.sendMessage(msg);
+						} else {
+							System.out.println("cinema为空");
+							Toast.makeText(CinemaDetailActivity.this,
+									"cinemaDetail为空，无可用信息", 0).show();
+						}
+					
+					
+					
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
