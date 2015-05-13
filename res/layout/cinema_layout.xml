@@ -113,13 +113,20 @@
         android:layout_below="@id/cinema_radio"/>
     	
 
-    <ListView
+    <!-- <ListView
         android:id="@+id/listview_cinema"
         android:layout_below="@id/cinema_radio"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@color/divider_color"
         android:dividerHeight="1dip" >
-    </ListView>
+    </ListView> -->
+    <com.wiseweb.ui.AutoListView
+        android:id="@+id/listview_cinema"
+        android:layout_below="@id/cinema_radio"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:divider="@color/divider_color"
+        android:dividerHeight="1dip" />
 
 </RelativeLayout>

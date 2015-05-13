@@ -126,8 +126,8 @@ public class CinemaSelectFilmActivity extends Activity {
 					public void onCheckedChanged(RadioGroup radioGroup,
 							int checkedId) {
 						// TODO Auto-generated method stub
-//						if (checkedId == R.id.cinema1) {
-//
+						if (checkedId == R.id.cinema1) {
+
 //							cinemaFilmAdapter = new CinemaFilmAdapter(
 //									startList, CinemaSelectFilmActivity.this);
 //							cinemaFilmList.setAdapter(cinemaFilmAdapter);
@@ -176,7 +176,7 @@ public class CinemaSelectFilmActivity extends Activity {
 //							cinemaFilmAdapter = new CinemaFilmAdapter(day2,
 //									CinemaSelectFilmActivity.this);
 //							cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//						}
+						}
 
 					}
 

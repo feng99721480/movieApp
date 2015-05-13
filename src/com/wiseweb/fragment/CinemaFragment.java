@@ -48,11 +48,15 @@ import com.wiseweb.fragment.adapter.CinemaAdapter;
 import com.wiseweb.json.CinemaResult;
 import com.wiseweb.json.CinemaResult.Cinema;
 import com.wiseweb.movie.R;
+import com.wiseweb.ui.AutoListView;
+import com.wiseweb.ui.AutoListView.OnLoadListener;
+import com.wiseweb.ui.AutoListView.OnRefreshListener;
 import com.wiseweb.util.GetEnc;
 
-public class CinemaFragment extends BaseFragment {
+public class CinemaFragment extends BaseFragment implements OnRefreshListener,OnLoadListener {
 	private MainActivity mMainActivity;
-	private ListView cinemaList;
+	//private ListView cinemaList;
+	private AutoListView cinemaList;
 	private CinemaAdapter cinemaAdapter;
 	private List<CinemaInfo> cinemaInfo = new ArrayList<CinemaInfo>();
 	private List<CinemaInfo> cinemaInfo_seat = new ArrayList<CinemaInfo>();
@@ -68,7 +72,40 @@ public class CinemaFragment extends BaseFragment {
 	private static final int ALL_CINEMA = 5;
 	private static final int SEAT_CINEMA = 6;
 	private static final int GROUP_CINEMA = 7;
-
+	private int start = 0;
+	
+	private Handler handler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			List<CinemaInfo> result = (List<CinemaInfo>) msg.obj;
+			switch (msg.what) {
+			case AutoListView.REFRESH:
+				cinemaList.onRefreshComplete();
+				cinemaInfo.clear();
+				cinemaInfo.addAll(result);
+				break;
+			case AutoListView.LOAD:
+				//start+=10;
+				cinemaList.onLoadComplete();
+				cinemaInfo.addAll(result);
+				break;
+			case ALL_CINEMA:
+				cinemaInfo.addAll(result);
+				cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
+				cinemaList.setAdapter(cinemaAdapter);
+				break;
+//			case SEAT_CINEMA:
+//				cinemaAdapter = new CinemaAdapter(cinemaInfo_seat,
+//						mMainActivity);
+//				break;
+//			case GROUP_CINEMA:
+//				cinemaAdapter = new CinemaAdapter(cinemaInfo_group,
+//						mMainActivity);
+//				break;
+			}
+			cinemaList.setResultSize(result.size());
+			cinemaAdapter.notifyDataSetChanged();
+		};
+	};
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -76,9 +113,11 @@ public class CinemaFragment extends BaseFragment {
 				false);
 		mMainActivity = (MainActivity) getActivity();
 		mFragmentManager = getActivity().getFragmentManager();
-		cinemaList = (ListView) cinemaLayout.findViewById(R.id.listview_cinema);
+		cinemaList = (AutoListView) cinemaLayout.findViewById(R.id.listview_cinema);
 		cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
 		cinemaList.setAdapter(cinemaAdapter);
+		cinemaList.setOnRefreshListener(this);
+		cinemaList.setOnLoadListener(this);
 		cityPreferences = mMainActivity.getSharedPreferences("city",
 				Context.MODE_PRIVATE);
 		cityTv = (TextView) cinemaLayout.findViewById(R.id.city_name);
@@ -123,31 +162,31 @@ public class CinemaFragment extends BaseFragment {
 
 				if (checkedId == selectSeat.getId()) {
 					// cinemaInfo_seat.clear();
-					for (int i = 0; i < cinemaInfo.size(); i++) {
-						if (cinemaInfo.get(i).isSeat() == true) {
-							cinemaInfo_seat.add(cinemaInfo.get(i));
-						}
-					}
+//					for (int i = 0; i < cinemaInfo.size(); i++) {
+//						if (cinemaInfo.get(i).isSeat() == true) {
+//							cinemaInfo_seat.add(cinemaInfo.get(i));
+//						}
+//					}
 					// 开启线程获取可以 选座 的电影院数据
 					// new Thread(selectSeatRunnable).start();
-					cinemaAdapter = new CinemaAdapter(cinemaInfo_seat,
-							mMainActivity);
-					cinemaList.setAdapter(cinemaAdapter);
+//					cinemaAdapter = new CinemaAdapter(cinemaInfo_seat,
+//							mMainActivity);
+//					cinemaList.setAdapter(cinemaAdapter);
 				} else if (checkedId == groupPurchase.getId()) {
 					// cinemaInfo_group.clear();
-					for (int i = 0; i < cinemaInfo.size(); i++) {
-						if (cinemaInfo.get(i).isGroupPurchase() == true) {
-							cinemaInfo_group.add(cinemaInfo.get(i));
-						}
-					}
+//					for (int i = 0; i < cinemaInfo.size(); i++) {
+//						if (cinemaInfo.get(i).isGroupPurchase() == true) {
+//							cinemaInfo_group.add(cinemaInfo.get(i));
+//						}
+//					}
 					// 开启线程获取可以 团购 的电影院数据
 					// new Thread(groupPurRunnable).start();
-					cinemaAdapter = new CinemaAdapter(cinemaInfo_group,
-							mMainActivity);
-					cinemaList.setAdapter(cinemaAdapter);
+//					cinemaAdapter = new CinemaAdapter(cinemaInfo_group,
+//							mMainActivity);
+//					cinemaList.setAdapter(cinemaAdapter);
 				} else {
 					// 开启线程获取所有电影院数据
-					 new Thread(runnable).start();
+					initData();
 					
 //					cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
 //					cinemaList.setAdapter(cinemaAdapter);
@@ -166,6 +205,8 @@ public class CinemaFragment extends BaseFragment {
 				SharedPreferences sp =mMainActivity.getSharedPreferences("cinemaConfig", Context.MODE_PRIVATE);
 				Editor editor = sp.edit();
 				editor.putInt("cinemaId", cinemaInfo.get(position).getCinemaId());
+				editor.putString("cinemaName", cinemaInfo.get(position).getCinemaName());
+				editor.putString("cinemaAddress", cinemaInfo.get(position).getCinemaAddress());
 				editor.commit();
 				
 				Intent intent = new Intent();
@@ -175,8 +216,11 @@ public class CinemaFragment extends BaseFragment {
 
 		});
 		// 默认界面 开启线程获取所有电影院数据
-		 new Thread(runnable).start();
+		initData();
 		return cinemaLayout;
+	}
+	private void initData(){
+		loadData(ALL_CINEMA);
 	}
 
 	@Override
@@ -210,176 +254,162 @@ public class CinemaFragment extends BaseFragment {
 //				19.9, "海淀区双榆树科学院南路44号", "1.5KM"));
 	}
 
-	private Handler handler = new Handler() {
-		public void handleMessage(android.os.Message msg) {
-			switch (msg.what) {
-			case ALL_CINEMA:
-				cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
-				cinemaList.setAdapter(cinemaAdapter);
-				cinemaAdapter.notifyDataSetChanged();
-				break;
-			case SEAT_CINEMA:
-				cinemaAdapter = new CinemaAdapter(cinemaInfo_seat,
-						mMainActivity);
-				cinemaList.setAdapter(cinemaAdapter);
-				cinemaAdapter.notifyDataSetChanged();
-				break;
-			case GROUP_CINEMA:
-				cinemaAdapter = new CinemaAdapter(cinemaInfo_group,
-						mMainActivity);
-				cinemaList.setAdapter(cinemaAdapter);
-				cinemaAdapter.notifyDataSetChanged();
-				break;
-			}
-		};
-	};
+	
 	// 从服务端获取所有影院
-	Runnable runnable = new Runnable() {
-
-		@Override
-		public void run() {
-			// String baseURL = "http://192.168.0.141:4000/appAPI";
-			HashMap<String, Object> params = new HashMap<String, Object>();
-			params.put("action", "cinema_Query");
-			Date date = new Date();
-			long time_stamp = date.getTime();
-			params.put("time_stamp", time_stamp + "");
-			int count = 10;// 数量
-			params.put("count", count);
-			int start = 0;// 从第几个开始
-			params.put("start", start);
-//			SharedPreferences s = mMainActivity.getSharedPreferences("city",
-//					Context.MODE_PRIVATE);
-//			String cityId = s.getString("cityId", null);
-			String cityId = "209";
-			params.put("city_id", cityId);
-			String enc = GetEnc.getEnc(params, "wiseMovie");
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "city_id=" + cityId + "&"
-					+ "start=" + start + "&" + "count=" + count + "&" + "enc="
-					+ enc + "&" + "time_stamp" + time_stamp);
-			System.out.println("*******************CinemaFragment*************************");
-			System.out.println(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "city_id=" + cityId + "&"
-					+ "start=" + start + "&" + "count=" + count + "&" + "enc="
-					+ enc + "&" + "time_stamp=" + time_stamp);
-			HttpResponse httpResponse;
-			String result;
-			try {
-				httpResponse = httpClient.execute(getMethod);
-				System.out.println("应答码="+httpResponse.getStatusLine().getStatusCode());
-				if (httpResponse.getStatusLine().getStatusCode() == 200) {
-					HttpEntity entity = httpResponse.getEntity();
-					result = EntityUtils.toString(entity, "utf-8");
-					if(result == null){
-						System.out.println("result为空");
-					}else{
-						System.out.println("result===="+result);
-					}
-					
-					Gson gson = new Gson();
-					CinemaResult cinemaResult = gson.fromJson(result,
-							CinemaResult.class);
-					List<Cinema> cinemas = cinemaResult.getCinemas();
-					if(cinemaResult == null ){
-						System.out.println("--------");
-					}else{
-						System.out.println("cinemaResult==="+cinemaResult.toString());
-					}
-					cinemaInfo.clear();
-					for (int i = 0; i < cinemas.size(); i++) {
-						CinemaInfo info = new CinemaInfo();
-						int cinemaId ;
-						String cinemaName = "";
-						boolean hasPreferential;
-						boolean hasImax;
-						boolean hasSeat;
-						boolean hasGroupPurchase;
-						double cinemaLowestPrice = 0.0;
-						String cinemaAddress = "";
-						String cinameDistance = "";
-						if(cinemas.get(i).getCinemaId() != 0){
-							cinemaId = cinemas.get(i).getCinemaId();
-							info.setCinemaId(cinemaId);
-						}
-						if (!(cinemas.get(i).getCinemaName().equals(null))) {
-							cinemaName = cinemas.get(i).getCinemaName();
-							System.out.println("cinemaName============="+cinemaName);
-							info.setCinemaName(cinemaName);
-						}
-						hasPreferential = cinemas.get(i).isPreferential();
-						if (hasPreferential == true) {
-							
-							info.setPreferential(hasPreferential);
+	private void loadData(final int what){
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// String baseURL = "http://192.168.0.141:4000/appAPI";
+				HashMap<String, Object> params = new HashMap<String, Object>();
+				params.put("action", "cinema_Query");
+				Date date = new Date();
+				long time_stamp = date.getTime();
+				params.put("time_stamp", time_stamp + "");
+				int count = start + 10;// 数量
+				params.put("count", count);
+				//int start = 0;// 从第几个开始
+				params.put("start", start);
+//				SharedPreferences s = mMainActivity.getSharedPreferences("city",
+//						Context.MODE_PRIVATE);
+//				String cityId = s.getString("cityId", null);
+				String cityId = "209";
+				params.put("city_id", cityId);
+				String enc = GetEnc.getEnc(params, "wiseMovie");
+				HttpClient httpClient = new DefaultHttpClient();
+				HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
+						+ params.get("action") + "&" + "city_id=" + cityId + "&"
+						+ "start=" + start + "&" + "count=" + count + "&" + "enc="
+						+ enc + "&" + "time_stamp" + time_stamp);
+				System.out.println("*******************CinemaFragment*************************");
+				System.out.println(Constant.baseURL + "action="
+						+ params.get("action") + "&" + "city_id=" + cityId + "&"
+						+ "start=" + start + "&" + "count=" + count + "&" + "enc="
+						+ enc + "&" + "time_stamp=" + time_stamp);
+				HttpResponse httpResponse;
+				String result;
+				try {
+					httpResponse = httpClient.execute(getMethod);
+					System.out.println("应答码="+httpResponse.getStatusLine().getStatusCode());
+					if (httpResponse.getStatusLine().getStatusCode() == 200) {
+						HttpEntity entity = httpResponse.getEntity();
+						result = EntityUtils.toString(entity, "utf-8");
+						if(result == null){
+							System.out.println("result为空");
 						}else{
-							System.out.println("hasPreferential============="+hasPreferential);
-						}
-						hasImax = cinemas.get(i).isImax();
-						if (hasImax == true) {
-							
-							info.setImax(hasImax);
-						}else{
-							System.out.println("hasImax============="+hasImax);
-						}
-						hasSeat = cinemas.get(i).isSeat();
-						if (hasSeat == true) {
-							
-							info.setSeat(hasSeat);
-						}else{
-							System.out.println("hasSeat============="+hasSeat);
-						}
-						hasGroupPurchase = cinemas.get(i).isGroupPurchase();
-						if (hasGroupPurchase == true) {
-							
-							info.setGroupPurchase(hasGroupPurchase);
-						}else{
-							System.out.println("hasGroupPurchase============="+hasGroupPurchase);
-						}
-						if (cinemas.get(i).getLowestPrice() == 0.0) {
-							cinemaLowestPrice = cinemas.get(i).getLowestPrice();
-							System.out.println("cinemaLowestPrice============="+cinemaLowestPrice);
-							info.setLowestPrice(cinemaLowestPrice);
-						}else{
-							System.out.println("cinemaLowestPrice============="+cinemaLowestPrice);
-						}
-						if (!(cinemas.get(i).getCinemaAddress().equals(null))) {
-							cinemaAddress = cinemas.get(i).getCinemaAddress();
-							System.out.println("cinemaAddress============="+cinemaAddress);
-							info.setCinemaAddress(cinemaAddress);
-						}
-						//这样写报空指针异常 数据本身就为空
-//						if (!(cinemas.get(i).getDistance().equals(null))) {
-//							cinameDistance = cinemas.get(i).getDistance();
-//							info.setDistance(cinameDistance);
-//						}else{
-//							System.out.println("cinameDistance=="+cinameDistance);
-//						}
-						if(cinemas.get(i).getDistance() != null){
-							cinameDistance = cinemas.get(i).getDistance();
-							info.setDistance(cinameDistance);
-						}else{
-							System.out.println("cinameDistance=="+cinameDistance);
+							System.out.println("result===="+result);
 						}
 						
-						cinemaInfo.add(info);
-					}
-					Message msg = new Message();
-					msg.what = ALL_CINEMA;
-					handler.sendMessage(msg);
+						Gson gson = new Gson();
+						CinemaResult cinemaResult = gson.fromJson(result,
+								CinemaResult.class);
+						List<Cinema> cinemas = cinemaResult.getCinemas();
+						if(cinemaResult == null ){
+							System.out.println("--------");
+						}else{
+							System.out.println("cinemaResult==="+cinemaResult.toString());
+						}
+						//cinemaInfo.clear();
+						List<CinemaInfo> tempList = new ArrayList<CinemaInfo>();
+						for (int i = 0; i < cinemas.size(); i++) {
+							CinemaInfo info = new CinemaInfo();
+							int cinemaId ;
+							String cinemaName = "";
+							boolean hasPreferential;
+							boolean hasImax;
+							boolean hasSeat;
+							boolean hasGroupPurchase;
+							double cinemaLowestPrice = 0.0;
+							String cinemaAddress = "";
+							String cinameDistance = "";
+							if(cinemas.get(i).getCinemaId() != 0){
+								cinemaId = cinemas.get(i).getCinemaId();
+								info.setCinemaId(cinemaId);
+							}
+							if (!(cinemas.get(i).getCinemaName().equals(null))) {
+								cinemaName = cinemas.get(i).getCinemaName();
+								System.out.println("cinemaName============="+cinemaName);
+								info.setCinemaName(cinemaName);
+							}
+							hasPreferential = cinemas.get(i).isPreferential();
+							if (hasPreferential == true) {
+								
+								info.setPreferential(hasPreferential);
+							}else{
+								System.out.println("hasPreferential============="+hasPreferential);
+							}
+							hasImax = cinemas.get(i).isImax();
+							if (hasImax == true) {
+								
+								info.setImax(hasImax);
+							}else{
+								System.out.println("hasImax============="+hasImax);
+							}
+							hasSeat = cinemas.get(i).isSeat();
+							if (hasSeat == true) {
+								
+								info.setSeat(hasSeat);
+							}else{
+								System.out.println("hasSeat============="+hasSeat);
+							}
+							hasGroupPurchase = cinemas.get(i).isGroupPurchase();
+							if (hasGroupPurchase == true) {
+								
+								info.setGroupPurchase(hasGroupPurchase);
+							}else{
+								System.out.println("hasGroupPurchase============="+hasGroupPurchase);
+							}
+							if (cinemas.get(i).getLowestPrice() == 0.0) {
+								cinemaLowestPrice = cinemas.get(i).getLowestPrice();
+								System.out.println("cinemaLowestPrice============="+cinemaLowestPrice);
+								info.setLowestPrice(cinemaLowestPrice);
+							}else{
+								System.out.println("cinemaLowestPrice============="+cinemaLowestPrice);
+							}
+							if (!(cinemas.get(i).getCinemaAddress().equals(null))) {
+								cinemaAddress = cinemas.get(i).getCinemaAddress();
+								System.out.println("cinemaAddress============="+cinemaAddress);
+								info.setCinemaAddress(cinemaAddress);
+							}
+							//这样写报空指针异常 数据本身就为空
+//							if (!(cinemas.get(i).getDistance().equals(null))) {
+//								cinameDistance = cinemas.get(i).getDistance();
+//								info.setDistance(cinameDistance);
+//							}else{
+//								System.out.println("cinameDistance=="+cinameDistance);
+//							}
+							if(cinemas.get(i).getDistance() != null){
+								cinameDistance = cinemas.get(i).getDistance();
+								info.setDistance(cinameDistance);
+							}else{
+								System.out.println("cinameDistance=="+cinameDistance);
+							}
+							
+							tempList.add(info);
+						}
+						Message msg = new Message();
+						msg.what = what;
+						msg.obj = tempList;
+						handler.sendMessage(msg);
 
-				}else{
-					Toast.makeText(mMainActivity, "没有获取到数据", 0).show();
+					}else{
+						Toast.makeText(mMainActivity, "没有获取到数据", 0).show();
+					}
+
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
+		
+		}).start();
+	
 
-		}
-	};
+		
+	}
 
 	// 从服务端获取所有可以选座的影院
 
@@ -629,6 +659,19 @@ public class CinemaFragment extends BaseFragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
+	}
+
+	@Override
+	public void onLoad() {
+		loadData(AutoListView.LOAD);
+		start+=10;
+		
+	}
+
+	@Override
+	public void onRefresh() {
+		loadData(AutoListView.REFRESH);
+		start = 0;
 	}
 
 }
