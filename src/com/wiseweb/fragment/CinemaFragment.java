@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.content.ClipData.Item;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -84,7 +85,6 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 				cinemaInfo.addAll(result);
 				break;
 			case AutoListView.LOAD:
-				//start+=10;
 				cinemaList.onLoadComplete();
 				cinemaInfo.addAll(result);
 				break;
@@ -104,6 +104,8 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 			}
 			cinemaList.setResultSize(result.size());
 			cinemaAdapter.notifyDataSetChanged();
+			System.out.println("result.size()*******************"+result.size());
+			System.out.println("cinemaInfo.size()*******************"+cinemaInfo.size());
 		};
 	};
 	@Override
@@ -186,6 +188,7 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 //					cinemaList.setAdapter(cinemaAdapter);
 				} else {
 					// 开启线程获取所有电影院数据
+					
 					initData();
 					
 //					cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
@@ -194,13 +197,14 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 			}
 
 		});
-
+		
 		cinemaList.setOnItemClickListener(new OnItemClickListener() {
-
+			int headerCount = cinemaList.getHeaderViewsCount();
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				
+				//因为增加了header 设置当前item上一个item的position
+				position -= cinemaList.getHeaderViewsCount();
 				//保存cinemaId用于CinemaDetailActivity获取数据
 				SharedPreferences sp =mMainActivity.getSharedPreferences("cinemaConfig", Context.MODE_PRIVATE);
 				Editor editor = sp.edit();
@@ -323,15 +327,22 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 							double cinemaLowestPrice = 0.0;
 							String cinemaAddress = "";
 							String cinameDistance = "";
+							//获取影院ID
 							if(cinemas.get(i).getCinemaId() != 0){
 								cinemaId = cinemas.get(i).getCinemaId();
 								info.setCinemaId(cinemaId);
+							}else{
+								info.setCinemaId(0);
 							}
-							if (!(cinemas.get(i).getCinemaName().equals(null))) {
+							//获取影院名称
+							if (cinemas.get(i).getCinemaName() != null) {
 								cinemaName = cinemas.get(i).getCinemaName();
 								System.out.println("cinemaName============="+cinemaName);
 								info.setCinemaName(cinemaName);
+							}else{
+								info.setCinemaName("无影院名称信息");
 							}
+							//获取新用户专享
 							hasPreferential = cinemas.get(i).isPreferential();
 							if (hasPreferential == true) {
 								
@@ -339,6 +350,7 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 							}else{
 								System.out.println("hasPreferential============="+hasPreferential);
 							}
+							//获取imax
 							hasImax = cinemas.get(i).isImax();
 							if (hasImax == true) {
 								
@@ -346,6 +358,7 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 							}else{
 								System.out.println("hasImax============="+hasImax);
 							}
+							//获取座
 							hasSeat = cinemas.get(i).isSeat();
 							if (hasSeat == true) {
 								
@@ -353,6 +366,7 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 							}else{
 								System.out.println("hasSeat============="+hasSeat);
 							}
+							//获取团购
 							hasGroupPurchase = cinemas.get(i).isGroupPurchase();
 							if (hasGroupPurchase == true) {
 								
@@ -360,18 +374,23 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 							}else{
 								System.out.println("hasGroupPurchase============="+hasGroupPurchase);
 							}
-							if (cinemas.get(i).getLowestPrice() == 0.0) {
+							//获取金额
+							if (cinemas.get(i).getLowestPrice() >= 0.0) {
 								cinemaLowestPrice = cinemas.get(i).getLowestPrice();
 								System.out.println("cinemaLowestPrice============="+cinemaLowestPrice);
 								info.setLowestPrice(cinemaLowestPrice);
 							}else{
+								info.setLowestPrice(0.0);
 								System.out.println("cinemaLowestPrice============="+cinemaLowestPrice);
 							}
-							if (!(cinemas.get(i).getCinemaAddress().equals(null))) {
+							if (cinemas.get(i).getCinemaAddress() != null) {
 								cinemaAddress = cinemas.get(i).getCinemaAddress();
 								System.out.println("cinemaAddress============="+cinemaAddress);
 								info.setCinemaAddress(cinemaAddress);
+							}else{
+								info.setCinemaAddress("无地址信息");
 							}
+							
 							//这样写报空指针异常 数据本身就为空
 //							if (!(cinemas.get(i).getDistance().equals(null))) {
 //								cinameDistance = cinemas.get(i).getDistance();
