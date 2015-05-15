@@ -1,6 +1,10 @@
 package com.wiseweb.activity;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +35,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -37,11 +44,15 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.wiseweb.constant.Constant;
+import com.wiseweb.fragment.adapter.HorizontalListViewAdapter;
+import com.wiseweb.fragment.adapter.HorizontalListViewCinemaDetailAdapter;
 import com.wiseweb.json.CinemaDetailResult;
 import com.wiseweb.json.CinemaDetailResult.CinemaDetail;
 import com.wiseweb.movie.R;
 import com.wiseweb.movie.R.color;
+import com.wiseweb.ui.HorizontalListView;
 import com.wiseweb.util.GetEnc;
+import com.wiseweb.util.Util;
 
 public class CinemaDetailActivity extends Activity implements OnClickListener {
 	private View cinemaDetailBack;
@@ -76,6 +87,12 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 	private TextView cinemaInfoTv;
 	private RelativeLayout cinemaInfo;
 	private ImageView infoMoreImg;
+	private ImageView logoImg;
+	private Bitmap logoBitmap ;
+	private HorizontalListView hListView;
+	private HorizontalListViewCinemaDetailAdapter hListAdapter;
+	private List<Bitmap> bmps = new ArrayList<Bitmap>();
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +105,8 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 	}
 
 	void initUI() {
+		hListView = (HorizontalListView) findViewById(R.id.cinema_hlistview);
+		logoImg = (ImageView) findViewById(R.id.cinema_logo_img);
 		infoMoreImg = (ImageView) findViewById(R.id.info_more_img);
 		cinemaInfo = (RelativeLayout) findViewById(R.id.cinema_info);
 		cinemaInfoTv = (TextView) findViewById(R.id.view_cinema_info);
@@ -127,6 +146,8 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 			}
 
 		});
+		hListAdapter = new HorizontalListViewCinemaDetailAdapter(CinemaDetailActivity.this, bmps);
+		hListView.setAdapter(hListAdapter);
 		//控制影院详情的展开和收缩
 		cinemaInfo.setOnClickListener(new OnClickListener() {
 			boolean flag = true;
@@ -247,9 +268,61 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 	Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			if (msg.what == 0) {
-				// 设置影院名称
 				CinemaDetail detail = (CinemaDetail) msg.obj;
-				if (!(detail.getCinemaName().equals(null))) {
+				
+				//设置影院logo
+				if(detail.getLogo() != null){
+					String logoPath = detail.getLogo();
+					System.out.println("logoPath--->"+logoPath);
+					Bitmap logo=null;
+					try {
+						logo = getLogo(logoPath);
+						if(logo != null){
+							logoImg.setImageBitmap(logo);
+						}else{
+							System.out.println("没找到LOGO资源");
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					
+				}
+				//设置影院图库
+				if(detail.getGalleries().length > 0){
+					String[] galleryPath = detail.getGalleries();
+					
+					for (int i = 0; i < galleryPath.length; i++) {
+						try {
+							Bitmap gallery = getLogo(galleryPath[i]);
+							System.out.println("gallery------->"+gallery);
+							
+							System.out.println("该影院有图片");
+							bmps.add(gallery);
+							
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}else{
+					
+					System.out.println("该影院没有图片");
+					hListView.setVisibility(View.GONE);
+					
+				}
+//				else {
+//					System.out.println("该影院没有图片");
+//					hListView.setVisibility(View.INVISIBLE);
+//				}
+				if(detail.getCityName() != null){
+					//保存城市名称用于ViewCinemaLocationActivity
+					SharedPreferences sp = getSharedPreferences("cityInfo", Context.MODE_PRIVATE);
+					Editor editor = sp.edit();
+					String cityNameStr = detail.getCityName();
+					editor.putString("cityName", cityNameStr);
+					editor.commit();
+				}
+				// 设置影院名称
+				if (detail.getCinemaName() != null) {
 					//保存影院名称用于SelectSeatBuyTicketActivity获取数据
 					SharedPreferences sp = getSharedPreferences("cinemaInfo", Context.MODE_PRIVATE);
 					Editor editor = sp.edit();
@@ -260,7 +333,7 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 					System.out.println("nameStr--------"+nameStr);
 				}
 				// 设置影院评分
-				if (!(detail.getScore().equals(null))) {
+				if (detail.getScore() != null) {
 					scoreCount.setText(detail.getScore().length+"人评分");
 				}else{
 					scoreCount.setText("0人评分");
@@ -414,7 +487,53 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 			}
 		};
 	};
-
+	//获取影院logo
+	
+		public  Bitmap getLogo(final String path) throws InterruptedException{
+			
+			Thread t = new Thread() {
+				public void run() {
+					// 连接服务器 用get请求获取图片
+					try {
+						URL url = new URL(path);
+						// 根据URL发送http请求
+						HttpURLConnection conn = (HttpURLConnection) url
+								.openConnection();
+						// 设置请求的方式
+						conn.setRequestMethod("GET");
+						// 设置链接超时时间
+						conn.setConnectTimeout(60000);
+						conn.setDoInput(true);
+						// conn.setRequestProperty("encoding","utf-8");
+						// 得到服务器的响应码 200(成功) 404(资源没找到) 503(服务器错误)
+						int code = conn.getResponseCode();
+						System.out.println("code=" + code);
+						if (code == 200) {
+							InputStream is = conn.getInputStream();
+							// 把流里面的内容转化为Bitmap
+							logoBitmap = BitmapFactory.decodeStream(is);
+							if(logoBitmap != null){
+								System.out.println("logoBitmap---->"+logoBitmap);
+								
+							}else{
+								System.out.println("logoBitmap为空");
+							}
+							
+						} else {
+							Toast.makeText(CinemaDetailActivity.this, "显示图片失败", 0)
+									.show();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					
+				};
+			};
+			t.start();
+			//*加入UI线程 等这个线程执行完 在执行UI线程 要不然UI线程获取不到Bitmap
+			t.join();
+			return logoBitmap;
+		}
 	// 获取数据
 	Runnable runnable = new Runnable() {
 
@@ -478,7 +597,7 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 			}
 		}
 	};
-
+	
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
