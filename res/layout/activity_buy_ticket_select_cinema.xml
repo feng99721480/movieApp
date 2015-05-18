@@ -20,19 +20,52 @@
         android:id="@+id/view_pager"
         android:layout_width="wrap_content"
         android:layout_height="1dp" />
+    <RelativeLayout 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/boder"
+        >
+        <ImageView 
+            android:id="@+id/select_unpress_img"
+            android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_cinema_select_unpress"
+            />
+        <!-- android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginBottom="5dp" -->
+        <TextView 
+            android:id="@+id/select_unpress_tv"
+            android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/select_unpress_img"
+        android:layout_centerVertical="true"
+        android:text="筛选"
+            />
+        <!-- android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="5dp" -->
+    </RelativeLayout> 
 
-    <include
+   <!--  <include
         android:id="@+id/radio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        layout="@layout/cinema_radio" />
-
-    <ListView
+        layout="@layout/cinema_radio" /> -->
+	<com.wiseweb.ui.AutoListView
+        android:id="@+id/buy_ticket_select_cinema_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:divider="@color/divider_color"
+        android:dividerHeight="1dip" />
+    <!-- <ListView
         android:id="@+id/buy_ticket_select_cinema_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:divider="@color/divider_color"
-        android:dividerHeight="1dip" />
+        android:dividerHeight="1dip" /> -->
 
 </LinearLayout>

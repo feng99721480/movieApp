@@ -64,10 +64,10 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 	private List<CinemaInfo> cinemaInfo_group = new ArrayList<CinemaInfo>();
 	private SharedPreferences cityPreferences;
 	private TextView cityTv;
-	private RadioGroup cinemaRadio;
+	//private RadioGroup cinemaRadio;
 	// private RadioButton cinemaAll;
-	private RadioButton selectSeat;
-	private RadioButton groupPurchase;
+	//private RadioButton selectSeat;
+	//private RadioButton groupPurchase;
 	private View cinemaArea;
 	private ImageView cinemaSearch;
 	private static final int ALL_CINEMA = 5;
@@ -125,11 +125,11 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 		cityTv = (TextView) cinemaLayout.findViewById(R.id.city_name);
 		cityTv.setText(cityPreferences.getString("city", null));
 		// cinemaAll = (RadioButton)cinemaLayout.findViewById(R.id.cinema_all);
-		selectSeat = (RadioButton) cinemaLayout
-				.findViewById(R.id.cinema_select_seat);
-		groupPurchase = (RadioButton) cinemaLayout
-				.findViewById(R.id.cinema_group_purchase);
-		cinemaRadio = (RadioGroup) cinemaLayout.findViewById(R.id.cinema_radio);
+//		selectSeat = (RadioButton) cinemaLayout
+//				.findViewById(R.id.cinema_select_seat);
+//		groupPurchase = (RadioButton) cinemaLayout
+//				.findViewById(R.id.cinema_group_purchase);
+//		cinemaRadio = (RadioGroup) cinemaLayout.findViewById(R.id.cinema_radio);
 		cinemaArea = (View) cinemaLayout.findViewById(R.id.cinema_area);
 		cinemaArea.setOnClickListener(new OnClickListener() {
 
@@ -157,46 +157,46 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 			}
 
 		});
-		cinemaRadio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-
-				if (checkedId == selectSeat.getId()) {
-					// cinemaInfo_seat.clear();
+//		cinemaRadio.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//
+//			@Override
+//			public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+//
+//				if (checkedId == selectSeat.getId()) {
+//					 cinemaInfo_seat.clear();
 //					for (int i = 0; i < cinemaInfo.size(); i++) {
 //						if (cinemaInfo.get(i).isSeat() == true) {
 //							cinemaInfo_seat.add(cinemaInfo.get(i));
 //						}
 //					}
-					// 开启线程获取可以 选座 的电影院数据
-					// new Thread(selectSeatRunnable).start();
+//					 开启线程获取可以 选座 的电影院数据
+//					 new Thread(selectSeatRunnable).start();
 //					cinemaAdapter = new CinemaAdapter(cinemaInfo_seat,
 //							mMainActivity);
 //					cinemaList.setAdapter(cinemaAdapter);
-				} else if (checkedId == groupPurchase.getId()) {
-					// cinemaInfo_group.clear();
+//				} else if (checkedId == groupPurchase.getId()) {
+//					 cinemaInfo_group.clear();
 //					for (int i = 0; i < cinemaInfo.size(); i++) {
 //						if (cinemaInfo.get(i).isGroupPurchase() == true) {
 //							cinemaInfo_group.add(cinemaInfo.get(i));
 //						}
 //					}
-					// 开启线程获取可以 团购 的电影院数据
-					// new Thread(groupPurRunnable).start();
+//					 开启线程获取可以 团购 的电影院数据
+//					 new Thread(groupPurRunnable).start();
 //					cinemaAdapter = new CinemaAdapter(cinemaInfo_group,
 //							mMainActivity);
 //					cinemaList.setAdapter(cinemaAdapter);
-				} else {
-					// 开启线程获取所有电影院数据
-					
-					initData();
-					
+//				} else {
+//					 开启线程获取所有电影院数据
+//					
+//					initData();
+//					
 //					cinemaAdapter = new CinemaAdapter(cinemaInfo, mMainActivity);
 //					cinemaList.setAdapter(cinemaAdapter);
-				}
-			}
-
-		});
+//				}
+//			}
+//
+//		});
 		
 		cinemaList.setOnItemClickListener(new OnItemClickListener() {
 			int headerCount = cinemaList.getHeaderViewsCount();
@@ -421,13 +421,10 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,On
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
 			}
 		
 		}).start();
-	
 
-		
 	}
 
 	// 从服务端获取所有可以选座的影院

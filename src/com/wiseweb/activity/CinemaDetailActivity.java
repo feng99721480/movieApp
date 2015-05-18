@@ -35,6 +35,8 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,6 +53,7 @@ import com.wiseweb.json.CinemaDetailResult.CinemaDetail;
 import com.wiseweb.movie.R;
 import com.wiseweb.movie.R.color;
 import com.wiseweb.ui.HorizontalListView;
+import com.wiseweb.ui.ImageDialog;
 import com.wiseweb.util.GetEnc;
 import com.wiseweb.util.Util;
 
@@ -146,8 +149,23 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 			}
 
 		});
+		//设置影院图库
 		hListAdapter = new HorizontalListViewCinemaDetailAdapter(CinemaDetailActivity.this, bmps);
 		hListView.setAdapter(hListAdapter);
+		//点击每张图片放大显示
+		hListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				ImageDialog dialog = new ImageDialog(CinemaDetailActivity.this, bmps.get(position));
+				
+				dialog.show();
+//				dialog.setCanceledOnTouchOutside(true);
+//				dialog.setCancelable(true);
+				
+			}
+		});
 		//控制影院详情的展开和收缩
 		cinemaInfo.setOnClickListener(new OnClickListener() {
 			boolean flag = true;
@@ -400,80 +418,80 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 					fetchTicketTv.setText(detail.getFetchTicket());
 				} else {
 					System.out.println("无取票信息数据");
-					fetchTicketTv.setText("无取票信息数据");
-					//ticketLayout.setVisibility(View.GONE);
+					//fetchTicketTv.setText("无取票信息数据");
+					ticketLayout.setVisibility(View.GONE);
 				}
 				// 设置IMAX信息
 				if (detail.getImax() != null) {
 					imaxTv.setText(detail.getImax());
 				} else {
 					System.out.println("无IMAX信息数据");
-					imaxTv.setText("无IMAX信息数据");
-					//imaxLayout.setVisibility(View.GONE);
+					//imaxTv.setText("无IMAX信息数据");
+					imaxLayout.setVisibility(View.GONE);
 				}
 				// 设置3D眼镜信息
 				if (detail.getGlass() != null) {
 					glassTv.setText(detail.getGlass());
 				} else {
 					System.out.println("无3D眼镜信息数据");
-					glassTv.setText("无3D眼镜信息数据");
-					//glassLayout.setVisibility(View.GONE);
+					//glassTv.setText("无3D眼镜信息数据");
+					glassLayout.setVisibility(View.GONE);
 				}
 				// 设置停车信息
 				if (detail.getPark() != null) {
 					parkTv.setText(detail.getPark());
 				} else {
 					System.out.println("无停车信息数据");
-					parkTv.setText("无停车信息数据");
-					//parkLayout.setVisibility(View.GONE);
+					//parkTv.setText("无停车信息数据");
+					parkLayout.setVisibility(View.GONE);
 				}
 				// 设置情侣座信息
 				if (detail.getLovers() != null) {
 					loversTv.setText(detail.getLovers());
 				} else {
 					System.out.println("无情侣座信息数据");
-					loversTv.setText("无情侣座信息数据");
-					//loversLayout.setVisibility(View.GONE);
+					//loversTv.setText("无情侣座信息数据");
+					loversLayout.setVisibility(View.GONE);
 				}
 				// 获取儿童优惠信息
 				if (detail.getChildren() != null) {
 					childrenTv.setText(detail.getChildren());
 				} else {
 					System.out.println("无儿童优惠座信息数据");
-					childrenTv.setText("无儿童优惠座信息数据");
-					//childrenLayout.setVisibility(View.GONE);
+					//childrenTv.setText("无儿童优惠座信息数据");
+					childrenLayout.setVisibility(View.GONE);
 				}
 				// 设置刷卡信息
 				if (detail.getCard() != null) {
 					cardTv.setText(detail.getCard());
 				} else {
 					System.out.println("无刷卡信息数据");
-					cardTv.setText("无刷卡信息数据");
-					//cardLayout.setVisibility(View.GONE);
+					//cardTv.setText("无刷卡信息数据");
+					cardLayout.setVisibility(View.GONE);
 				}
 				// 设置wifi信息
 				if (detail.getWifi() != null) {
 					wifiTv.setText(detail.getWifi());
 				} else {
 					System.out.println("无wifi信息数据");
-					wifiTv.setText("无wifi信息数据");
-					//wifiLayout.setVisibility(View.GONE);
+					//wifiTv.setText("无wifi信息数据");
+					wifiLayout.setVisibility(View.GONE);
 				}
 				// 获取休息区信息
 				if (detail.getRest() != null) {
 					restTv.setText(detail.getRest());
 				} else {
 					System.out.println("无休息区信息数据");
-					restTv.setText("无休息区信息数据");
-					//restLayout.setVisibility(View.GONE);
+					//restTv.setText("无休息区信息数据");
+					restLayout.setVisibility(View.GONE);
 				}
 				// 获取退票退款信息
 				if (detail.getRefund() != null) {
 					refundTv.setText(detail.getRefund());
 				} else {
 					System.out.println("无退票退款信息数据");
-					refundTv.setText("无退票退款信息数据");
-					//refundLayout.setVisibility(View.GONE);
+					//refundTv.setText("无退票退款信息数据");
+					refundLayout.setVisibility(View.GONE);
 				}
 				// 获取优惠信息
 				if (detail.getCoupon() != null) {
