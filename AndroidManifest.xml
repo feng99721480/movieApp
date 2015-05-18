@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="21" />
+        android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -79,7 +79,7 @@
         </activity>
         <activity
             android:name="com.wiseweb.activity.BuyTicketSelectCinema"
-            android:theme="@style/MyTheme" >
+            android:theme="@style/Theme.PageIndicatorDefaults" >
         </activity>
         <activity android:name="com.wiseweb.activity.CinemaSelectFilmActivity" >
         </activity>

@@ -1,12 +1,28 @@
 package com.wiseweb.activity;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,12 +35,18 @@ import android.widget.Toast;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
+import com.google.gson.Gson;
 import com.wiseweb.bean.Seat;
 import com.wiseweb.bean.SeatInfo;
+import com.wiseweb.constant.Constant;
+import com.wiseweb.json.MovieDetailResult;
+import com.wiseweb.json.MovieDetailResult.MovieDetail;
 import com.wiseweb.movie.R;
 import com.wiseweb.seatchoose.view.OnSeatClickListener;
 import com.wiseweb.seatchoose.view.SSThumView;
 import com.wiseweb.seatchoose.view.SSView;
+import com.wiseweb.util.GetEnc;
+import com.wiseweb.util.Util;
 
 public class SelectSeatBuyTicketActivity extends Activity {
 
@@ -198,16 +220,17 @@ public class SelectSeatBuyTicketActivity extends Activity {
 			}
 
 		});
-		submitOrder = (Button)findViewById(R.id.submit_order);
-		submitOrder.setOnClickListener(new OnClickListener(){
+		submitOrder = (Button) findViewById(R.id.submit_order);
+		submitOrder.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent();
-				intent.setClass(SelectSeatBuyTicketActivity.this, SubmitOrderActivity.class);
+				intent.setClass(SelectSeatBuyTicketActivity.this,
+						SubmitOrderActivity.class);
 				SelectSeatBuyTicketActivity.this.startActivity(intent);
 			}
-			
+
 		});
 
 	}
@@ -255,6 +278,63 @@ public class SelectSeatBuyTicketActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+
+	Runnable runnable = new Runnable() {
+
+		@Override
+		public void run() {
+			// JSONObject seatInfoResult = new JSONObject();
+			HashMap<String, Object> params = new HashMap<String, Object>();
+			params.put("action", "seat_info");
+			/**
+			 * 得到planId
+			 */
+			Long planId = 385335l;
+			params.put("planId", planId);
+
+			Date date = new Date();
+			long time_stamp = date.getTime();
+			params.put("time_stamp", time_stamp + "");
+
+			String enc = GetEnc.getEnc(params, "wiseMovie");
+
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
+					+ params.get("action") + "&" + "planId=" + planId + "&"
+					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+
+			HttpResponse httpResponse;
+			String result;
+			try {
+				httpResponse = httpClient.execute(getMethod);
+				if (httpResponse.getStatusLine().getStatusCode() == 200) {
+					HttpEntity entity = httpResponse.getEntity();
+					result = EntityUtils.toString(entity, "utf-8");
+					JSONArray seatsArray = new JSONObject(result)
+							.getJSONArray("seats");
+					for (int i = 0; i < seatsArray.length(); i++) {
+						//取得第i个座位
+						JSONObject jsonObj = (JSONObject) seatsArray.getJSONObject(i);
+
+					}
+
+					Message msg = new Message();
+					// Bundle data = new Bundle();
+					// msg.setData(data);
+					msg.what = 0;
+					// handler.sendMessage(msg);
+				}
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+	};
 
 	/**
 	 * 获得数据 设置座位信息

@@ -1,12 +1,10 @@
 package com.wiseweb.activity;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -15,23 +13,16 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -45,10 +36,8 @@ import android.widget.TextView;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
-
-import com.baidu.location.LocationClientOption;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.wiseweb.constant.Constant;
 import com.wiseweb.fragment.adapter.CityListAdapter;
 import com.wiseweb.fragment.adapter.CitySearchAdapter;
 import com.wiseweb.json.City;
@@ -68,6 +57,7 @@ public class CityListActivity extends Activity {
 	private ArrayList<String> list = new ArrayList<String>();
 	private ArrayList<String> listTag = new ArrayList<String>();
 	private ArrayList<String> listId = new ArrayList<String>();
+	private ArrayList<String> listName = new ArrayList<String>();
 	private SharedPreferences cityPreferences;
 	// private SharedPreferences mflag; //
 	private View citySearchBack;
@@ -89,7 +79,7 @@ public class CityListActivity extends Activity {
 		setContentView(R.layout.city_list_activity);
 		// positionCityName = (TextView) findViewById(R.id.position_city_name);
 
-		mLocationClient = new LocationClient(this); // 声明LocationClient类
+/*		mLocationClient = new LocationClient(this); // 声明LocationClient类
 
 		// 设置参数
 		LocationClientOption option = new LocationClientOption();
@@ -196,7 +186,7 @@ public class CityListActivity extends Activity {
 //				}
 				Log.d("Poi_sb", sb.toString());
 			}
-		}); // 注册监听函数
+		}); // 注册监听函数  */
 
 		// setData();
 		cityList = (ListView) findViewById(R.id.city_list);
@@ -205,13 +195,13 @@ public class CityListActivity extends Activity {
 		listTag.add("定位的城市");
 		new Thread(runnable).start();
 
-		adapter = new CityListAdapter(this, list, listTag);
-		cityList = (ListView) findViewById(R.id.city_list);
-		cityList.setAdapter(adapter);
+//		adapter = new CityListAdapter(this, list, listTag);
+//		cityList = (ListView) findViewById(R.id.city_list);
+//		cityList.setAdapter(adapter);
 
 		searchAdapter = new CitySearchAdapter(CityListActivity.this);
-		// searchAdapter.setDataSource(list);
-		// cityList.setAdapter(searchAdapter);
+//		searchAdapter.setDataSource(list);
+//		cityList.setAdapter(searchAdapter);
 		cityImageSearch = (ImageView) findViewById(R.id.city_image_search);
 
 		citySearchBack = (View) findViewById(R.id.city_search_title);
@@ -234,7 +224,6 @@ public class CityListActivity extends Activity {
 					citySearchDelText.setVisibility(View.GONE);
 				} else {
 					citySearchDelText.setVisibility(View.VISIBLE);
-
 				}
 			}
 
@@ -303,8 +292,8 @@ public class CityListActivity extends Activity {
 				SharedPreferences.Editor editor = cityPreferences.edit();
 				editor.putString("city", city);
 				// 取得cityId
-				for (int i = 0; i < list.size(); i++) {
-					if (list.get(i).equals(city))
+				for (int i = 0; i < listName.size(); i++) {
+					if (listName.get(i).equals(city))
 						cityId = listId.get(i);
 				}
 				editor.putString("cityId", cityId);
@@ -317,7 +306,7 @@ public class CityListActivity extends Activity {
 				// startActivity(intent);
 				Intent data = new Intent();
 				data.putExtra("city", city);
-				// 请求代码可以自己设置，这里设置成20
+				// 请求代码可以自己设置，这里设置成2
 				setResult(2, data);
 				finish();
 
@@ -333,6 +322,8 @@ public class CityListActivity extends Activity {
 			Bundle data = msg.getData();
 			// String val = data.getString("response");
 			// System.out.println("请求结果-->" + val);
+			list = data.getStringArrayList("list");
+			listTag = data.getStringArrayList("listTag");
 			adapter = new CityListAdapter(CityListActivity.this, list, listTag);
 
 			cityList.setAdapter(adapter);
@@ -344,7 +335,6 @@ public class CityListActivity extends Activity {
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
-			String baseURL = "http://192.168.0.141:4000/appAPI";
 			HashMap<String, Object> params = new HashMap<String, Object>();
 			params.put("action", "city_Query");
 			Date date = new Date();
@@ -353,10 +343,10 @@ public class CityListActivity extends Activity {
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
 
-			HttpGet getMethod = new HttpGet(baseURL + "?" + "action="
+			HttpGet getMethod = new HttpGet(Constant.baseURL  + "action="
 					+ params.get("action") + "&" + "enc=" + enc + "&"
 					+ "time_stamp=" + time_stamp);
-			System.out.println(baseURL + "?" + "action=" + params.get("action")
+			System.out.println("cities---------"+Constant.baseURL + "action=" + params.get("action")
 					+ "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 
@@ -372,19 +362,19 @@ public class CityListActivity extends Activity {
 					CityResult cityResult = gson.fromJson(result,
 							CityResult.class);
 					List<City> citys = cityResult.getCitis();
-					// i<citys.size(); 后面的为空，只能先设为1
-					for (int i = 0; i < 1; i++) {
+					for (int i = 0; i < citys.size(); i++) {
 						List<Group> group = citys.get(i).getGroup();
 						System.out.println("group.size()" + group.size());
 						String text = citys.get(i).getText();
 						listTag.add(text);
 						list.add(text);
-						listId.add(text);
+//						listId.add(text);
 						for (int j = 0; j < group.size(); j++) {
 							List<CityList> cityList = group.get(j).getList();
 							for (int m = 0; m < cityList.size(); m++) {
 								String cityName = cityList.get(m).getCityName();
 								list.add(cityName);
+								listName.add(cityName);
 								String cityId = cityList.get(m).getCityId();
 								listId.add(cityId);
 							}
@@ -394,6 +384,7 @@ public class CityListActivity extends Activity {
 					Bundle data = new Bundle();
 					data.putStringArrayList("list", list);
 					data.putStringArrayList("listTag", listTag);
+					data.putStringArrayList("listId", listId);
 					msg.setData(data);
 					handler.sendMessage(msg);
 

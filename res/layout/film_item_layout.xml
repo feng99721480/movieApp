@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:descendantFocusability="blocksDescendants" 
-    android:padding="3dp">
+    android:descendantFocusability="blocksDescendants"
+    android:padding="3dp" >
 
     <ImageView
         android:id="@+id/img_film_item"
@@ -24,80 +24,84 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" 
-            android:layout_margin="5dp">
+            android:layout_margin="5dp"
+            android:orientation="horizontal" >
 
             <TextView
                 android:id="@+id/name_film_item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxEms="8"
+                android:singleLine="true"
                 android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/iMax"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" 
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:paddingLeft="3dp"
-                android:paddingRight="3dp"/>
+                android:paddingRight="3dp"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/new_film"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
                 android:paddingLeft="3dp"
-                android:paddingRight="3dp"/>
+                android:paddingRight="3dp"
+                android:textColor="@android:color/white"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/film_outline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp" 
-            android:textColor="@android:color/darker_gray"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="5dp"/>
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/film_show"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
+            android:layout_margin="5dp"
             android:textColor="@android:color/darker_gray"
-            android:layout_margin="5dp" />
+            android:textSize="13sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="5dp">
+        android:orientation="vertical" >
+
         <TextView
             android:id="@+id/film_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:layout_gravity="center"
             android:gravity="right"
-            android:textColor="@color/color_text_want" 
-            android:layout_gravity="center"/>
+            android:textColor="@color/color_text_want"
+            android:textSize="15sp" />
 
         <Button
             android:id="@+id/buy_filmticket"
             android:layout_width="50dp"
             android:layout_height="30dp"
-            android:background="@drawable/film_buy_btn"
-            android:text="@string/buy_ticket"
-            android:textSize="12sp"
             android:layout_marginTop="15dp"
+            android:background="@drawable/film_buy_btn"
+            android:focusable="false"
+            android:text="@string/buy_ticket"
             android:textColor="@drawable/film_buy_btn_text"
-            android:focusable="false"/>
+            android:textSize="12sp" />
     </LinearLayout>
 
 </RelativeLayout>

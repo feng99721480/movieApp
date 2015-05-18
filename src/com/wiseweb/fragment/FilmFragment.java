@@ -71,6 +71,10 @@ public class FilmFragment extends BaseFragment {
 	private ImageView filmSearch;
 	private Button buyTicket;
 	private BitmapDrawable bd;
+	private static int startCome = 0;
+	private List<Long> movieIdsOn;
+	private List<Long> movieIdsCome;
+	private SharedPreferences movieConfigure;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,14 +92,13 @@ public class FilmFragment extends BaseFragment {
 		// editor.commit();
 		city.setText(cityPreferences.getString("city", null));
 
+		// mListView = (XListView) filmLayout.findViewById(R.id.listview_film);
 		mListView = (ListView) filmLayout.findViewById(R.id.listview_film);
-		// mFilmAdapter = new FilmAdapter(mFilmInfo, mMainActivity);
-		// mListView.setAdapter(mFilmAdapter);
-		releasing = (RadioButton) filmLayout.findViewById(R.id.releasingFilm); //
-		onReleasing = (RadioButton) filmLayout //
-				.findViewById(R.id.onreleasingFilm);
 		radioGroup = (RadioGroup) filmLayout
 				.findViewById(R.id.film_title_group);
+		releasing = (RadioButton) filmLayout.findViewById(R.id.releasingFilm); // 正在上映
+		onReleasing = (RadioButton) filmLayout
+				.findViewById(R.id.onreleasingFilm);// 即将上映
 		filmSearch = (ImageView) filmLayout.findViewById(R.id.film_search);
 		filmSearch.setOnClickListener(new OnClickListener() {
 
@@ -122,6 +125,16 @@ public class FilmFragment extends BaseFragment {
 				startActivityForResult(intent, 1);
 			}
 		});
+
+		Thread filmOnThread = new Thread(runnable);
+		filmOnThread.start();
+		try {
+			filmOnThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		mListView.setAdapter(mFilmAdapter);
+		// mListView.setXListViewListener(this);
 		// mListView.setEnabled(true);
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -134,6 +147,20 @@ public class FilmFragment extends BaseFragment {
 				// mFilmInfo.get(position).toString(), Toast.LENGTH_SHORT)
 				// .show();
 				Intent intent = new Intent();
+				movieConfigure =getActivity().getSharedPreferences("movieConfigure", Context.MODE_PRIVATE);
+				SharedPreferences.Editor editor = movieConfigure.edit();
+				String movieName = mFilmInfo.get(position).getFilmName();
+				editor.putString("movieName", movieName);
+				// 看是从正在上映还是从即将上映跳过去的
+				if (radioGroup.getCheckedRadioButtonId() == releasing.getId()) {
+					editor.putLong("movieId", movieIdsOn.get(position));   // 电影id
+					editor.putBoolean("movieOnCome", true);                //正在上映还是即将上映电影标识
+				} else {
+					editor.putLong("movieId", movieIdsCome.get(position));
+					editor.putBoolean("movieOnCome", false);
+				}
+				editor.commit();
+				
 				intent.setClass(mMainActivity, FilmDetailsActivity.class);
 				startActivity(intent);
 			}
@@ -143,41 +170,60 @@ public class FilmFragment extends BaseFragment {
 
 			@Override
 			public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
+				// 即将上映
 				if (checkedId == onReleasing.getId()) {
+					Thread onReleasing = new Thread(onReleasingRunnable);
+					onReleasing.start();
+					try {
+						onReleasing.join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					// onLoad();
+
+				} else if (checkedId == releasing.getId()) {
 					// mFilmInfo.clear();
-					upComingFilmAdapter = new UpComingFilmAdapter(mOnFilmInfo,
-							mMainActivity);
-					mListView.setAdapter(upComingFilmAdapter);
-				} else {
-					// mFilmInfo.clear();
-					// new Thread(onReleasingRunnable).start();
-					mFilmAdapter = new FilmAdapter(mFilmInfo, mMainActivity);
-					mListView.setAdapter(mFilmAdapter);
+					if (mFilmInfo != null) {
+						mFilmAdapter = new FilmAdapter(mFilmInfo, mMainActivity);
+						mListView.setAdapter(mFilmAdapter);
+
+					} else {
+						Thread releasing = new Thread(runnable);
+						releasing.start();
+						try {
+							releasing.join();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						// mFilmAdapter = new FilmAdapter(mFilmInfo,
+						// mMainActivity);
+						// mListView.setAdapter(mFilmAdapter);
+
+					}
+					// mFilmAdapter.notifyDataSetChanged();
 
 				}
 			}
 
 		});
-		// new Thread(runnable).start();
-		bd = (BitmapDrawable) (mMainActivity.getResources()
-				.getDrawable(R.drawable.runman));
-		Bitmap runman = bd.getBitmap();
-		mFilmInfo.add(new FilmInfo("奔跑吧，兄弟", "超级喜剧", "导演", "邓超，李晨", "大陆",
-				"88分钟", "超级好看的电影", "很好看的电影啊", "2015-01-30", runman, "6.8分",
-				"2D", true, "今天127家影院上映102场"));
 
-		mOnFilmInfo.add(new FilmInfo("RUNNING", "超级喜剧", "导演", "邓超，李晨", "大陆",
-				"88分钟", "超级好看的电影", "很好看的电影啊", "2015-01-30", runman, "6.8分",
-				"iMax3D", true, "今天127家影院上映102场"));
 		return filmLayout;
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
+		// 从cityList返回的结果
 		if (2 == resultCode) {
 			String cityName = data.getExtras().getString("city");
 			city.setText(cityName);
+			// 切换城市时，相应的数据也得刷新
+			Thread filmOnThread = new Thread(runnable);
+			filmOnThread.start();
+			try {
+				filmOnThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -204,12 +250,15 @@ public class FilmFragment extends BaseFragment {
 				// String val = data.getString("result");
 				mFilmAdapter = new FilmAdapter(mFilmInfo, mMainActivity);
 				mListView.setAdapter(mFilmAdapter);
+
 				mFilmAdapter.notifyDataSetChanged();
+				break;
 			case 1:
 				upComingFilmAdapter = new UpComingFilmAdapter(mOnFilmInfo,
 						mMainActivity);
 				mListView.setAdapter(upComingFilmAdapter);
 				upComingFilmAdapter.notifyDataSetChanged();
+				break;
 			}
 			return false;
 		}
@@ -219,6 +268,7 @@ public class FilmFragment extends BaseFragment {
 
 		@Override
 		public void run() {
+			movieIdsOn = new ArrayList<Long>();
 			HashMap<String, Object> params = new HashMap<String, Object>();
 			params.put("action", "movie_on");
 			Date date = new Date();
@@ -227,14 +277,22 @@ public class FilmFragment extends BaseFragment {
 			SharedPreferences s = mMainActivity.getSharedPreferences("city",
 					Context.MODE_PRIVATE);
 			String cityId = s.getString("cityId", null);
+			// int cityId = 36;
 			params.put("city_id", cityId);
+			String startTime = "0";
+			params.put("startTime", startTime);
+			int count = 12;
+			params.put("count", count);
+
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "city_id=" + cityId + "&"
+					+ params.get("action") + "&" + "cityId=" + cityId + "&"
+					+ "startTime=" + startTime + "&" + "count=" + count + "&"
 					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
 			System.out.println(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "city_id=" + cityId + "&"
+					+ params.get("action") + "&" + "cityId=" + cityId + "&"
+					+ "startTime=" + startTime + "&" + "count=" + count + "&"
 					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 			String result;
@@ -251,6 +309,7 @@ public class FilmFragment extends BaseFragment {
 					for (int i = 0; i < movies.size(); i++) {
 						FilmInfo film = new FilmInfo();
 						String movieName = "";
+						long movieId;
 						String movieScore = "";
 						Boolean has2D;
 						Boolean has3D;
@@ -258,11 +317,15 @@ public class FilmFragment extends BaseFragment {
 						String movieProperty;
 						String actionTime = "无数据";
 						String posterPath;
-						if (!(movies.get(i).getMovieName().equals(null))) {
+						String pathVerticalS;
+						String pathSquare;
+						String pathHorizonB;
+						if (!(movies.get(i).getMovieName() == null)) {
 							movieName = movies.get(i).getMovieName();
 							film.setFilmName(movieName);
 						}
-						if (!(movies.get(i).getScore().equals(null))) {
+						movieId = movies.get(i).getMovieId();
+						if (!(movies.get(i).getScore() == null)) {
 							movieScore = movies.get(i).getScore();
 
 						} else {
@@ -272,26 +335,41 @@ public class FilmFragment extends BaseFragment {
 						has2D = movies.get(i).getHas2D();
 						has3D = movies.get(i).getHas3D();
 						hasImax = movies.get(i).getHasImax();
-						if (has2D && hasImax == true) {
+						if (has2D != null && hasImax != null && has2D
+								&& hasImax == true) {
 							movieProperty = "Imax2D";
-						} else if (has3D && hasImax == true) {
+						} else if (has3D != null && hasImax != null && has3D
+								&& hasImax == true) {
 							movieProperty = "Imax3D";
-						} else if (hasImax == false && has3D == true) {
+						} else if (has3D != null && has3D == true) {
 							movieProperty = "3D";
 						} else {
 							movieProperty = "";
 						}
 						film.setiMax(movieProperty);
-						if (!(movies.get(i).getPublishTime().equals(null))) {
+						if (!(movies.get(i).getPublishTime() == null)) {
 							actionTime = movies.get(i).getPublishTime();
 						}
 						film.setActionTime(actionTime);
-						posterPath = movies.get(i).getPosterPath();
-						if (!posterPath.equals(null)) {
+						// posterPath = movies.get(i).getPosterPath();
+						if (!(movies.get(i).getPosterPath() == null)) {
+							posterPath = movies.get(i).getPosterPath();
 							Bitmap filmImage = Util.getBitmap(posterPath);
 							film.setImgId(filmImage);
+						} else if (!(movies.get(i).getPathVerticalS() == null)) {
+							pathVerticalS = movies.get(i).getPathVerticalS();
+							Bitmap filmImage = Util.getBitmap(pathVerticalS);
+							film.setImgId(filmImage);
+						} else if (!(movies.get(i).getPathSquare() == null)) {
+							pathSquare = movies.get(i).getPathSquare();
+							Bitmap filmImage = Util.getBitmap(pathSquare);
+							film.setImgId(filmImage);
+						} else if (!(movies.get(i).getPathHorizonB() == null)) {
+							pathHorizonB = movies.get(i).getPathHorizonB();
+							Bitmap filmImage = Util.getBitmap(pathHorizonB);
+							film.setImgId(filmImage);
 						}
-
+						movieIdsOn.add(movieId);
 						mFilmInfo.add(film);
 					}
 					Message msg = new Message();
@@ -314,6 +392,7 @@ public class FilmFragment extends BaseFragment {
 
 		@Override
 		public void run() {
+			movieIdsCome = new ArrayList<Long>();
 			HashMap<String, Object> params = new HashMap<String, Object>();
 			// 动作
 			params.put("action", "movie_coming");
@@ -325,18 +404,19 @@ public class FilmFragment extends BaseFragment {
 			int count = 12;
 			params.put("count", count);
 			// 开始位置，默认为0
-			int startTime = 0;
-			params.put("startTime", startTime);
+			// int startTime = 0;
+
+			params.put("startTime", startCome);
 			// 获得enc参数
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
 					+ params.get("action") + "&" + "count=" + count + "&"
-					+ "startTime=" + startTime + "&" + "enc=" + enc + "&"
+					+ "startTime=" + startCome + "&" + "enc=" + enc + "&"
 					+ "time_stamp=" + time_stamp);
 			System.out.println(Constant.baseURL + "action="
 					+ params.get("action") + "&" + "count=" + count + "&"
-					+ "startTime=" + startTime + "&" + "enc=" + enc + "&"
+					+ "startTime=" + startCome + "&" + "enc=" + enc + "&"
 					+ "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 			String result;
@@ -354,6 +434,7 @@ public class FilmFragment extends BaseFragment {
 					for (int i = 0; i < movies.size(); i++) {
 						FilmInfo film = new FilmInfo();
 						String movieName = "";
+						long movieId;
 						String movieScore = "";
 						Boolean has2D;
 						Boolean has3D;
@@ -361,12 +442,15 @@ public class FilmFragment extends BaseFragment {
 						String movieProperty;
 						String actionTime = "无数据";
 						String posterPath;
-
+						String pathVerticalS;
+						String pathSquare;
+						// String pathHorizonB;
 						if (!(movies.get(i).getMovieName().equals(null))) {
 							movieName = movies.get(i).getMovieName();
 							film.setFilmName(movieName);
 						}
-						if (!(movies.get(i).getScore().equals(null))) {
+						movieId = movies.get(i).getMovieId();
+						if (!(movies.get(i).getScore() == null)) {
 							movieScore = movies.get(i).getScore();
 
 						} else {
@@ -376,26 +460,43 @@ public class FilmFragment extends BaseFragment {
 						has2D = movies.get(i).getHas2D();
 						has3D = movies.get(i).getHas3D();
 						hasImax = movies.get(i).getHasImax();
-						if (has2D && hasImax == true) {
+						if (has2D != null && hasImax != null && has2D
+								&& hasImax == true) {
 							movieProperty = "Imax2D";
-						} else if (has3D && hasImax == true) {
+						} else if (has3D != null && hasImax != null && has3D
+								&& hasImax == true) {
 							movieProperty = "Imax3D";
-						} else if (hasImax == false && has3D == true) {
+						} else if (has3D != null && has3D == true) {
 							movieProperty = "3D";
 						} else {
 							movieProperty = "";
 						}
 						film.setiMax(movieProperty);
-						if (!(movies.get(i).getPublishTime().equals(null))) {
+						if (!(movies.get(i).getPublishTime() == null)) {
 							actionTime = movies.get(i).getPublishTime();
 						}
 						film.setActionTime(actionTime);
-						posterPath = movies.get(i).getPathSquare();
-						if (posterPath != null) {
-							Bitmap filmImage = Util.getBitmap(posterPath);
+
+						if (movies.get(i).getPathSquare() != null) {
+							pathSquare = movies.get(i).getPathSquare();
+							Bitmap filmImage = Util.getBitmap(pathSquare);
 							film.setImgId(filmImage);
+						} else if (!(movies.get(i).getPathVerticalS() == null)) {
+							pathVerticalS = movies.get(i).getPathVerticalS();
+							Bitmap filmImage = Util.getBitmap(pathVerticalS);
+							film.setImgId(filmImage);
+						} else {
+
 						}
+						// else if (!(movies.get(i).getPathHorizonB() == null))
+						// {
+						// pathHorizonB = movies.get(i).getPathHorizonB();
+						// Bitmap filmImage = Util.getBitmap(pathHorizonB);
+						// film.setImgId(filmImage);
+						// }
+
 						mOnFilmInfo.add(film);
+						movieIdsCome.add(movieId);
 						// properties.add(movieProperty);
 						// names.add(movieName);
 						// scores.add(movieScore);

@@ -54,7 +54,7 @@ public class MovieDetailResult {
 		public String pathVerticalS;
 		public int point; // 用户评分
 		public String publishTime;
-		public String score; // 编辑评分
+		public float score; // 编辑评分
 
 		public String getActor() {
 			return actor;
@@ -176,11 +176,11 @@ public class MovieDetailResult {
 			this.publishTime = publishTime;
 		}
 
-		public String getScore() {
+		public float getScore() {
 			return score;
 		}
 
-		public void setScore(String score) {
+		public void setScore(float score) {
 			this.score = score;
 		}
 

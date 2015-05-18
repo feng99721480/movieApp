@@ -9,6 +9,11 @@
 
     <include layout="@layout/buy_ticket_title_panel" />
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp" />
+
     <com.viewpagerindicator.TabPageIndicator
         android:id="@+id/page_indicator"
         android:layout_width="wrap_content"
@@ -16,17 +21,14 @@
         android:background="@color/transparentblue" >
     </com.viewpagerindicator.TabPageIndicator>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp" />
-
-    <include
+    <!--
+         <include
         android:id="@+id/radio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        layout="@layout/cinema_radio" />
+        layout="@layout/cinema_radio" />
+    -->
 
     <ListView
         android:id="@+id/buy_ticket_select_cinema_list"

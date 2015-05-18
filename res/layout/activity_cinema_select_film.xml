@@ -84,7 +84,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@id/film_name" />
+                    android:layout_toRightOf="@id/film_name"
+                    android:textColor="@android:color/white" />
 
                 <TextView
                     android:id="@+id/film_score"
@@ -115,9 +116,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:layout_marginTop="10dp"
-                    android:orientation="horizontal" >
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="10dp" >
 
-                    <RadioButton
+                    <!-- <RadioButton
                         android:id="@+id/cinema1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -129,49 +131,6 @@
                         android:text="今天3月11日"
                         android:textColor="@drawable/cinema_film_date_textcolor" />
 
-                    <RadioButton
-                        android:id="@+id/cinema2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="3dp"
-                        android:background="@drawable/cinema_film_date"
-                        android:button="@null"
-                        android:padding="3dp"
-                        android:text="今天3月11日"
-                        android:textColor="@drawable/cinema_film_date_textcolor" />
-
-                    <RadioButton
-                        android:id="@+id/cinema3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="3dp"
-                        android:background="@drawable/cinema_film_date"
-                        android:button="@null"
-                        android:padding="3dp"
-                        android:text="今天3月11日"
-                        android:textColor="@drawable/cinema_film_date_textcolor" />
-
-                    <RadioButton
-                        android:id="@+id/cinema4"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="3dp"
-                        android:background="@drawable/cinema_film_date"
-                        android:button="@null"
-                        android:padding="3dp"
-                        android:text="今天3月11日"
-                        android:textColor="@drawable/cinema_film_date_textcolor" />
-
-                    <RadioButton
-                        android:id="@+id/cinema5"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="3dp"
-                        android:background="@drawable/cinema_film_date"
-                        android:button="@null"
-                        android:padding="3dp"
-                        android:text="今天3月11日"
-                        android:textColor="@drawable/cinema_film_date_textcolor" />
 
                     <RadioButton
                         android:id="@+id/cinema6"
@@ -182,7 +141,7 @@
                         android:button="@null"
                         android:padding="3dp"
                         android:text="今天3月11日"
-                        android:textColor="@drawable/cinema_film_date_textcolor" />
+                        android:textColor="@drawable/cinema_film_date_textcolor" /> -->
                 </RadioGroup>
             </HorizontalScrollView>
 
