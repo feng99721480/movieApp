@@ -27,4 +27,9 @@
   <!-- submit order -->
   <color name="color_count_down">#FFF3CB</color>
   <color name="color_text_bg">#F5F5F5</color>
+  <!-- 筛选商圈 -->
+  <color name="black">#000000</color>
+    <color name="choose_eara_item_press_color">#f4f4f4</color>
+    <color name="white">#ffffff</color>
+    <color name="no_color">#00000000</color>
 </resources>

@@ -11,6 +11,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.sina.weibo.SinaWeibo;
@@ -24,6 +25,7 @@ public class LoginActivity extends Activity {
 	private Platform sinaWeibo;
 	private String userName;
 	private Intent intent;
+	private TextView registerTv;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,17 @@ public class LoginActivity extends Activity {
 		sinaWeibo = ShareSDK.getPlatform(this, SinaWeibo.NAME);
 	}
 	public void initUI(){
+		registerTv = (TextView) findViewById(R.id.register_tv);
+		//跳转注册界面
+		registerTv.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(LoginActivity.this, RegisterActivity.class);
+				startActivity(intent);
+			}
+		});
 		loginTitleBack = (RelativeLayout)findViewById(R.id.login_title_back);
 		loginTitleBack.setOnClickListener(new OnClickListener(){
 

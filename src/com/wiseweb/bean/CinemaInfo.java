@@ -10,7 +10,7 @@ public class CinemaInfo {
 	private double lowestPrice; //
 	private String cinemaAddress; //
 	private String distance; // 
-
+	private String districtName;
 	/*
 	 * constructor
 	 */
@@ -19,7 +19,7 @@ public class CinemaInfo {
 	}
 	public CinemaInfo(String cinemaName, boolean preferential, boolean imax,
 			boolean seat, boolean groupPurchase, double lowestPrice,
-			String cinemaAddress, String distance) {
+			String cinemaAddress, String distance,String districtName) {
 		super();
 		this.cinemaName = cinemaName;
 		this.preferential = preferential;
@@ -29,6 +29,7 @@ public class CinemaInfo {
 		this.lowestPrice = lowestPrice;
 		this.cinemaAddress = cinemaAddress;
 		this.distance = distance;
+		this.districtName = districtName;
 	}
 
 	// Getters and Setters
@@ -103,14 +104,20 @@ public class CinemaInfo {
 	public void setDistance(String distance) {
 		this.distance = distance;
 	}
-
+	
+	public String getDistrictName() {
+		return districtName;
+	}
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
 	@Override
 	public String toString() {
 		return "CinemaInfo [cinemaName=" + cinemaName + ", preferential="
 				+ preferential + ", imax=" + imax + ", seat=" + seat
 				+ ", groupPurchase=" + groupPurchase + ", lowestPrice="
 				+ lowestPrice + ", cinemaAddress=" + cinemaAddress
-				+ ", distance=" + distance + "]";
+				+ ", distance=" + distance + ",districtName="+districtName+"]";
 	}
 
 	

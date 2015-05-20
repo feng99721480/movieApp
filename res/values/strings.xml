@@ -55,4 +55,7 @@
 
     <!-- 消除警告，可忽略 -->
     <string name="d">图片描述</string>
+    
+    <!-- 注册 -->
+    <string name="register_tv">注册</string>
 </resources>
