@@ -6,10 +6,11 @@
     android:orientation="vertical" >
 
     <include
-        android:id="@+id/register_title"
+        android:id="@+id/register_title_second"
         layout="@layout/register_layout_title" />
 
     <LinearLayout
+        android:id="@+id/linearlayout_one_second"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:orientation="vertical" >
@@ -25,22 +26,60 @@
                 android:layout_weight="1"
                 android:gravity="center" >
 
-                <TextView
-                    android:id="@+id/one_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/tv_red"
-                    android:text="1"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
+                <!--
+                     <ImageView
+                    android:id="@+id/one_img"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/one" />
+                -->
 
                 <TextView
-                    android:id="@+id/pull_number"
+                    android:id="@+id/one_tv_second"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tv_gray"
+                    android:text="1"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/pull_number_second"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
-                    android:layout_toRightOf="@id/one_tv"
+                    android:layout_toRightOf="@id/one_tv_second"
                     android:text="输入手机号"
+                    android:textColor="#999d9c" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center" >
+
+                <!-- <ImageView
+                    android:id="@+id/two_img"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/two" /> -->
+                    <TextView
+                    android:id="@+id/two_tv_second"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/tv_red"
+                    android:text="2"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/pull_code_second"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="2dp"
+                    android:layout_toRightOf="@id/two_tv_second"
+                    android:text="输入验证码"
                     android:textColor="@color/main_color" />
             </RelativeLayout>
 
@@ -50,62 +89,25 @@
                 android:layout_weight="1"
                 android:gravity="center" >
 
-                <!--
-                     <ImageView
-                    android:id="@+id/two_img"
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:src="@drawable/two" />
-                -->
-
-                <TextView
-                    android:id="@+id/two_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/tv_gray"
-                    android:text="2"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/pull_code"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
-                    android:layout_toRightOf="@id/two_tv"
-                    android:text="输入验证码"
-                    android:textColor="#999d9c" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center" >
-
-                <!--
-                     <ImageView
+                <!-- <ImageView
                     android:id="@+id/three_img"
                     android:layout_width="15dp"
                     android:layout_height="15dp"
-                    android:src="@drawable/three" />
-                -->
-
+                    android:src="@drawable/three" /> -->
                 <TextView
-                    android:id="@+id/three_tv"
+                    android:id="@+id/three_tv_second"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/tv_gray"
                     android:text="3"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    android:textColor="@android:color/white" />
 
                 <TextView
-                    android:id="@+id/pull_password"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
-                    android:layout_toRightOf="@id/three_tv"
+                    android:layout_toRightOf="@id/three_tv_second"
                     android:text="设置密码"
                     android:textColor="#999d9c" />
             </RelativeLayout>
@@ -115,6 +117,25 @@
             android:layout_width="match_parent"
             android:layout_height="30dp"
             android:orientation="horizontal" >
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@color/main_color" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@color/main_color" />
+
+            <ImageView
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:src="@drawable/mini_red_dot" />
 
             <View
                 android:layout_width="0dp"
@@ -148,27 +169,19 @@
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
                 android:background="#999d9c" />
-
-            <ImageView
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-                android:src="@drawable/mini_black_point" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_weight="1"
-                android:background="#999d9c" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_weight="1"
-                android:background="#999d9c" />
         </LinearLayout>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/send_code_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:paddingLeft="10dp"
+        android:text="验证码短信已发送到手机"
+        android:textColor="#999d9c"
+         />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -178,16 +191,16 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/phone_number"
+            android:id="@+id/code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
-            android:text="手机号" />
+            android:text="验证码" />
 
         <EditText
-            android:id="@+id/pull_phone_number"
+            android:id="@+id/pull_code"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -195,12 +208,12 @@
             android:layout_marginTop="10dp"
             android:background="@null"
             android:gravity="center_horizontal"
-            android:hint="请输入您的手机号码"
+            android:hint="请输入短信中的验证码"
             android:inputType="phone"
             android:textSize="14sp" />
 
         <ImageView
-            android:id="@+id/delete_phone_number"
+            android:id="@+id/delete_code"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -211,43 +224,15 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/get_code"
+        android:id="@+id/push_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/cashier__button"
-        android:text="获取验证码"
+        android:text="提交验证码"
         android:textColor="@android:color/white" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal" >
-
-        <ImageButton
-            android:id="@+id/imgButton"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/ic_checkbox_photo_selected" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:text="我已阅读并同意"
-            android:textColor="#999d9c" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:text="抠电影用户协议"
-            android:textColor="#f58220" />
-    </LinearLayout>
 
 </LinearLayout>

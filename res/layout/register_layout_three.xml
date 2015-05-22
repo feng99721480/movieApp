@@ -29,7 +29,7 @@
                     android:id="@+id/one_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/tv_red"
+                    android:background="@drawable/tv_gray"
                     android:text="1"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
@@ -41,7 +41,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_toRightOf="@id/one_tv"
                     android:text="输入手机号"
-                    android:textColor="@color/main_color" />
+                    android:textColor="#999d9c" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -95,7 +95,7 @@
                     android:id="@+id/three_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/tv_gray"
+                    android:background="@drawable/tv_red"
                     android:text="3"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
@@ -107,7 +107,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_toRightOf="@id/three_tv"
                     android:text="设置密码"
-                    android:textColor="#999d9c" />
+                    android:textColor="@color/main_color" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -128,38 +128,38 @@
                 android:layout_height="2dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:background="#999d9c" />
+                android:background="@color/main_color" />
 
             <ImageView
                 android:layout_width="6dp"
                 android:layout_height="6dp"
-                android:src="@drawable/mini_black_point" />
+                android:src="@drawable/mini_red_dot" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="2dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:background="#999d9c" />
+                android:background="@color/main_color" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="2dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:background="#999d9c" />
+                android:background="@color/main_color" />
 
             <ImageView
                 android:layout_width="6dp"
                 android:layout_height="6dp"
-                android:src="@drawable/mini_black_point" />
+                android:src="@drawable/mini_red_dot" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="2dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:background="#999d9c" />
+                android:background="@color/main_color" />
 
             <View
                 android:layout_width="0dp"
@@ -174,80 +174,103 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:gravity="center_vertical"
-        android:orientation="horizontal" >
+        android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/phone_number"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/password_tv"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="密       码" />
+
+            <EditText
+                android:id="@+id/pull_password_ok"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@null"
+                android:gravity="center_horizontal"
+                android:hint="密码（6-32个字符）"
+                android:inputType="textPassword"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/delete_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ad_view_close_image_normal"
+                android:visibility="invisible" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:text="手机号" />
+            android:layout_marginRight="10dp"
+            android:background="#999d9c" />
 
-        <EditText
-            android:id="@+id/pull_phone_number"
-            android:layout_width="200dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@null"
-            android:gravity="center_horizontal"
-            android:hint="请输入您的手机号码"
-            android:inputType="phone"
-            android:textSize="14sp" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
 
-        <ImageView
-            android:id="@+id/delete_phone_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/ad_view_close_image_normal"
-            android:visibility="invisible" />
+            <TextView
+                android:id="@+id/sure_password_tv"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:text="确认密码" />
+
+            <EditText
+                android:id="@+id/sure_password"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@null"
+                android:gravity="center_horizontal"
+                android:hint="请再次输入密码"
+                android:inputType="textPassword"
+                android:textSize="14sp" />
+
+            <ImageView
+                android:id="@+id/delete_sure_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/ad_view_close_image_normal"
+                android:visibility="invisible" />
+        </LinearLayout>
     </LinearLayout>
 
     <Button
-        android:id="@+id/get_code"
+        android:id="@+id/register_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/cashier__button"
-        android:text="获取验证码"
+        android:text="注册"
         android:textColor="@android:color/white" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal" >
-
-        <ImageButton
-            android:id="@+id/imgButton"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginLeft="10dp"
-            android:background="@drawable/ic_checkbox_photo_selected" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:text="我已阅读并同意"
-            android:textColor="#999d9c" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:text="抠电影用户协议"
-            android:textColor="#f58220" />
-    </LinearLayout>
 
 </LinearLayout>
