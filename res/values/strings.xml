@@ -58,4 +58,7 @@
     
     <!-- 注册 -->
     <string name="register_tv">注册</string>
+    <!-- 我的账户 -->
+    <string name="my_account">我的账户</string>
+    <string name="modify_username">修改用户名</string>
 </resources>

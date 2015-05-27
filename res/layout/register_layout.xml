@@ -74,7 +74,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_toRightOf="@id/two_tv"
                     android:text="输入验证码"
-                    android:textColor="#999d9c" />
+                    android:textColor="@color/deep_gray" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -107,7 +107,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_toRightOf="@id/three_tv"
                     android:text="设置密码"
-                    android:textColor="#999d9c" />
+                    android:textColor="@color/deep_gray" />
             </RelativeLayout>
         </LinearLayout>
 
@@ -128,7 +128,7 @@
                 android:layout_height="2dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:background="#999d9c" />
+                android:background="@color/deep_gray" />
 
             <ImageView
                 android:layout_width="6dp"
@@ -140,14 +140,14 @@
                 android:layout_height="2dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:background="#999d9c" />
+                android:background="@color/deep_gray" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="2dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:background="#999d9c" />
+                android:background="@color/deep_gray" />
 
             <ImageView
                 android:layout_width="6dp"
@@ -159,14 +159,14 @@
                 android:layout_height="2dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:background="#999d9c" />
+                android:background="@color/deep_gray" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="2dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:background="#999d9c" />
+                android:background="@color/deep_gray" />
         </LinearLayout>
     </LinearLayout>
 

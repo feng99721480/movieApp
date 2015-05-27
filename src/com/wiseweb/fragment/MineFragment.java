@@ -19,6 +19,7 @@ import cn.sharesdk.sina.weibo.SinaWeibo;
 
 import com.wiseweb.activity.LoginActivity;
 import com.wiseweb.activity.MainActivity;
+import com.wiseweb.activity.MyAccountActivity;
 import com.wiseweb.activity.MyCinemaTicketActivity;
 import com.wiseweb.activity.MyFilmActivity;
 import com.wiseweb.constant.Constant;
@@ -27,7 +28,7 @@ import com.wiseweb.movie.R;
 public class MineFragment extends BaseFragment {
 	private MainActivity mMainActivity;
 	private TextView mineName;
-	private String userName;
+	private String nickName;
 	private ImageView mineHeader;
 	private RelativeLayout myTicket;
 	private RelativeLayout mineInfo;
@@ -44,13 +45,13 @@ public class MineFragment extends BaseFragment {
 		myCinemaTicket = (LinearLayout) mineLayout
 				.findViewById(R.id.my_cinema_ticket_layout);
 
-		SharedPreferences s = mMainActivity.getSharedPreferences("user",
+		SharedPreferences s = mMainActivity.getSharedPreferences("userInfo",
 				Context.MODE_PRIVATE);
-		userName = s.getString("userName", "");
-		if (userName.isEmpty() == false) {
-			mineName.setText(userName);
+		nickName = s.getString("nickname", "");
+		if (nickName.isEmpty() == false) {
+			mineName.setText(nickName);
 		} else {
-			mineName.setText("登录");
+			mineName.setText("立即登录");
 		}
 		myCinemaTicket.setOnClickListener(new OnClickListener() {
 
@@ -83,9 +84,15 @@ public class MineFragment extends BaseFragment {
 
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent();
-				intent.setClass(mMainActivity, LoginActivity.class);
-				startActivityForResult(intent, 0);
+				if (mineName.getText().toString().trim().equals("立即登录")) {
+					Intent intent = new Intent();
+					intent.setClass(mMainActivity, LoginActivity.class);
+					startActivityForResult(intent, 0);
+				} else {
+					Intent intent = new Intent();
+					intent.setClass(mMainActivity, MyAccountActivity.class);
+					startActivityForResult(intent, 0);
+				}
 			}
 
 		});
@@ -99,15 +106,20 @@ public class MineFragment extends BaseFragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		switch (requestCode) {
+		switch (resultCode) {
 		case 0:
-			Bundle b = data.getExtras();
-			String name = b.getString("userName");
-			mineName.setText(name);
+			// Bundle b = data.getExtras();
+			// String name = b.getString("userName");
+			String nickname = data.getStringExtra("nickname");
+			mineName.setText(nickname);
 			break;
-		/*
-		 * case 1: mineName.setText("登录"); break;
-		 */
+
+		case 1:
+			System.out.println("走这了吗？？？？？？？？？？？？？");
+			
+			mineName.setText("立即登录");
+			break;
+
 		default:
 			break;
 

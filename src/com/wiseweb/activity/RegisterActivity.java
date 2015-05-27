@@ -1,13 +1,21 @@
 package com.wiseweb.activity;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
+import com.wiseweb.db.UserSQLiteOpenHelper;
 import com.wiseweb.movie.R;
 import com.wiseweb.movie.R.color;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +28,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -37,6 +46,7 @@ public class RegisterActivity extends Activity {
 	private ImageButton imgButton;
 	private boolean flag = false;
 	private Button getCodeBtn;
+	private UserSQLiteOpenHelper helper;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +58,7 @@ public class RegisterActivity extends Activity {
 	}
 
 	private void init() {
-
+		helper = new UserSQLiteOpenHelper(RegisterActivity.this);
 		getCodeBtn = (Button) findViewById(R.id.get_code);
 		// 点击按钮 获取验证码
 		getCodeBtn.setOnClickListener(new OnClickListener() {
@@ -68,7 +78,14 @@ public class RegisterActivity extends Activity {
 					if (!flag) {
 						Toast.makeText(RegisterActivity.this, "正在向服务器请求验证码。。。",
 								0).show();
-
+						//讲用户名存入数据库
+						insert(phoneNumberStr);
+						//讲用户名保存 用于RegisterActivityThree
+						SharedPreferences sp = getSharedPreferences("userInfo", MODE_PRIVATE);
+						Editor editor = sp.edit();
+						editor.putString("username", phoneNumberStr);
+						editor.commit();
+						
 						Intent intent = new Intent();
 						intent.putExtra("phoneNumber", phoneNumberStr);
 						intent.setClass(RegisterActivity.this,
@@ -101,6 +118,7 @@ public class RegisterActivity extends Activity {
 			}
 		});
 		pullPhoneNumber = (EditText) findViewById(R.id.pull_phone_number);
+
 		deletePhoneNumber = (ImageView) findViewById(R.id.delete_phone_number);
 		// 点击图片逐个删除editText里的内容
 		deletePhoneNumber.setOnClickListener(new OnClickListener() {
@@ -139,6 +157,7 @@ public class RegisterActivity extends Activity {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
+
 				isEmpty();
 			}
 
@@ -148,6 +167,29 @@ public class RegisterActivity extends Activity {
 
 			}
 		});
+		//点击输入框显示软键盘
+//		pullPhoneNumber.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				System.out.println("_______________");
+//				pullPhoneNumber.requestFocus();
+//
+//				Timer timer = new Timer();
+//				timer.schedule(new TimerTask() {
+//
+//					@Override
+//					public void run() {
+//						InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//						// imm.toggleSoftInput(0,
+//						// InputMethodManager.HIDE_NOT_ALWAYS);
+////						imm.showSoftInput(pullPhoneNumber,
+////								InputMethodManager.SHOW_FORCED);
+//						imm.showSoftInputFromInputMethod(pullPhoneNumber.getWindowToken(), 0);
+//					}
+//				}, 998);
+//			}
+//		});
 		mRegisterTitleBack = (RelativeLayout) findViewById(R.id.register_title_back);
 		// 点击返回上一个activity
 		mRegisterTitleBack.setOnClickListener(new OnClickListener() {
@@ -182,5 +224,11 @@ public class RegisterActivity extends Activity {
 		} else {
 			deletePhoneNumber.setVisibility(View.VISIBLE);
 		}
+	}
+	//讲用户名存入数据库
+	public void insert(String username){
+		SQLiteDatabase db = helper.getWritableDatabase();
+		db.execSQL("insert into user (username) values (?)", new Object[] {username});
+		db.close();
 	}
 }
