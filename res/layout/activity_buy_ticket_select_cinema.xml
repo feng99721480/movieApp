@@ -9,11 +9,6 @@
 
     <include layout="@layout/buy_ticket_title_panel" />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
-        android:layout_width="wrap_content"
-        android:layout_height="1dp" />
-
     <com.viewpagerindicator.TabPageIndicator
         android:id="@+id/page_indicator"
         android:layout_width="wrap_content"
@@ -21,20 +16,56 @@
         android:background="@color/transparentblue" >
     </com.viewpagerindicator.TabPageIndicator>
 
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp" />
+
+    <RelativeLayout
+        android:id="@+id/relative_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:background="@drawable/boder" >
+
+        <ImageView
+            android:id="@+id/select_unpress_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_cinema_select_unpress" />
+
+        <TextView
+            android:id="@+id/select_unpress_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/select_unpress_img"
+            android:text="筛选" />
+    </RelativeLayout>
+
     <!--
          <include
         android:id="@+id/radio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        layout="@layout/cinema_radio" />
+        layout="@layout/cinema_radio" />
     -->
 
-    <ListView
+    <com.wiseweb.ui.AutoListView
+        android:id="@+id/buy_ticket_select_cinema_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:divider="@color/divider_color"
+        android:dividerHeight="1dip" />
+    <!--
+         <ListView
         android:id="@+id/buy_ticket_select_cinema_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:divider="@color/divider_color"
         android:dividerHeight="1dip" />
+    -->
 
 </LinearLayout>

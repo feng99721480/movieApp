@@ -56,7 +56,7 @@
             android:paddingRight="10dp" />
     </RelativeLayout>
 
-    <RadioGroup
+   <!--  <RadioGroup
         android:id="@+id/cinema_radio"
         android:layout_below="@id/cinema_title"
         android:layout_width="wrap_content"
@@ -103,23 +103,30 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:button="@null" />
-    </RadioGroup>
+    </RadioGroup> -->
     
     <View 
         android:id="@+id/line"
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="#d8d8d8"
-        android:layout_below="@id/cinema_radio"/>
+        android:layout_below="@id/cinema_title"/>
     	
 
-    <ListView
+    <!-- <ListView
         android:id="@+id/listview_cinema"
         android:layout_below="@id/cinema_radio"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@color/divider_color"
         android:dividerHeight="1dip" >
-    </ListView>
+    </ListView> -->
+    <com.wiseweb.ui.AutoListView
+        android:id="@+id/listview_cinema"
+        android:layout_below="@id/line"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:divider="@color/divider_color"
+        android:dividerHeight="1dip" />
 
 </RelativeLayout>
