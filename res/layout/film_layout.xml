@@ -84,23 +84,22 @@
             android:src="@drawable/ic_search_white" />
     </RelativeLayout>
 
-    <ListView
+    <!-- <ListView
         android:id="@+id/listview_film"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/film_title"
         android:divider="@color/divider_color"
-        android:dividerHeight="1dip" />
+        android:dividerHeight="1dip" /> -->
 
-    <!--
-    <com.wiseweb.ui.XListView
+    
+    <com.wiseweb.ui.AutoListView
         android:id="@+id/listview_film"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/film_title"
         android:divider="@color/divider_color"
         android:dividerHeight="1dip" >
-    </com.wiseweb.ui.XListView>
-    -->
+    </com.wiseweb.ui.AutoListView>
 
 </RelativeLayout>

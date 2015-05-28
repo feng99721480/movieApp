@@ -59,20 +59,20 @@ public class CityListAdapter extends ArrayAdapter<String> {
 					.findViewById(R.id.city_list_item_text);
 			textView.setText(getItem(position));
 		}
-		if (position == 1) {
-			SharedPreferences locationPreferences = mContext
-					.getSharedPreferences("locationCity", Context.MODE_PRIVATE);
-			String locationCity = locationPreferences.getString("locationCity",
-					null);
-			TextView textView = (TextView) view
-					.findViewById(R.id.city_list_item_text);
-
-			if (locationCity == null) {
-				textView.setText("定位中...");
-			} else {
-				textView.setText(locationCity);
-			}
-		}
+//		if (position == 1) {
+//			SharedPreferences locationPreferences = mContext
+//					.getSharedPreferences("locationCity", Context.MODE_PRIVATE);
+//			String locationCity = locationPreferences.getString("locationCity",
+//					null);
+//			TextView textView = (TextView) view
+//					.findViewById(R.id.city_list_item_text);
+//
+//			if (locationCity == null) {
+//				textView.setText("定位中...");
+//			} else {
+//				textView.setText(locationCity);
+//			}
+//		}
 		return view;
 	}
 }

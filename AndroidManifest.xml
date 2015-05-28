@@ -126,17 +126,15 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:permission="android.permission.BAIDU_LOCATION_SERVICE"
-            android:process=":remote" >
+            android:process=":remote" />
+        <service
+            android:name="com.wiseweb.service.LocationService"
+            android:enabled="true" >
             <intent-filter>
-                <action android:name="com.baidu.location.service_v2.4" >
-                </action>
+                <action android:name="com.wiseweb.movie.MSG_ACTION" />
             </intent-filter>
-        </service>
-        <service android:name="com.wiseweb.service.LocationService" >
-        </service>
-
-        <!--
+		</service>
+            <!--
         <service
             android:name="com.wiseweb.service.CheckUpdate"
             android:enabled="true" >
@@ -145,10 +143,10 @@
                 </action>
             </intent-filter>
         </service>
-        -->
+            -->
 
 
-        <!-- <uses-library android:name="android.test.runner" /> -->
+            <!-- <uses-library android:name="android.test.runner" /> -->
     </application>
     <!-- 记住这个一要放在application外面，不然会出现配置错误 信息 -->
     <!--

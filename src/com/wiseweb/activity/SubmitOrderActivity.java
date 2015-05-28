@@ -1,7 +1,5 @@
 package com.wiseweb.activity;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -16,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.wiseweb.movie.R;
+import com.wiseweb.util.Util;
 
 public class SubmitOrderActivity extends Activity implements OnClickListener {
 	private TextView countDownText;
@@ -112,7 +111,7 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 		case R.id.order_pay_btn:
 			// 判断是否是合法的手机号
 			String s = orderPhone.getText().toString();
-			Boolean isMobileNum = isMobileNum(s);
+			Boolean isMobileNum = Util.isMobileNum(s);
 			if (isMobileNum == true) { // 手机号合法
 				// 转去支付界面
 				Intent intent = new Intent();
@@ -126,15 +125,5 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 			}
 			break;
 		}
-	}
-
-	/**
-	 * 判断是否是合法的手机号
-	 */
-	public static boolean isMobileNum(String mobiles) {
-		Pattern p = Pattern
-				.compile("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$");
-		Matcher m = p.matcher(mobiles);
-		return m.matches();
 	}
 }

@@ -81,7 +81,12 @@ public class FilmDetailsActivity extends Activity {
 				Context.MODE_PRIVATE);
 		name = movieConfigure.getString("movieName", null);
 		movieId = movieConfigure.getLong("movieId", 0);
-		movieOnCome = movieConfigure.getBoolean("movieOnCome", true);
+		movieOnCome = movieConfigure.getBoolean("movieOnCome", true);   //通过这个标识决定买票按钮是否显示
+		//如果是从即将上映电影列表调过来的，购票按钮将不会显示
+		if(movieOnCome == false){
+			buyTicket.setVisibility(View.GONE);
+		}
+		//获得电影详情
 		Thread movieDetailThread = new Thread(runnable);
 		movieDetailThread.start();
 		try {
@@ -262,7 +267,7 @@ public class FilmDetailsActivity extends Activity {
 					int length = 0;
 					String actionTime = "无数据";
 					String posterPath = "";
-					if (!(movie.getMovieName().equals(null))) {
+					if (movie.getMovieName()!=null) {
 						name = movie.getMovieName();
 					}
 					movieName.setText(name);
@@ -274,7 +279,8 @@ public class FilmDetailsActivity extends Activity {
 						filmRatingText.setText(score + "分");
 						filmRatingBar.setRating(score / 2);
 					} else {
-						filmRatingText.setText("多少人想看");
+//						filmRatingText.setText("多少人想看");
+						filmRatingText.setText("");
 						filmRatingBar.setVisibility(View.GONE);
 					}
 

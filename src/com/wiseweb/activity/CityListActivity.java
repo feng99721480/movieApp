@@ -15,9 +15,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -47,17 +51,20 @@ import com.wiseweb.json.CityResult;
 import com.wiseweb.listener.MyLocationListenner;
 import com.wiseweb.movie.R;
 import com.wiseweb.service.LocationService;
+import com.wiseweb.util.DatabaseHelper;
 import com.wiseweb.util.GetEnc;
+import com.wiseweb.util.Util;
 
 //import com.baidu.location.BDNotifyListener;//假如用到位置提醒功能，需要import该类
 
 public class CityListActivity extends Activity {
+	public static final int STORAGE_COMPLETION = 0;
 	private CityListAdapter adapter = null;
 	private ListView cityList = null;
-	private ArrayList<String> list = new ArrayList<String>();
-	private ArrayList<String> listTag = new ArrayList<String>();
-	private ArrayList<String> listId = new ArrayList<String>();
-	private ArrayList<String> listName = new ArrayList<String>();
+	private ArrayList<String> list = new ArrayList<String>(); // 所有的数据
+	private ArrayList<String> listTag = new ArrayList<String>(); // tag数据
+	private ArrayList<String> listId = new ArrayList<String>(); // 城市id
+	private ArrayList<String> listName = new ArrayList<String>(); // 城市名称
 	private SharedPreferences cityPreferences;
 	// private SharedPreferences mflag; //
 	private View citySearchBack;
@@ -71,140 +78,39 @@ public class CityListActivity extends Activity {
 	private String cityId = null;
 	private CitySearchAdapter searchAdapter;
 	private ImageView cityImageSearch;
+	private DatabaseHelper db;
+	private SQLiteDatabase dbRead, dbWrite;
+	private Cursor cursor;
+	private String oldFirst = "";
+	private String newFirst = "";
+	private String oldText = "";
+	private String newText = "";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.city_list_activity);
-		// positionCityName = (TextView) findViewById(R.id.position_city_name);
+		Intent intent = new Intent("com.wiseweb.movie.MSG_ACTION");
+		startService(intent);
+		initView();
+		
+		db = new DatabaseHelper(this);
+		dbRead = db.getReadableDatabase();
+		dbWrite = db.getWritableDatabase();
+		initListView();
+//		list.add("定位的城市");
+//		list.add("定位中");
+//		listTag.add("定位的城市");
 
-/*		mLocationClient = new LocationClient(this); // 声明LocationClient类
-
-		// 设置参数
-		LocationClientOption option = new LocationClientOption();
-		option.setOpenGps(true); // 是否打开GPS
-		option.setCoorType("bd09ll"); //
-		// 设置返回值的坐标类型。
-//		option.setPriority(LocationClientOption.NetWorkFirst); // 设置定位优先级
-		option.setProdName("LocationDemo"); //
-		// 设置产品线名称。强烈建议您使用自定义的产品线名称，方便我们以后为您提供更高效准确的定位服务。
-		option.setScanSpan(5000); // 设置定时定位的时间间隔。单位毫秒
-		option.setAddrType("detail");
-
-		mLocationClient.setLocOption(option);
-
-		mLocationClient.start();
-
-		mLocationClient.requestLocation();
-
-		// option.setIsNeedAddress(true);
-
-		// option.disableCache(true);
-		// 禁止启用缓存定位
-		// option.setPoiNumber(5);
-		// 最多返回POI个数
-		// option.setPoiDistance(1000);
-		// poi查询距离 //
-//		option.setPoiExtraInfo(true); // 是否需要POI的电话和地址等详细信息 //
-		mLocationClient.setLocOption(option);
-		mLocationClient.registerLocationListener(new BDLocationListener() {
-			public void onReceiveLocation(BDLocation location) {
-				LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-				Location mlocation = locationManager
-						.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-				if (location == null)
-					return;
-				StringBuffer sb = new StringBuffer(256);
-				sb.append("time : ");
-				sb.append(location.getTime());
-				sb.append("\nerror code : ");
-				sb.append(location.getLocType());
-				sb.append("\nlatitude : ");
-				sb.append(location.getLatitude());
-				sb.append("\nlontitude : ");
-				sb.append(location.getLongitude());
-				sb.append("\nradius : ");
-				sb.append(location.getRadius());
-
-				sb.append("\naddr : ");
-				sb.append(location.getAddrStr());
-
-				if (location.getLocType() == BDLocation.TypeGpsLocation) {
-					sb.append("\nspeed : ");
-					sb.append(location.getSpeed());
-					sb.append("\nsatellite : ");
-					sb.append(location.getSatelliteNumber());
-				} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-					sb.append("\naddr : ");
-					sb.append(location.getAddrStr());
-
-				}
-				Geocoder geocoder = new Geocoder(CityListActivity.this, Locale
-						.getDefault());
-				List<Address> addresses = null;
-				try {
-					addresses = geocoder.getFromLocation(
-							location.getLatitude(), location.getLongitude(), 1);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if (addresses != null && addresses.size() > 0) {
-					Address address = addresses.get(0);
-					city = address.getLocality(); //
-					System.out.println("city:" + city);
-					positionCityName.setText(city);
-				}
-
-			}
-
-			public void onReceivePoi(BDLocation poiLocation) {
-				if (poiLocation == null) {
-					return;
-				}
-				StringBuffer sb = new StringBuffer(256);
-				sb.append("Poi time : ");
-				sb.append(poiLocation.getTime());
-				sb.append("\nerror code : ");
-				sb.append(poiLocation.getLocType());
-				sb.append("\nlatitude : ");
-				sb.append(poiLocation.getLatitude());
-				sb.append("\nlontitude : ");
-				sb.append(poiLocation.getLongitude());
-				sb.append("\nradius : ");
-				sb.append(poiLocation.getRadius());
-				if (poiLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
-					sb.append("\naddr : ");
-					sb.append(poiLocation.getAddrStr());
-				}
-//				if (poiLocation.hasPoi()) {
-//					sb.append("\nPoi:");
-//					sb.append(poiLocation.getPoi());
-//				} else {
-//					sb.append("noPoi information");
-//				}
-				Log.d("Poi_sb", sb.toString());
-			}
-		}); // 注册监听函数  */
-
-		// setData();
-		cityList = (ListView) findViewById(R.id.city_list);
-		list.add("定位的城市");
-		list.add("定位中");
-		listTag.add("定位的城市");
-		new Thread(runnable).start();
-
-//		adapter = new CityListAdapter(this, list, listTag);
-//		cityList = (ListView) findViewById(R.id.city_list);
-//		cityList.setAdapter(adapter);
+		// adapter = new CityListAdapter(this, list, listTag);
+		// cityList = (ListView) findViewById(R.id.city_list);
+		// cityList.setAdapter(adapter);
 
 		searchAdapter = new CitySearchAdapter(CityListActivity.this);
-//		searchAdapter.setDataSource(list);
-//		cityList.setAdapter(searchAdapter);
-		cityImageSearch = (ImageView) findViewById(R.id.city_image_search);
+		// searchAdapter.setDataSource(list);
+		// cityList.setAdapter(searchAdapter);
 
-		citySearchBack = (View) findViewById(R.id.city_search_title);
 		citySearchBack.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -213,8 +119,6 @@ public class CityListActivity extends Activity {
 			}
 
 		});
-		citySearchEdit = (EditText) findViewById(R.id.city_etSearch);
-		citySearchDelText = (ImageView) findViewById(R.id.city_ivDeleteText);
 
 		citySearchEdit.addTextChangedListener(new TextWatcher() {
 
@@ -244,6 +148,7 @@ public class CityListActivity extends Activity {
 			}
 
 		});
+		// 搜索框中的删除按钮点击事件
 		citySearchDelText.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -260,7 +165,8 @@ public class CityListActivity extends Activity {
 			public void onClick(View arg0) {
 				if (citySearchEdit.getText().toString() != null) {
 
-					searchAdapter.setDataSource(list);
+					searchAdapter.setDataSource(Util
+							.removeDuplicateFromArrayList(list));
 					cityList.setAdapter(searchAdapter);
 					searchAdapter.searchData(citySearchEdit.getText()
 							.toString());
@@ -298,14 +204,10 @@ public class CityListActivity extends Activity {
 				}
 				editor.putString("cityId", cityId);
 				editor.commit();
-				// String str = cityPreferences.getString("city", null);
-				// System.out.println(str);
-
-				// Intent intent = new Intent();
-				// intent.setClass(CityListActivity.this, MainActivity.class);
-				// startActivity(intent);
+				
 				Intent data = new Intent();
 				data.putExtra("city", city);
+				data.putExtra("cityId", cityId);
 				// 请求代码可以自己设置，这里设置成2
 				setResult(2, data);
 				finish();
@@ -319,17 +221,23 @@ public class CityListActivity extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			Bundle data = msg.getData();
-			// String val = data.getString("response");
-			// System.out.println("请求结果-->" + val);
-			list = data.getStringArrayList("list");
-			listTag = data.getStringArrayList("listTag");
-			adapter = new CityListAdapter(CityListActivity.this, list, listTag);
-
-			cityList.setAdapter(adapter);
+			switch(msg.what){
+			case STORAGE_COMPLETION:
+				initListView();
+				break;
+			}
+				
+//			Bundle data = msg.getData();
+//			list = data.getStringArrayList("list");
+//			listTag = data.getStringArrayList("listTag");
+//			adapter = new CityListAdapter(CityListActivity.this, list, listTag);
+//
+//			cityList.setAdapter(adapter);
 		}
 	};
-
+   /**
+    * 请求数据
+    */
 	Runnable runnable = new Runnable() {
 
 		@Override
@@ -343,11 +251,12 @@ public class CityListActivity extends Activity {
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
 
-			HttpGet getMethod = new HttpGet(Constant.baseURL  + "action="
+			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
 					+ params.get("action") + "&" + "enc=" + enc + "&"
 					+ "time_stamp=" + time_stamp);
-			System.out.println("cities---------"+Constant.baseURL + "action=" + params.get("action")
-					+ "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			System.out.println("cities---------" + Constant.baseURL + "action="
+					+ params.get("action") + "&" + "enc=" + enc + "&"
+					+ "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 
 			String result;
@@ -364,28 +273,38 @@ public class CityListActivity extends Activity {
 					List<City> citys = cityResult.getCitis();
 					for (int i = 0; i < citys.size(); i++) {
 						List<Group> group = citys.get(i).getGroup();
-						System.out.println("group.size()" + group.size());
+						String tab = citys.get(i).getTab();
 						String text = citys.get(i).getText();
-						listTag.add(text);
-						list.add(text);
-//						listId.add(text);
+						// listTag.add(text);
+						// list.add(text);
+						// listId.add(text);
 						for (int j = 0; j < group.size(); j++) {
 							List<CityList> cityList = group.get(j).getList();
 							for (int m = 0; m < cityList.size(); m++) {
 								String cityName = cityList.get(m).getCityName();
-								list.add(cityName);
-								listName.add(cityName);
 								String cityId = cityList.get(m).getCityId();
-								listId.add(cityId);
+								String first = cityList.get(m).getFirst();
+								ContentValues cv = new ContentValues();
+								cv.put("cityId", cityId);
+								cv.put("cityName", cityName);
+								cv.put("first", first);
+								cv.put("tab", tab);
+								cv.put("text", text);
+								cursor = dbRead.query("cityInfo", new String[]{"cityId"}, "cityId=?", new String[]{cityId}, null, null, null);
+								if(cursor.moveToFirst() == false){  //查询结果，无此数据，插入
+									dbWrite.insert("cityInfo", null, cv);
+								}
+															
 							}
 						}
 					}
 					Message msg = new Message();
-					Bundle data = new Bundle();
-					data.putStringArrayList("list", list);
-					data.putStringArrayList("listTag", listTag);
-					data.putStringArrayList("listId", listId);
-					msg.setData(data);
+					msg.what = STORAGE_COMPLETION;
+//					Bundle data = new Bundle();
+//					data.putStringArrayList("list", list);
+//					data.putStringArrayList("listTag", listTag);
+//					data.putStringArrayList("listId", listId);
+//					msg.setData(data);
 					handler.sendMessage(msg);
 
 				}
@@ -397,50 +316,88 @@ public class CityListActivity extends Activity {
 		}
 	};
 
-	
-	
+	/**
+	 * 初始化UI
+	 */
+	public void initView() {
+		cityList = (ListView) findViewById(R.id.city_list);
+		cityImageSearch = (ImageView) findViewById(R.id.city_image_search);
+		citySearchBack = (View) findViewById(R.id.city_search_title);
+		citySearchEdit = (EditText) findViewById(R.id.city_etSearch);
+		citySearchDelText = (ImageView) findViewById(R.id.city_ivDeleteText);
+	}
 
-	public void setData() {
-		list.add("定位的城市");
-		listTag.add("定位的城市");
-		list.add("定位中");
-		list.add("热门城市");
-		listTag.add("热门城市");
-		list.add("上海");
-		list.add("北京");
-		list.add("广州");
-		list.add("深圳");
-		list.add("武汉");
-		list.add("天津");
-		list.add("西安");
-		list.add("南京");
-		list.add("杭州");
-		list.add("成都");
-		list.add("重庆");
-		list.add("A");
-		listTag.add("A");
-		list.add("阿坝");
-		list.add("阿克苏");
-		list.add("阿拉善盟");
-		list.add("安吉");
-		list.add("安康");
-		list.add("安庆");
-		list.add("B");
-		listTag.add("B");
-		list.add("白城");
-		list.add("百色");
-		list.add("白山");
-		list.add("白银");
-		list.add("保定");
-		list.add("C");
-		listTag.add("C");
-		list.add("沧州");
-		list.add("长春");
-		list.add("常德");
-		list.add("昌吉");
-		list.add("长乐");
-		list.add("长沙");
-		list.add("长治");
-		list.add("常州");
+	/**
+	 * 展示数据
+	 */
+	private void initListView() {
+		cursor = dbRead.query("cityInfo", null, null, null, null, null, null);
+		if (cursor.moveToFirst() == false) {
+			Thread t = new Thread(runnable);
+			t.start();
+//			try {
+//				t.join();
+//				initListView();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+		} else {
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+					.moveToNext()) {
+				String name = cursor.getString(cursor
+						.getColumnIndex("cityName"));
+				String id = cursor.getString(cursor.getColumnIndex("cityId"));
+				String first = cursor.getString(cursor.getColumnIndex("first"));
+				String tab = cursor.getString(cursor.getColumnIndex("first"));
+				String text = cursor.getString(cursor.getColumnIndex("text"));
+				newText = text;
+
+				if (text.equals("热门城市") && !newText.equals(oldText)) {
+					list.add(text);
+					listTag.add(text);
+					oldText = newText;
+					list.add(name);
+					listName.add(name);
+					listId.add(id);
+				} else if (newText.equals(oldText) && newText.equals("热门城市")) {
+					list.add(name);
+					listName.add(name);
+					listId.add(id);
+				} else {
+					newFirst = first;
+					// 前后的first值不相同的话 加一个tag值
+					if (!oldFirst.equals(newFirst)) {
+						list.add(newFirst);
+						listTag.add(newFirst);
+						oldFirst = newFirst;
+					}
+					list.add(name);
+					listName.add(name);
+					listId.add(id);
+
+				}
+				adapter = new CityListAdapter(CityListActivity.this, list,
+						listTag);
+				cityList.setAdapter(adapter);
+
+			}
+		}
+	}
+
+	/**
+	 * 广播接收器，接受定位服务广播的消息
+	 */
+	public class MsgReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// 拿到定位的城市名称，更新UI
+			String name = intent.getStringExtra("name");
+			list.set(1, name);
+			adapter = new CityListAdapter(CityListActivity.this, list, listTag);
+			cityList.setAdapter(adapter);
+		}
+
 	}
 }

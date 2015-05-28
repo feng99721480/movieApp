@@ -33,9 +33,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:text="2015-03-12 周四  17:55"
-                android:textSize="15sp"
-                android:layout_marginTop="5dp" />
+                android:textSize="15sp" />
         </LinearLayout>
 
         <Button
@@ -44,17 +44,47 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:background="@drawable/btn_submit_order"
-            android:text="提交订单"
-            android:textSize="15sp"
-            android:textColor="@android:color/white" />
+            android:text="@string/submit_order"
+            android:textColor="@android:color/white"
+            android:textSize="15sp" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/phone_num"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/film_title"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_text_bg"
+            android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
+            android:paddingLeft="@dimen/submit_order_paddingleft"
+            android:paddingTop="@dimen/submit_order_paddingtop"
+            android:text="@string/ticket_phone_text"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/order_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:inputType="number"
+            android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
+            android:paddingLeft="@dimen/submit_order_paddingleft"
+            android:paddingTop="@dimen/submit_order_paddingtop" />
+    </LinearLayout>
 
     <include
         android:id="@+id/divider"
-        android:layout_below="@id/film_title"
-        layout="@layout/divider_view"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/phone_num"
+        layout="@layout/divider_view" />
 
     <LinearLayout
         android:id="@+id/caption"
@@ -69,25 +99,25 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/seat_avail"
-            android:text="可选" 
             android:layout_marginRight="5dp"
-            android:textColor="@android:color/darker_gray"/>
+            android:drawableLeft="@drawable/seat_avail"
+            android:text="可选"
+            android:textColor="@android:color/darker_gray" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
             android:drawableLeft="@drawable/seat_select"
             android:text="已选"
-            android:layout_marginRight="5dp" 
-            android:textColor="@android:color/darker_gray"/>
+            android:textColor="@android:color/darker_gray" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
             android:drawableLeft="@drawable/seat_unavail"
             android:text="已售"
-            android:layout_marginRight="5dp"
             android:textColor="@android:color/darker_gray" />
 
         <TextView
@@ -97,54 +127,60 @@
             android:text="情侣座"
             android:textColor="@android:color/darker_gray" />
     </LinearLayout>
-    <RelativeLayout 
+
+    <RelativeLayout
         android:id="@+id/seats"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/caption"
-        android:visibility="gone">
-        <TextView 
+        android:visibility="gone" >
+
+        <TextView
             android:id="@+id/seat1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_margin="10dp"/>
-        <TextView 
+            android:layout_margin="10dp" />
+
+        <TextView
             android:id="@+id/seat2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/seat1"
-             android:layout_margin="10dp"/>
-        <TextView 
+            android:layout_margin="10dp"
+            android:layout_toRightOf="@id/seat1" />
+
+        <TextView
             android:id="@+id/seat3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/seat2"
-            android:layout_margin="10dp"/>
-        <TextView 
+            android:layout_margin="10dp"
+            android:layout_toRightOf="@id/seat2" />
+
+        <TextView
             android:id="@+id/seat4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/seat3"
-            android:layout_margin="10dp"/>
-        <TextView 
+            android:layout_margin="10dp"
+            android:layout_toRightOf="@id/seat3" />
+
+        <TextView
             android:id="@+id/total_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_margin="10dp"
-            android:textColor="@color/main_color"/>
+            android:textColor="@color/main_color" />
     </RelativeLayout>
-	<TextView 
-	    android:id="@+id/screen"
-	    android:layout_width="fill_parent"
-	    android:layout_height="30dp"
-	    android:background="@color/main_color"
-	    android:text="屏幕"
-	    android:textColor="@android:color/white"
-	    android:layout_below="@id/seats"
-	    android:gravity="center"/>
-   
+
+    <TextView
+        android:id="@+id/screen"
+        android:layout_width="fill_parent"
+        android:layout_height="30dp"
+        android:layout_below="@id/seats"
+        android:background="@color/main_color"
+        android:gravity="center"
+        android:text="屏幕"
+        android:textColor="@android:color/white" />
 
     <com.wiseweb.seatchoose.view.SSView
         android:id="@+id/mSSView"
@@ -152,15 +188,15 @@
         android:layout_height="250dp"
         android:layout_below="@id/screen"
         android:layout_marginTop="20dp" />
-    
+
     <com.wiseweb.seatchoose.view.SSThumView
-            android:id="@+id/ss_ssthumview"
-            android:layout_width="@dimen/ss_seat_thum_size_w"
-            android:layout_height="200dp"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="5.0dip"
-            android:layout_marginLeft="5.0dip"
-            android:layout_marginTop="5.0dip" 
-            android:layout_below="@id/mSSView"/>
+        android:id="@+id/ss_ssthumview"
+        android:layout_width="@dimen/ss_seat_thum_size_w"
+        android:layout_height="200dp"
+        android:layout_below="@id/mSSView"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="5.0dip"
+        android:layout_marginLeft="5.0dip"
+        android:layout_marginTop="5.0dip" />
 
 </RelativeLayout>

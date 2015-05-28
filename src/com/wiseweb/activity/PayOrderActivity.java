@@ -42,9 +42,9 @@ public class PayOrderActivity extends Activity implements OnItemClickListener,
 		setContentView(R.layout.activity_pay_order);
 		initView();
 		sv.smoothScrollTo(0, 0);
-		ways.add("银行卡支付");
+//		ways.add("银行卡支付");
 		ways.add("支付宝支付");
-		ways.add("微信支付");
+//		ways.add("微信支付");
 		setData();
 		payAdapter = new PayWayListAdapter(payWayList, this);
 		payWayListview.setAdapter(payAdapter);

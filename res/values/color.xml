@@ -35,5 +35,12 @@
     <color name="vpi__bright_foreground_disabled_holo_light">#ffb2b2b2</color>
     <color name="vpi__bright_foreground_inverse_holo_dark">@color/vpi__bright_foreground_holo_light</color>
     <color name="vpi__bright_foreground_inverse_holo_light">@color/vpi__bright_foreground_holo_dark</color>
+    <!-- 筛选商圈 -->
+    <color name="black">#000000</color>
+    <color name="choose_eara_item_press_color">#f4f4f4</color>
+    <color name="white">#ffffff</color>
+    <color name="no_color">#00000000</color>
+    <!-- 注册 -->
+    <color name="deep_gray">#999d9c</color>
 
 </resources>

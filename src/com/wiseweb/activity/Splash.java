@@ -26,7 +26,6 @@ public class Splash extends Activity {
         //注意该方法要再setContentView方法之前实现 
 		SDKInitializer.initialize(getApplicationContext());  
 		setContentView(R.layout.splash1);
-		// /////////
 		//
 		// startService(new Intent(this, CheckUpdate.class));
 		// //////

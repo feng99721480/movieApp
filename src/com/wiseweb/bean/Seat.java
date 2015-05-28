@@ -8,8 +8,8 @@ public class Seat
   /**可用标签*/
   private String seatState = null;
   /**情侣座*/
-  private String loveInd = null;
-
+  private boolean loveInd ;
+  
   
   public void setN(String paramString)
   {
@@ -18,7 +18,7 @@ public class Seat
 
   public boolean a()
   {
-    return ("1".equals(this.loveInd)) || ("2".equals(this.loveInd));
+    return ((true==this.loveInd) || false == this.loveInd);
   }
 
   public String getN()
@@ -36,12 +36,12 @@ public class Seat
     return this.seatState;
   }
 
-  public void setLoveInd(String paramString)
+  public void setLoveInd(boolean paramString)
   {
     this.loveInd = paramString;
   }
 
-  public String getLoveInd()
+  public Boolean getLoveInd()
   {
     return this.loveInd;
   }

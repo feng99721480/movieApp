@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -19,8 +20,8 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.Menu;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,12 +37,9 @@ import android.widget.Toast;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
-import com.google.gson.Gson;
 import com.wiseweb.bean.Seat;
 import com.wiseweb.bean.SeatInfo;
 import com.wiseweb.constant.Constant;
-import com.wiseweb.json.MovieDetailResult;
-import com.wiseweb.json.MovieDetailResult.MovieDetail;
 import com.wiseweb.movie.R;
 import com.wiseweb.seatchoose.view.OnSeatClickListener;
 import com.wiseweb.seatchoose.view.SSThumView;
@@ -66,6 +65,8 @@ public class SelectSeatBuyTicketActivity extends Activity {
 	private String d;
 	private double price;
 	private Button submitOrder;
+	private EditText orderPhone;
+	private String mobile;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +75,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 		setContentView(R.layout.activity_select_seat_buy_ticket);
 		// 初始化shareSDK
 		// ShareSDK.initSDK(this);
-		init();
+		initView();
 	}
 
 	@Override
@@ -85,7 +86,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 
 	}
 
-	private void init() {
+	private void initView() {
 		mSSView = (SSView) this.findViewById(R.id.mSSView);
 		mSSThumView = (SSThumView) this.findViewById(R.id.ss_ssthumview);
 		// mSSView.setXOffset(20);
@@ -220,15 +221,41 @@ public class SelectSeatBuyTicketActivity extends Activity {
 			}
 
 		});
+		orderPhone = (EditText) findViewById(R.id.order_phone);
+
 		submitOrder = (Button) findViewById(R.id.submit_order);
 		submitOrder.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setClass(SelectSeatBuyTicketActivity.this,
-						SubmitOrderActivity.class);
-				SelectSeatBuyTicketActivity.this.startActivity(intent);
+				// 验证手机号的合法性
+				if (submitOrder.getText() == null) {// 手机号没输入
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							SelectSeatBuyTicketActivity.this);
+					builder.setTitle("提示");
+					builder.setMessage("请输入手机号");
+					builder.setPositiveButton("确定", null);
+					builder.show();
+				} else if (Util.isMobileNum(submitOrder.getText().toString()) == false) { // 输入的手机号不合法
+					new AlertDialog.Builder(SelectSeatBuyTicketActivity.this)
+							.setTitle("提示").setMessage("请输入正确的电话号码")
+							.setPositiveButton("确定", null).show();
+				} else {// 合法手机号
+					mobile = submitOrder.getText().toString();
+					// 创建订单
+					Thread t = new Thread(createOrderRunnable);
+					t.start();
+					try {
+						t.join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					Intent intent = new Intent();
+					intent.setClass(SelectSeatBuyTicketActivity.this,
+							SubmitOrderActivity.class);
+					SelectSeatBuyTicketActivity.this.startActivity(intent);
+				}
+
 			}
 
 		});
@@ -279,6 +306,79 @@ public class SelectSeatBuyTicketActivity extends Activity {
 		return true;
 	}
 
+	/**
+	 * 创建订单
+	 */
+	Runnable createOrderRunnable = new Runnable() {
+
+		@Override
+		public void run() {
+			HashMap<String, Object> params = new HashMap<String, Object>();
+			long time_stamp = Util.getTimeStamp();
+			params.put("time_stamp", time_stamp);
+			params.put("action", "order_add"); // 接口名称
+			params.put("mobile", mobile); // 手机号
+			String seatNo = "";
+			params.put("seat_no", seatNo); // 座位id
+			long planId = 0;
+			params.put("plan_id", planId); // 场次id
+			String enc = GetEnc.getEnc(params, "wiseMovie");
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpGet getMethod = new HttpGet(Constant.baseURL
+					+ "action=order_add" + "&" + "seat_no=" + seatNo + "&"
+					+ "plan_id=" + planId + "&" + "mobile=" + mobile + "&"
+					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			System.out.println(Constant.baseURL
+					+ "action=order_add" + "&" + "seat_no=" + seatNo + "&"
+					+ "plan_id=" + planId + "&" + "mobile=" + mobile + "&"
+					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			HttpResponse httpResponse;
+			String result;
+			try {
+				httpResponse = httpClient.execute(getMethod);
+				if (httpResponse.getStatusLine().getStatusCode() == 200) {
+					HttpEntity entity = httpResponse.getEntity();
+					result = EntityUtils.toString(entity, "utf-8");
+					// 获得信息
+					System.out.println("result----" + result);
+					JSONArray orders = new JSONObject(result).getJSONArray("orders");
+					for(int i=0;i<orders.length();i++){
+						JSONObject order = orders.getJSONObject(i);
+						String orderId = order.getString("orderId");
+//						String activityId = order.getString("activityId");
+						String agio = order.getString("agio");//还需支付的金额
+						String ticketNo = order.getString("ticketNo"); 
+						String mobile = order.getString("mobile");     //手机号
+						String money = order.getString("money");  //订单总额
+						int orderStatus = order.getInt("orderStatus");//订单状态
+						String seatInfo = order.getString("seatInfo");
+						String seatno = order.getString("seatNo");
+						JSONObject plan = order.getJSONObject("plan");
+						JSONObject cinema = plan.getJSONObject("cinema");
+						int platform = cinema.getInt("platform");        
+						String featureTime = plan.getString("featureTime");
+						String hallName = plan.getString("hallName");  //厅名
+						//汇总需要的信息带到确认订单activity
+						
+					}
+					
+					
+					
+				}
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+
+		}
+
+	};
+
 	Runnable runnable = new Runnable() {
 
 		@Override
@@ -313,8 +413,26 @@ public class SelectSeatBuyTicketActivity extends Activity {
 					JSONArray seatsArray = new JSONObject(result)
 							.getJSONArray("seats");
 					for (int i = 0; i < seatsArray.length(); i++) {
-						//取得第i个座位
-						JSONObject jsonObj = (JSONObject) seatsArray.getJSONObject(i);
+						// 取得第i个座位
+						JSONObject seat = (JSONObject) seatsArray
+								.getJSONObject(i);
+
+						Seat mSeat = new Seat();
+
+						int seatType = seat.getInt("seatType"); // 0:普通座 1：情侣座
+						int graphCol = seat.getInt("graphCol"); // 相对于屏幕的列号，第四象限坐标系x
+						int graphRow = seat.getInt("graphRow"); // 相对于屏幕的排号，第四象限坐标系y
+						String hallId = seat.getString("hallId"); // 厅ID
+						String seatCol = seat.getString("seatCol"); // 影厅规定的列号，用于打印影票
+						String seatNo = seat.getString("seatNo"); // 座位号
+						String seatPieceName = seat.getString("seatPieceName");
+						String seatPieceNo = seat.getString("seatPieceNo");
+						String seatRow = seat.getString("seatRow");
+						String seatState = seat.getString("seatState");
+
+						if (seatType == 1) { // 普通座
+							Boolean isLoverL = seat.getBoolean("isLoverL");
+						}
 
 					}
 
@@ -331,7 +449,6 @@ public class SelectSeatBuyTicketActivity extends Activity {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-
 		}
 
 	};
@@ -359,7 +476,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 
 				}
 				mSeat.setSeatState("");
-				mSeat.setLoveInd("0");
+				mSeat.setLoveInd(true);
 				mSeatList.add(mSeat);
 			}
 			mSeatInfo.setDesc(String.valueOf(i + 1));

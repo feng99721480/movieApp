@@ -85,10 +85,11 @@ public class CinemaSelectFilmActivity extends Activity {
 	private String cinemaAddress;
 	private TextView cinemaNameText, cinemaBriefName, cinemaBriefAddress;
 	private List<String> dates = new ArrayList<String>();
-//	private String selectedDate = "2015-05-15";
+	// private String selectedDate = "2015-05-15";
 	private String selectedDate = "";
 	private int isCount = 0;
 	private SharedPreferences movieConfigure;
+
 	// private List<>
 
 	@Override
@@ -110,6 +111,7 @@ public class CinemaSelectFilmActivity extends Activity {
 		 * cinemaBriefAddress.setText(cinemaAddress);
 		 */
 		selectedDate = Util.getSystemYearMonthDay();
+		System.out.println("selectedDate" + selectedDate);
 		Thread cinemaMovies = new Thread(runnable);
 		cinemaMovies.start();
 		try {
@@ -128,7 +130,7 @@ public class CinemaSelectFilmActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-		
+
 		cinemaFilmList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -152,7 +154,7 @@ public class CinemaSelectFilmActivity extends Activity {
 						selectedDate = tempButton.getText().toString();
 						Thread moviePlan = new Thread(planRunnable);
 						moviePlan.start();
-//						cinemaFilmDate.removeAllViews();
+						// cinemaFilmDate.removeAllViews();
 						try {
 							moviePlan.join();
 						} catch (InterruptedException e) {
@@ -202,19 +204,22 @@ public class CinemaSelectFilmActivity extends Activity {
 				break;
 			case MOVIE_PLAN:
 
-				if(isCount==0){
+				if (isCount == 0) {
 					for (int i = 0; i < dates.size(); i++) {
 						RadioButton tempButton = new RadioButton(
 								CinemaSelectFilmActivity.this);
 						tempButton
 								.setBackgroundResource(R.drawable.cinema_film_date);
 						tempButton.setPadding(20, 15, 20, 15);
-//						LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);  // , 1选写
-//						lp.setMargins(10, 20, 30, 40); 
-//						
-//						tempButton.setLayoutParams(lp);
-//						tempButton.requestLayout();
-						tempButton.setButtonDrawable(android.R.color.transparent);
+						// LinearLayout.LayoutParams lp = new
+						// LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						// LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1选写
+						// lp.setMargins(10, 20, 30, 40);
+						//
+						// tempButton.setLayoutParams(lp);
+						// tempButton.requestLayout();
+						tempButton
+								.setButtonDrawable(android.R.color.transparent);
 						tempButton.setText(dates.get(i).toString());
 						tempButton.setTag(i);
 						tempButton
@@ -265,14 +270,14 @@ public class CinemaSelectFilmActivity extends Activity {
 			// params.put("city_id", cityId);
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "cinemaId=" + cinemaId + "&"
-					+ "start=" + start + "&" + "count=" + count + "enc=" + enc
-					+ "&" + "time_stamp=" + time_stamp);
-			System.out.println(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "cinemaId=" + cinemaId + "&"
-					+ "start=" + start + "&" + "count=" + count + "enc=" + enc
-					+ "&" + "time_stamp=" + time_stamp);
+			HttpGet getMethod = new HttpGet(Constant.baseURL
+					+ "action=cinema_movies" + "&" + "cinemaId=" + cinemaId
+					+ "&" + "start=" + start + "&" + "count=" + count + "enc="
+					+ enc + "&" + "time_stamp=" + time_stamp);
+			System.out.println(Constant.baseURL
+					+ "action=cinema_movies" + "&" + "cinemaId=" + cinemaId
+					+ "&" + "start=" + start + "&" + "count=" + count + "enc="
+					+ enc + "&" + "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 			String result;
 			try {
@@ -310,6 +315,7 @@ public class CinemaSelectFilmActivity extends Activity {
 
 						} else {
 							movieScore = "无评分";
+							
 						}
 						scores.add(movieScore);
 
@@ -390,7 +396,7 @@ public class CinemaSelectFilmActivity extends Activity {
 			// count 数量
 			int count = 10;
 			params.put("count", count);
-			
+
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
@@ -422,9 +428,9 @@ public class CinemaSelectFilmActivity extends Activity {
 						String dateStr = (String) datesArray.getString(i);
 						dates.add(dateStr);
 					}
-					
+
 					List<MoviePlan> plans = new ArrayList<MoviePlan>();
-					selectedDate ="2015-05-21";
+					// selectedDate ="2015-05-21";
 					JSONArray plansArray = object.getJSONObject("plans")
 							.getJSONArray(selectedDate);
 					// 获得相应的数据 再展示出来
@@ -459,7 +465,7 @@ public class CinemaSelectFilmActivity extends Activity {
 							price = aPlan.getString("price");
 						}
 						moviePlan.setPrice(price);
-						
+
 						moviePlans.add(moviePlan);
 					}
 
@@ -517,7 +523,7 @@ public class CinemaSelectFilmActivity extends Activity {
 				dates.clear();
 				isCount = 0;
 				cinemaFilmDate.removeAllViews();
-				
+
 				hListViewAdapter.setSelectIndex(position);
 
 				hListViewAdapter.notifyDataSetChanged();
@@ -540,8 +546,9 @@ public class CinemaSelectFilmActivity extends Activity {
 				filmScore.setText(scores.get(position) + "分");
 				// 得到点击的那个movieId,然后根据应用此movieId查询出来排期
 				movieId = movieIds.get(position);
-				//保存信息
-				movieConfigure = getSharedPreferences("movieConfigure", Context.MODE_PRIVATE);
+				// 保存信息
+				movieConfigure = getSharedPreferences("movieConfigure",
+						Context.MODE_PRIVATE);
 				SharedPreferences.Editor editor = movieConfigure.edit();
 				editor.putLong("movieId", movieId);
 				editor.putString("movieName", names.get(position));
