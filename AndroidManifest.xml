@@ -97,6 +97,10 @@
         </activity>
         <activity android:name="com.wiseweb.activity.ModifyUsernameActivity">
         </activity>
+        <activity android:name="com.wiseweb.activity.ModifyPasswordActivity">
+        </activity>
+        <activity android:name="com.wiseweb.activity.BindPhoneNumberActivity">
+        </activity>
 
         <!-- 一键分享的 -->
         <activity

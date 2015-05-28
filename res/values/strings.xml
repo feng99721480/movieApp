@@ -61,4 +61,6 @@
     <!-- 我的账户 -->
     <string name="my_account">我的账户</string>
     <string name="modify_username">修改用户名</string>
+    <string name="modify_password">修改密码</string>
+    <string name="bind_phone_number">绑定手机号</string>
 </resources>

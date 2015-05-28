@@ -13,6 +13,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -41,6 +42,8 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 	private RelativeLayout headLayout;
 	private RelativeLayout usernameLayout;
 	private RelativeLayout genderLayout;
+	private RelativeLayout PwdLayout;
+	private RelativeLayout bindLayout;
 	private TextView genderTv;
 	private TextView nicknameTv;
 	private SharedPreferences sp;
@@ -51,7 +54,10 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 	private UserSQLiteOpenHelper helper;
 	private Cursor cursor;
 	private Bitmap headerBmp ;
-
+	private String gender;
+	private String username;
+	private TextView bindTv;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -59,21 +65,31 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.my_account);
 		sp = getSharedPreferences("userInfo", MODE_PRIVATE);
 		nickname = sp.getString("nickname", "");
+		gender = sp.getString("gender", "未知");
+		username = sp.getString("username", "");
 		
 		init();
-		if(getHeader(nickname).getHeight() == 0){
+		
+		if(getHeader(nickname) == null){
+			headImg.setImageResource(R.drawable.ic_userpic);
 			System.out.println("数据库里没有头像数据。。。。。。。。。。。。。");
 		}else{
-			System.out.println("有头像数据啦！！！！！！！！！！！！！！！！");
 			headerBmp = getHeader(nickname);
 			headImg.setImageBitmap(headerBmp);
+			System.out.println("有头像数据啦！！！！！！！！！！！！！！！！");
 		}
 		
 	}
 
 	private void init() {
+		
+		bindLayout = (RelativeLayout) findViewById(R.id.my_account_bind_layout);
+		bindTv = (TextView) findViewById(R.id.my_account_bind_tv);
+		bindTv.setText(username);
+		PwdLayout = (RelativeLayout) findViewById(R.id.my_account_pwd_layout);
 		helper = new UserSQLiteOpenHelper(MyAccountActivity.this);
 		genderTv = (TextView) findViewById(R.id.my_account_gender_tv);
+		genderTv.setText(gender);
 		genderLayout = (RelativeLayout) findViewById(R.id.my_account_gender_layout);
 		nicknameTv = (TextView) findViewById(R.id.my_account_username_tv);
 		nicknameTv.setText(nickname);
@@ -88,24 +104,26 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 		logout.setOnClickListener(this);
 		usernameLayout.setOnClickListener(this);
 		genderLayout.setOnClickListener(this);
+		PwdLayout.setOnClickListener(this);
+		bindLayout.setOnClickListener(this);
 
 	}
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.my_account_title_back:
+		case R.id.my_account_title_back://点击返回
 			Intent intent = new Intent();
 			intent.putExtra("nickname", nickname);
 			setResult(0, intent);
 			finish();
 			break;
-		case R.id.logout:
+		case R.id.logout://点击退出登录
 			System.out.println("__________");
 			setResult(1, null);
 			finish();
 			break;
-		case R.id.my_account_head_layout:
+		case R.id.my_account_head_layout://修改头像
 			AlertDialog.Builder headBuilder = new Builder(
 					MyAccountActivity.this);
 			headBuilder.setTitle("设置头像");
@@ -137,6 +155,7 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 										if (null != fileDel)
 											if (fileDel.toString().endsWith(
 													"_temp.jpg")) {
+												//"_temp.jpg"
 												fileDel.delete();
 											}
 									}
@@ -145,6 +164,7 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 										+ "/"
 										+ System.currentTimeMillis()
 										+ "_temp.jpg");
+								//"_temp.jpg"
 								intent.putExtra(MediaStore.EXTRA_OUTPUT,
 										Uri.fromFile(file));
 								// intent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -165,13 +185,13 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 					});
 			headBuilder.show();// 一定要show出来
 			break;
-		case R.id.my_account_username_layout:
+		case R.id.my_account_username_layout://跳转修改昵称界面
 			Intent intent1 = new Intent();
 			intent1.setClass(MyAccountActivity.this,
 					ModifyUsernameActivity.class);
 			startActivityForResult(intent1, 0);
 			break;
-		case R.id.my_account_gender_layout:
+		case R.id.my_account_gender_layout://修改性别
 			AlertDialog.Builder genderBuilder = new Builder(
 					MyAccountActivity.this);
 			genderBuilder.setTitle("设置头像");
@@ -183,10 +203,26 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 						public void onClick(DialogInterface dialog, int which) {
 
 							genderTv.setText(genderItems[which]);
+							//将性别保存到shared 
+							Editor editor = sp.edit();
+							editor.putString("gender", genderItems[which]);
+							editor.commit();
+							//将性别保存到数据库
+							updateGender(genderItems[which]);
 							dialog.dismiss();
 						}
 					});
 			genderBuilder.show();
+			break;
+		case R.id.my_account_pwd_layout://跳转修改密码界面
+			Intent intent2 = new Intent();
+			intent2.setClass(MyAccountActivity.this, ModifyPasswordActivity.class);
+			startActivity(intent2);
+			break;
+		case R.id.my_account_bind_layout://跳转修改手机号界面
+			Intent intent3 = new Intent();
+			intent3.setClass(MyAccountActivity.this, BindPhoneNumberActivity.class);
+			startActivityForResult(intent3, 0);
 			break;
 		}
 	}
@@ -233,6 +269,12 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 			nickname = data.getStringExtra("nickname");
 			nicknameTv.setText(nickname);
 		}
+		// 改变username
+				if (resultCode == 5) {
+					System.out.println("改变username了吗？？？？？？？？？？？？？？？？？？？");
+					username = data.getStringExtra("username");
+					bindTv.setText(username);
+				}
 
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -243,6 +285,7 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 	 * @param uri
 	 */
 	public void startPhotoZoom(Uri uri) {
+		System.out.println("执行这个方法了吗");
 		Intent intent = new Intent("com.android.camera.action.CROP");
 		intent.setDataAndType(uri, IMAGE_UNSPECIFIED);
 		intent.putExtra("crop", "true");
@@ -254,6 +297,7 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 		intent.putExtra("outputY", 64);
 		intent.putExtra("return-data", true);
 		startActivityForResult(intent, PHOTO_RESOULT);
+		
 	}
 	//将图片以字节形式存入数据库
 	public void updateHeader(byte[] head){
@@ -265,14 +309,26 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 	}
 	//获取存入数据库的图片
 	public Bitmap getHeader(String nicknameStr){
+		System.out.println("111111111"+nicknameStr);
 		SQLiteDatabase db = helper.getReadableDatabase();
 		cursor = db.query("user", new String[]{"header"}, "nickname=?", new String[]{nicknameStr}, null, null, null);
 		Bitmap bitmap = null;
 		while(cursor.moveToNext()){
-			byte[] img = cursor.getBlob(cursor.getColumnIndex("header"));
-			bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
+			if(cursor.getBlob(cursor.getColumnIndex("header"))!=null){
+				byte[] img = cursor.getBlob(cursor.getColumnIndex("header"));
+				bitmap = BitmapFactory.decodeByteArray(img, 0, img.length);
+				return bitmap;
+			}
 		}
 		db.close();
-		return bitmap;
+		return null;
+	}
+	//将性别存入数据库
+	public void updateGender(String genderStr){
+		SQLiteDatabase db = helper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put("gender", genderStr);
+		db.update("user", values, "nickname=?", new String[]{nickname});
+		db.close();
 	}
 }
