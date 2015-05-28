@@ -57,7 +57,6 @@
         <activity android:name="com.wiseweb.activity.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -121,10 +120,12 @@
         </activity>
         <activity android:name="com.wiseweb.activity.ViewCinemaLocationActivity" />
         <activity android:name="com.wiseweb.activity.SubmitOrderActivity" >
-            
         </activity>
         <activity android:name="com.wiseweb.activity.MyCinemaTicketActivity" />
         <activity android:name="com.wiseweb.activity.PayOrderActivity" />
+        <activity android:name="com.wiseweb.activity.PayActivity" >
+            
+        </activity>
         <!-- 百度定位 -->
         <service
             android:name="com.baidu.location.f"

@@ -290,7 +290,7 @@ public class CityListActivity extends Activity {
 								cv.put("first", first);
 								cv.put("tab", tab);
 								cv.put("text", text);
-								cursor = dbRead.query("cityInfo", new String[]{"cityId"}, "cityId=?", new String[]{cityId}, null, null, null);
+								cursor = dbRead.query("cityInfo", new String[]{"cityId","text"}, "cityId=? and text=?", new String[]{cityId,text}, null, null, null);
 								if(cursor.moveToFirst() == false){  //查询结果，无此数据，插入
 									dbWrite.insert("cityInfo", null, cv);
 								}

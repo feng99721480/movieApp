@@ -2,7 +2,7 @@
 <resources>
 
     
-    <string name="action_settings">Settings</string><string name="app_name">movie</string>
+    <string name="action_settings">Settings</string><string name="app_name">虎啸影视</string>
     <string name="hello_world">Hello world!</string>
     <!-- film -->
     <string name="releasing">正在上映</string>

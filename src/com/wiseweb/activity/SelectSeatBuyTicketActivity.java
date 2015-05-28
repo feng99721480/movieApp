@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
 import android.view.View;
@@ -42,6 +43,7 @@ import cn.sharesdk.onekeyshare.OnekeyShare;
 import com.wiseweb.bean.Seat;
 import com.wiseweb.bean.SeatInfo;
 import com.wiseweb.constant.Constant;
+import com.wiseweb.fragment.adapter.UpComingFilmAdapter;
 import com.wiseweb.movie.R;
 import com.wiseweb.seatchoose.view.OnSeatClickListener;
 import com.wiseweb.seatchoose.view.SSThumView;
@@ -53,6 +55,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 
 	private static final int ROW = 8;
 	private static final int EACH_ROW_COUNT = 20;
+	private static final int ORDER_ADD = 0;
 	private SSView mSSView;
 	private SSThumView mSSThumView;
 	private ArrayList<SeatInfo> list_seatInfos = new ArrayList<SeatInfo>();
@@ -253,10 +256,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					Intent intent = new Intent();
-					intent.setClass(SelectSeatBuyTicketActivity.this,
-							SubmitOrderActivity.class);
-					SelectSeatBuyTicketActivity.this.startActivity(intent);
+
 				}
 
 			}
@@ -309,6 +309,19 @@ public class SelectSeatBuyTicketActivity extends Activity {
 		return true;
 	}
 
+	private Handler handler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+
+			switch (msg.what) {
+			case ORDER_ADD:
+
+				break;
+
+			}
+		}
+	};
 	/**
 	 * 创建订单
 	 */
@@ -320,66 +333,80 @@ public class SelectSeatBuyTicketActivity extends Activity {
 			long time_stamp = Util.getTimeStamp();
 			params.put("time_stamp", time_stamp);
 			params.put("action", "order_add"); // 接口名称
-			mobile = "18703812035";
+			mobile = "13641094940";
 			params.put("mobile", mobile); // 手机号
-			String seatNo = "02011121,02011120";
+			String seatNo = "11059401-15-0000000000000001-1-02,2C11059401-15-0000000000000001-1-01";
 			params.put("seat_no", seatNo); // 座位id
-			long planId = 35284626;
+			long planId = 35346105;
 			params.put("plan_id", planId); // 场次id
+			int sendMessage = 0;
+			params.put("send_message", sendMessage);
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet getMethod = new HttpGet(Constant.baseURL
-					+ "action=order_add" + "&" + "seat_no=" + seatNo + "&"
-					+ "plan_id=" + planId + "&" + "mobile=" + mobile + "&"
-					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
-			System.out.println(Constant.baseURL
-					+ "action=order_add" + "&" + "seat_no=" + seatNo + "&"
-					+ "plan_id=" + planId + "&" + "mobile=" + mobile + "&"
-					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			// HttpGet getMethod = new HttpGet(Constant.baseURL
+			// + "action=order_add" + "&" + "seat_no=" + seatNo + "&"
+			// + "plan_id=" + planId + "&" + "mobile=" + mobile + "&"
+			// + "send_message=" + sendMessage + "&" + "enc=" + enc + "&"
+			// + "time_stamp=" + time_stamp);
+			// System.out.println(Constant.baseURL + "action=order_add" + "&"
+			// + "seat_no=" + seatNo + "&" + "plan_id=" + planId + "&"
+			// + "mobile=" + mobile + "&" + "send_message=" + sendMessage
+			// + "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			HttpGet getMethod = new HttpGet(
+					"http://test.komovie.cn/api_movie/service?action=order_add&mobile=13641094940&seat_no=11059401-15-0000000000000001-1-01%2C11059401-15-0000000000000001-1-02&plan_id=35346118&send_message=0&time_stamp=1432802355579&enc=8ee345d93d774e999bc6346fc9f78a72");
 			HttpResponse httpResponse;
 			String result;
 			try {
 				httpResponse = httpClient.execute(getMethod);
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
+
 					HttpEntity entity = httpResponse.getEntity();
 					result = EntityUtils.toString(entity, "utf-8");
 					// 获得信息
 					System.out.println("result----" + result);
-					JSONArray orders = new JSONObject(result).getJSONArray("orders");
-					for(int i=0;i<orders.length();i++){
-						JSONObject order = orders.getJSONObject(i);
-						String orderId = order.getString("orderId");
-//						String activityId = order.getString("activityId");
-						String agio = order.getString("agio");//还需支付的金额
-						String ticketNo = order.getString("ticketNo"); 
-						String mobile = order.getString("mobile");     //手机号
-						String money = order.getString("money");  //订单总额
-						int orderStatus = order.getInt("orderStatus");//订单状态
-						String seatInfo = order.getString("seatInfo");
-						String seatno = order.getString("seatNo");
-						JSONObject plan = order.getJSONObject("plan");
-						JSONObject cinema = plan.getJSONObject("cinema");
-						String cinemaName = cinema.getString("cinemaName"); //影院名称
-//						int platform = cinema.getInt("platform");        
-						String featureTime = plan.getString("featureTime");
-						String hallName = plan.getString("hallName");  //厅名
-						JSONObject movie = plan.getJSONObject("movie");
-						String movieName = movie.getString("movieName");//电影名称
-						
-						//汇总需要的信息带到确认订单activity
-						orderPreferences = getSharedPreferences("orderConfig",Context.MODE_PRIVATE);
-						SharedPreferences.Editor e = orderPreferences.edit();
-						e.putString("orderId", orderId);
-						e.putString("agio", agio);
-						e.putString("mobile", mobile);
-						e.putString("money", money);      //订单总额
-						e.putString("featureTime", featureTime);
-						e.putString("cinemaName", cinemaName);
-						e.putString("movieName", movieName);
-						e.putString("hallName", hallName);
-						e.putString("seatNo",seatno);
-						e.commit();
-					}
+
+					JSONObject order = new JSONObject(result)
+							.getJSONObject("order");
+					String orderId = order.getString("orderId");
+					// String activityId = order.getString("activityId");
+					String agio = order.getString("agio");// 还需支付的金额
+					String ticketNo = order.getString("ticketNo");
+					String mobile = order.getString("mobile"); // 手机号
+					String money = order.getString("money"); // 订单总额
+					int orderStatus = order.getInt("orderStatus");// 订单状态
+					String seatInfo = order.getString("seatInfo");
+					String seatno = order.getString("seatNo");
+					JSONObject plan = order.getJSONObject("plan");
+					JSONObject cinema = plan.getJSONObject("cinema");
+					String cinemaName = cinema.getString("cinemaName"); // 影院名称
+					// int platform = cinema.getInt("platform");
+					String featureTime = plan.getString("featureTime");
+					String hallName = plan.getString("hallName"); // 厅名
+					JSONObject movie = plan.getJSONObject("movie");
+					String movieName = movie.getString("movieName");// 电影名称
+
+					// 汇总需要的信息带到确认订单activity
+					orderPreferences = getSharedPreferences("orderConfig",
+							Context.MODE_PRIVATE);
+					SharedPreferences.Editor e = orderPreferences.edit();
+					e.putString("orderId", orderId);
+					e.putString("agio", agio);
+					e.putString("mobile", mobile);
+					e.putString("money", money); // 订单总额
+					e.putString("featureTime", featureTime);
+					e.putString("cinemaName", cinemaName);
+					e.putString("movieName", movieName);
+					e.putString("hallName", hallName);
+					e.putString("seatNo", seatno);
+					e.commit();
+
+					Message msg = new Message();
+					// Bundle data = new Bundle();
+					msg.what = ORDER_ADD;
+					handler.sendMessage(msg);
+
+				} else {
+					System.out.println("lalalaalalalalala");
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -390,7 +417,10 @@ public class SelectSeatBuyTicketActivity extends Activity {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-
+			Intent intent = new Intent();
+			intent.setClass(SelectSeatBuyTicketActivity.this,
+					SubmitOrderActivity.class);
+			SelectSeatBuyTicketActivity.this.startActivity(intent);
 		}
 
 	};

@@ -78,7 +78,7 @@ public class UpComingFilmAdapter extends BaseAdapter {
 			holder.imageView.setImageBitmap(mListFilmBean.get(position)
 					.getImgId());
 		} else {
-			holder.imageView.setImageResource(R.drawable.default_img720);
+			holder.imageView.setImageResource(R.drawable.default_img);
 		}
 		
 		holder.nameFilm.setText(mListFilmBean.get(position).getFilmName());

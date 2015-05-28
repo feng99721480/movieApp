@@ -113,47 +113,22 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 				Context.MODE_PRIVATE);
 		cityId = cityPreferences.getString("cityId", null);
 		cityName = cityPreferences.getString("city", null);
-		// if (cityId == null || cityName == null) {
-		// AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
-		// builder.setTitle("选择城市");
-		// builder.setMessage("请先选择城市");
-		// builder.setPositiveButton("确定", new DialogInterface.OnClickListener()
-		// {
-		//
-		// @Override
-		// public void onClick(DialogInterface dialog, int whichButton) {
-		// // TODO Auto-generated method stub
-		// Intent intent = new Intent();
-		// intent.setClass(mMainActivity, CityListActivity.class);
-		// startActivityForResult(intent, 1);
-		// }
-		// });
-		// builder.show();
-		//
-		// }
-		if (cityId == null || cityName == null) {
-			Intent intent = new Intent();
-			intent.setClass(mMainActivity, CityListActivity.class);
-			startActivityForResult(intent, 1);
-		}
-		// SharedPreferences.Editor editor = cityPreferences.edit();
-		// editor.putString("city", "北京");
-		// editor.putString("cityId", "36");
-		// editor.commit();
-
 		city.setText(cityPreferences.getString("city", null));
 
-		// mListView = (ListView) filmLayout.findViewById(R.id.listview_film);
-		mListView = (AutoListView) filmLayout.findViewById(R.id.listview_film);
+		// mListView = (ListView)
+		// filmLayout.findViewById(R.id.listview_film);
+		mListView = (AutoListView) filmLayout
+				.findViewById(R.id.listview_film);
 		mListView.setOnRefreshListener(this);
 		mListView.setOnLoadListener(this);
 
 		radioGroup = (RadioGroup) filmLayout
 				.findViewById(R.id.film_title_group);
-		releasing = (RadioButton) filmLayout.findViewById(R.id.releasingFilm); // 正在上映
+		releasing = (RadioButton) filmLayout
+				.findViewById(R.id.releasingFilm); // 正在上映
 		onReleasing = (RadioButton) filmLayout
 				.findViewById(R.id.onreleasingFilm);// 即将上映
-		initListView();
+//		initListView();
 		filmSearch = (ImageView) filmLayout.findViewById(R.id.film_search);
 		filmSearch.setOnClickListener(new OnClickListener() {
 
@@ -180,16 +155,7 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 				startActivityForResult(intent, 1);
 			}
 		});
-
-		// Thread filmOnThread = new Thread(runnable);
-		// filmOnThread.start();
-		// try {
-		// filmOnThread.join();
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		// mListView.setAdapter(mFilmAdapter);
-		initListView();
+		
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -206,16 +172,19 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 				SharedPreferences.Editor editor = movieConfigure.edit();
 				String movieName;
 				// 看是从正在上映还是从即将上映跳过去的
-				if (radioGroup.getCheckedRadioButtonId() == releasing.getId()) {
-					
+				if (radioGroup.getCheckedRadioButtonId() == releasing
+						.getId()) {
+
 					movieName = mFilmInfo.get(position - 1).getFilmName(); // 在这里使用autoListView,点击第一条的时候，position的值为1
 					editor.putString("movieName", movieName);
 					editor.putLong("movieId", movieIdsOn.get(position - 1)); // 电影id
 					editor.putBoolean("movieOnCome", true); // 正在上映还是即将上映电影标识
 				} else {
-					movieName = mComeFilmInfo.get(position-1).getFilmName();
+					movieName = mComeFilmInfo.get(position - 1)
+							.getFilmName();
 					editor.putString("movieName", movieName);
-					editor.putLong("movieId", movieIdsCome.get(position - 1));
+					editor.putLong("movieId",
+							movieIdsCome.get(position - 1));
 					editor.putBoolean("movieOnCome", false);
 				}
 				editor.commit();
@@ -225,49 +194,79 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 			}
 
 		});
-		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		radioGroup
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-			@Override
-			public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-				// 即将上映
-				if (checkedId == onReleasing.getId()) {
-//					Thread onReleasing = new Thread(onReleasingRunnable);
-//					onReleasing.start();
-//					try {
-//						onReleasing.join();
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
-					// onLoad();
-					initListView();
+					@Override
+					public void onCheckedChanged(RadioGroup radioGroup,
+							int checkedId) {
+						// 即将上映
+						if (checkedId == onReleasing.getId()) {
+							// Thread onReleasing = new
+							// Thread(onReleasingRunnable);
+							// onReleasing.start();
+							// try {
+							// onReleasing.join();
+							// } catch (InterruptedException e) {
+							// e.printStackTrace();
+							// }
+							// onLoad();
+							initListView();
 
-				} else if (checkedId == releasing.getId()) {
-					// mFilmInfo.clear();
-					if (mFilmInfo != null) {
-						mFilmAdapter = new FilmAdapter(mFilmInfo, mMainActivity);
-						mListView.setAdapter(mFilmAdapter);
+						} else if (checkedId == releasing.getId()) {
+							// mFilmInfo.clear();
+							if (mFilmInfo != null) {
+								mFilmAdapter = new FilmAdapter(mFilmInfo,
+										mMainActivity);
+								mListView.setAdapter(mFilmAdapter);
 
-					} else {
-//						Thread releasing = new Thread(runnable);
-//						releasing.start();
-//						try {
-//							releasing.join();
-//						} catch (InterruptedException e) {
-//							e.printStackTrace();
-//						}
-						initListView();
-						// mFilmAdapter = new FilmAdapter(mFilmInfo,
-						// mMainActivity);
-						// mListView.setAdapter(mFilmAdapter);
+							} else {
+								// Thread releasing = new Thread(runnable);
+								// releasing.start();
+								// try {
+								// releasing.join();
+								// } catch (InterruptedException e) {
+								// e.printStackTrace();
+								// }
+								initListView();
+								// mFilmAdapter = new FilmAdapter(mFilmInfo,
+								// mMainActivity);
+								// mListView.setAdapter(mFilmAdapter);
 
+							}
+							// mFilmAdapter.notifyDataSetChanged();
+
+						}
 					}
-					// mFilmAdapter.notifyDataSetChanged();
 
-				}
-			}
+				});
 
-		});
+		
 
+		if (cityId == null || cityName == null) {
+			AlertDialog.Builder builder = new AlertDialog.Builder(mMainActivity);
+			builder.setTitle("选择城市");
+			builder.setMessage("请先选择城市");
+			builder.setPositiveButton("确定",
+					new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							// TODO Auto-generated method stub
+							Intent intent = new Intent();
+							intent.setClass(mMainActivity,
+									CityListActivity.class);
+							startActivityForResult(intent, 1);
+						}
+					});
+			builder.show();
+			// Intent intent = new Intent();
+			// intent.setClass(mMainActivity, CityListActivity.class);
+			// startActivityForResult(intent, 1);
+		} else {
+			initListView();
+		}
 		return filmLayout;
 	}
 
@@ -327,10 +326,10 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 				mListView.onLoadComplete();
 				upComingFilmAdapter = new UpComingFilmAdapter(mComeFilmInfo,
 						mMainActivity);
-//				mListView.setAdapter(upComingFilmAdapter);
-//				upComingFilmAdapter.notifyDataSetChanged();
+				// mListView.setAdapter(upComingFilmAdapter);
+				// upComingFilmAdapter.notifyDataSetChanged();
 				initListView();
-				
+
 				Bundle b = msg.getData();
 				mListView.setResultSize(b.getInt("newCount"));
 				break;
@@ -349,7 +348,7 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 			movieIdsOn = new ArrayList<Long>();
 			HashMap<String, Object> params = new HashMap<String, Object>();
 			params.put("action", "movie_on");
-			
+
 			long time_stamp = Util.getTimeStamp();
 			params.put("time_stamp", time_stamp + "");
 			SharedPreferences s = mMainActivity.getSharedPreferences("city",
@@ -466,11 +465,11 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 						cv.put("actor", movies.get(i).getActor());
 						cv.put("country", movies.get(i).getCountry());
 						cv.put("director", movies.get(i).getDirector()); // 导演
-//						cv.put("posterPath", posterPath);
-//						cv.put("pathVerticalS", pathVerticalS);
-//						cv.put("pathVerticalS", pathVerticalS);
-//						cv.put("pathSquare", pathSquare);
-//						cv.put("pathHorizonB", pathHorizonB);
+						// cv.put("posterPath", posterPath);
+						// cv.put("pathVerticalS", pathVerticalS);
+						// cv.put("pathVerticalS", pathVerticalS);
+						// cv.put("pathSquare", pathSquare);
+						// cv.put("pathHorizonB", pathHorizonB);
 						cv.put("movieImg", image);
 						cv.put("cityId", cityId);
 						cursor = dbRead.query("movieOnInfo", new String[] {
@@ -480,9 +479,10 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 								null);
 						if (cursor.moveToFirst() == false) { // 无此数据 插入之
 							dbWrite.insert("movieOnInfo", null, cv);
-						}else{ //有数据更新之
-							dbWrite.update("movieOnInfo", cv, "movieId=? and cityId=?", new String[] {
-										movieId + "", cityId });
+						} else { // 有数据更新之
+							dbWrite.update("movieOnInfo", cv,
+									"movieId=? and cityId=?", new String[] {
+											movieId + "", cityId });
 						}
 					}
 					Message msg = new Message();
@@ -602,7 +602,7 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 							film.setImgId(filmImage);
 							image = Util.imgToByteArray(filmImage);
 						}
-						
+
 						// else if (!(movies.get(i).getPathHorizonB() == null))
 						// {
 						// pathHorizonB = movies.get(i).getPathHorizonB();
@@ -633,8 +633,8 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 						cv.put("director", movies.get(i).getDirector()); // 导演
 						cv.put("hot", movies.get(i).getHot());
 						// cv.put("posterPath", posterPath);
-//						cv.put("pathVerticalS", pathVerticalS);
-//						cv.put("pathSquare", pathSquare);
+						// cv.put("pathVerticalS", pathVerticalS);
+						// cv.put("pathSquare", pathSquare);
 						cv.put("movieImg", image);
 						// cv.put("pathHorizonB", pathHorizonB);
 						cursor = dbRead
@@ -644,9 +644,9 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 												+ "" }, null, null, null);
 						if (cursor.moveToFirst() == false) { // 无此数据 插入之
 							dbWrite.insert("movieComingInfo", null, cv);
-						}else{
-							dbWrite.update("movieComingInfo", cv, "movieId=?", new String[] { movieId
-												+ "" });
+						} else {
+							dbWrite.update("movieComingInfo", cv, "movieId=?",
+									new String[] { movieId + "" });
 						}
 					}
 					Message msg = new Message();
@@ -688,9 +688,10 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 		case AutoListView.REFRESH:
 			// start = 0;
 			if (radioGroup.getCheckedRadioButtonId() == releasing.getId()) {
-//				Thread t = new Thread(runnable);
-//				t.start();
-				int count = dbWrite.delete("movieOnInfo", "cityId=?", new String[]{cityId});
+				// Thread t = new Thread(runnable);
+				// t.start();
+				int count = dbWrite.delete("movieOnInfo", "cityId=?",
+						new String[] { cityId });
 				initListView();
 				// try {
 				// t.join();
@@ -698,9 +699,9 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 				// e.printStackTrace();
 				// }
 			} else {
-//				Thread t = new Thread(onReleasingRunnable);
-//				t.start();
-				//删除所有记录
+				// Thread t = new Thread(onReleasingRunnable);
+				// t.start();
+				// 删除所有记录
 				int count = dbWrite.delete("movieComingInfo", null, null);
 				initListView();
 				// try {
@@ -753,52 +754,54 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 								.getColumnIndex("publishTime")));
 					}
 					Bitmap filmImage = null;
-					//取出数据转换成Bitmap
-					byte[] in = cursor.getBlob(cursor.getColumnIndex("movieImg"));
-					if(in!=null){
-						filmImage = BitmapFactory.decodeByteArray(in, 0, in.length);
+					// 取出数据转换成Bitmap
+					byte[] in = cursor.getBlob(cursor
+							.getColumnIndex("movieImg"));
+					if (in != null) {
+						filmImage = BitmapFactory.decodeByteArray(in, 0,
+								in.length);
 						film.setImgId(filmImage);
 					}
-				    
-				    
-//					if (cursor.getString(cursor.getColumnIndex("posterPath")) != null) {
-//
-//						try {
-//							filmImage = Util.getBitmap(cursor.getString(cursor
-//									.getColumnIndex("posterPath")));
-//						} catch (IOException e) {
-//							e.printStackTrace();
-//						}
-//
-//						film.setImgId(filmImage);
-//					} else if (cursor.getString(cursor
-//							.getColumnIndex("pathVerticalS")) != null) {
-//						try {
-//							filmImage = Util.getBitmap(cursor.getString(cursor
-//									.getColumnIndex("pathVerticalS")));
-//						} catch (IOException e) {
-//							e.printStackTrace();
-//						}
-//						film.setImgId(filmImage);
-//					} else if (cursor.getString(cursor
-//							.getColumnIndex("pathSquare")) != null) {
-//						try {
-//							filmImage = Util.getBitmap(cursor.getString(cursor
-//									.getColumnIndex("pathSquare")));
-//						} catch (IOException e) {
-//							e.printStackTrace();
-//						}
-//						film.setImgId(filmImage);
-//					} else if (cursor.getString(cursor
-//							.getColumnIndex("pathHorizonB")) != null) {
-//						try {
-//							filmImage = Util.getBitmap(cursor.getString(cursor
-//									.getColumnIndex("pathHorizonB")));
-//						} catch (IOException e) {
-//							e.printStackTrace();
-//						}
-//						film.setImgId(filmImage);
-//					}
+
+					// if (cursor.getString(cursor.getColumnIndex("posterPath"))
+					// != null) {
+					//
+					// try {
+					// filmImage = Util.getBitmap(cursor.getString(cursor
+					// .getColumnIndex("posterPath")));
+					// } catch (IOException e) {
+					// e.printStackTrace();
+					// }
+					//
+					// film.setImgId(filmImage);
+					// } else if (cursor.getString(cursor
+					// .getColumnIndex("pathVerticalS")) != null) {
+					// try {
+					// filmImage = Util.getBitmap(cursor.getString(cursor
+					// .getColumnIndex("pathVerticalS")));
+					// } catch (IOException e) {
+					// e.printStackTrace();
+					// }
+					// film.setImgId(filmImage);
+					// } else if (cursor.getString(cursor
+					// .getColumnIndex("pathSquare")) != null) {
+					// try {
+					// filmImage = Util.getBitmap(cursor.getString(cursor
+					// .getColumnIndex("pathSquare")));
+					// } catch (IOException e) {
+					// e.printStackTrace();
+					// }
+					// film.setImgId(filmImage);
+					// } else if (cursor.getString(cursor
+					// .getColumnIndex("pathHorizonB")) != null) {
+					// try {
+					// filmImage = Util.getBitmap(cursor.getString(cursor
+					// .getColumnIndex("pathHorizonB")));
+					// } catch (IOException e) {
+					// e.printStackTrace();
+					// }
+					// film.setImgId(filmImage);
+					// }
 					mFilmInfo.add(film);
 					movieIdsOn.add(id);
 				} // end for
@@ -810,8 +813,8 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 			movieIdsCome = new ArrayList<Long>();
 			movieIdsCome.clear();
 			mComeFilmInfo.clear();
-			cursor = dbRead.query("movieComingInfo", null, null,
-					null, null, null, null);
+			cursor = dbRead.query("movieComingInfo", null, null, null, null,
+					null, null);
 			if (cursor.moveToFirst() == false) { // cursor为空
 				Thread t = new Thread(onReleasingRunnable);
 				t.start();
@@ -839,10 +842,12 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 								.getColumnIndex("publishTime")));
 					}
 					Bitmap filmImage = null;
-					//取出数据转换成Bitmap
-					byte[] in = cursor.getBlob(cursor.getColumnIndex("movieImg"));
-					if(in!=null){
-						filmImage = BitmapFactory.decodeByteArray(in, 0, in.length);
+					// 取出数据转换成Bitmap
+					byte[] in = cursor.getBlob(cursor
+							.getColumnIndex("movieImg"));
+					if (in != null) {
+						filmImage = BitmapFactory.decodeByteArray(in, 0,
+								in.length);
 						film.setImgId(filmImage);
 					}
 					mComeFilmInfo.add(film);
@@ -850,7 +855,8 @@ public class FilmFragment extends BaseFragment implements OnRefreshListener,
 				} // end for
 
 			}
-			upComingFilmAdapter = new UpComingFilmAdapter(mComeFilmInfo, mMainActivity);
+			upComingFilmAdapter = new UpComingFilmAdapter(mComeFilmInfo,
+					mMainActivity);
 			mListView.setAdapter(upComingFilmAdapter);
 		}
 

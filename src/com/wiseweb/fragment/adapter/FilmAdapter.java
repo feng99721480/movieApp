@@ -90,7 +90,7 @@ public class FilmAdapter extends BaseAdapter {
 			holder.imageView.setImageBitmap(mListFilmBean.get(position)
 					.getImgId());
 		} else {
-			holder.imageView.setImageResource(R.drawable.default_img720);
+			holder.imageView.setImageResource(R.drawable.default_img);
 		}
 		// 电影名称
 		holder.nameFilm.setText(mListFilmBean.get(position).getFilmName());
