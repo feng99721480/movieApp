@@ -55,6 +55,11 @@
             android:value="0Gdz0HEyeNNHpKVeWigG9nrx" />
 
         <activity android:name="com.wiseweb.activity.MainActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name="com.wiseweb.activity.Splash" >
         </activity>
@@ -81,11 +86,7 @@
         <activity android:name="com.wiseweb.activity.CinemaDetailActivity" >
         </activity>
         <activity android:name="com.wiseweb.activity.SelectSeatBuyTicketActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            
         </activity>
 
         <!-- 一键分享的 -->
