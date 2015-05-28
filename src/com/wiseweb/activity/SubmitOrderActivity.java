@@ -3,6 +3,7 @@ package com.wiseweb.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
@@ -23,11 +24,12 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 	private TextView orderMovieName;
 	private TextView orderEvent; // 场次
 	private TextView orderSeat;
-	private EditText orderPhone;
+	private TextView orderPhone;
 	private TextView orderTotalPrice;
 	private TextView orderTotalPayment;
 	private Button orderPayBtn;
 	private RelativeLayout submitOrderTitleBack;
+	private SharedPreferences orderPreferences;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 		 */
 		submitOrderTitleBack.setOnClickListener(this);
 		orderPayBtn.setOnClickListener(this);
+		
 	}
 
 	/**
@@ -55,11 +58,12 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 		orderMovieName = (TextView) findViewById(R.id.order_movie_name);
 		orderEvent = (TextView) findViewById(R.id.order_event);
 		orderSeat = (TextView) findViewById(R.id.order_seat);
-		orderPhone = (EditText) findViewById(R.id.order_phone);
+		orderPhone = (TextView) findViewById(R.id.order_phone);
 		orderTotalPrice = (TextView) findViewById(R.id.order_total_price);
 		orderTotalPayment = (TextView) findViewById(R.id.order_total_payment);
 		orderPayBtn = (Button) findViewById(R.id.order_pay_btn);
 		submitOrderTitleBack = (RelativeLayout) findViewById(R.id.submit_order_title_back);
+//		orderPreferences = getSharedPreferences("orderConfig",Context.);
 	}
 
 	/**

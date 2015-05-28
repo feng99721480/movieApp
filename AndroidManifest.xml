@@ -57,11 +57,6 @@
         <activity android:name="com.wiseweb.activity.MainActivity" >
         </activity>
         <activity android:name="com.wiseweb.activity.Splash" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.wiseweb.activity.CityListActivity"
@@ -86,6 +81,11 @@
         <activity android:name="com.wiseweb.activity.CinemaDetailActivity" >
         </activity>
         <activity android:name="com.wiseweb.activity.SelectSeatBuyTicketActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <!-- 一键分享的 -->
@@ -119,7 +119,9 @@
         <activity android:name="com.wiseweb.activity.FilmSearchResultActivity" >
         </activity>
         <activity android:name="com.wiseweb.activity.ViewCinemaLocationActivity" />
-        <activity android:name="com.wiseweb.activity.SubmitOrderActivity" />
+        <activity android:name="com.wiseweb.activity.SubmitOrderActivity" >
+            
+        </activity>
         <activity android:name="com.wiseweb.activity.MyCinemaTicketActivity" />
         <activity android:name="com.wiseweb.activity.PayOrderActivity" />
         <!-- 百度定位 -->
@@ -133,8 +135,8 @@
             <intent-filter>
                 <action android:name="com.wiseweb.movie.MSG_ACTION" />
             </intent-filter>
-		</service>
-            <!--
+        </service>
+        <!--
         <service
             android:name="com.wiseweb.service.CheckUpdate"
             android:enabled="true" >
@@ -143,10 +145,10 @@
                 </action>
             </intent-filter>
         </service>
-            -->
+        -->
 
 
-            <!-- <uses-library android:name="android.test.runner" /> -->
+        <!-- <uses-library android:name="android.test.runner" /> -->
     </application>
     <!-- 记住这个一要放在application外面，不然会出现配置错误 信息 -->
     <!--

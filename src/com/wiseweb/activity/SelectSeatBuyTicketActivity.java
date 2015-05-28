@@ -21,7 +21,9 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.Menu;
@@ -67,6 +69,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 	private Button submitOrder;
 	private EditText orderPhone;
 	private String mobile;
+	private SharedPreferences orderPreferences;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -229,19 +232,19 @@ public class SelectSeatBuyTicketActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// 验证手机号的合法性
-				if (submitOrder.getText() == null) {// 手机号没输入
+				if (orderPhone.getText() == null) {// 手机号没输入
 					AlertDialog.Builder builder = new AlertDialog.Builder(
 							SelectSeatBuyTicketActivity.this);
 					builder.setTitle("提示");
 					builder.setMessage("请输入手机号");
 					builder.setPositiveButton("确定", null);
 					builder.show();
-				} else if (Util.isMobileNum(submitOrder.getText().toString()) == false) { // 输入的手机号不合法
+				} else if (Util.isMobileNum(orderPhone.getText().toString()) == false) { // 输入的手机号不合法
 					new AlertDialog.Builder(SelectSeatBuyTicketActivity.this)
 							.setTitle("提示").setMessage("请输入正确的电话号码")
 							.setPositiveButton("确定", null).show();
 				} else {// 合法手机号
-					mobile = submitOrder.getText().toString();
+					mobile = orderPhone.getText().toString();
 					// 创建订单
 					Thread t = new Thread(createOrderRunnable);
 					t.start();
@@ -317,10 +320,11 @@ public class SelectSeatBuyTicketActivity extends Activity {
 			long time_stamp = Util.getTimeStamp();
 			params.put("time_stamp", time_stamp);
 			params.put("action", "order_add"); // 接口名称
+			mobile = "18703812035";
 			params.put("mobile", mobile); // 手机号
-			String seatNo = "";
+			String seatNo = "02011121,02011120";
 			params.put("seat_no", seatNo); // 座位id
-			long planId = 0;
+			long planId = 35284626;
 			params.put("plan_id", planId); // 场次id
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
@@ -355,15 +359,27 @@ public class SelectSeatBuyTicketActivity extends Activity {
 						String seatno = order.getString("seatNo");
 						JSONObject plan = order.getJSONObject("plan");
 						JSONObject cinema = plan.getJSONObject("cinema");
-						int platform = cinema.getInt("platform");        
+						String cinemaName = cinema.getString("cinemaName"); //影院名称
+//						int platform = cinema.getInt("platform");        
 						String featureTime = plan.getString("featureTime");
 						String hallName = plan.getString("hallName");  //厅名
-						//汇总需要的信息带到确认订单activity
+						JSONObject movie = plan.getJSONObject("movie");
+						String movieName = movie.getString("movieName");//电影名称
 						
+						//汇总需要的信息带到确认订单activity
+						orderPreferences = getSharedPreferences("orderConfig",Context.MODE_PRIVATE);
+						SharedPreferences.Editor e = orderPreferences.edit();
+						e.putString("orderId", orderId);
+						e.putString("agio", agio);
+						e.putString("mobile", mobile);
+						e.putString("money", money);      //订单总额
+						e.putString("featureTime", featureTime);
+						e.putString("cinemaName", cinemaName);
+						e.putString("movieName", movieName);
+						e.putString("hallName", hallName);
+						e.putString("seatNo",seatno);
+						e.commit();
 					}
-					
-					
-					
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
