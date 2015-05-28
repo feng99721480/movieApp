@@ -2,6 +2,7 @@ package com.wiseweb.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -63,20 +64,30 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 		orderTotalPayment = (TextView) findViewById(R.id.order_total_payment);
 		orderPayBtn = (Button) findViewById(R.id.order_pay_btn);
 		submitOrderTitleBack = (RelativeLayout) findViewById(R.id.submit_order_title_back);
-//		orderPreferences = getSharedPreferences("orderConfig",Context.);
+		orderPreferences = getSharedPreferences("orderConfig",Context.MODE_PRIVATE);
 	}
 
 	/**
 	 * 设置订单数据
 	 */
 	public void setData() {
-		orderCinemaName.setText("影院：" + "东都影城");
-		orderMovieName.setText("电影：" + "左耳");
-		orderEvent.setText("场次：" + "2015-04-28 周二 17:25");
-		orderSeat.setText("座位：" + "7号厅 5排12座");
-		orderTotalPrice.setText("总价：" + "41元");
-		orderTotalPayment.setText("合计支付：" + "41元");
-		orderPayBtn.setText("立即支付" + "41" + "元");
+		String cinemaName = orderPreferences.getString("cinemaName", "");
+		String movieName = orderPreferences.getString("movieName", "");
+		String featureTime = orderPreferences.getString("featureTime", "");
+		String hallName = orderPreferences.getString("hallName", "");
+		String seatNo = orderPreferences.getString("seatNo", "");
+		String phone = orderPreferences.getString("orderPhone", "");
+		String money = orderPreferences.getString("money", "");
+		String agio = orderPreferences.getString("agio", "");
+		
+		orderCinemaName.setText("影院：" + cinemaName);
+		orderMovieName.setText("电影：" + movieName);
+		orderEvent.setText("场次：" + featureTime);
+		orderSeat.setText("座位：" + hallName+" "+seatNo);
+		orderPhone.setText("手机号："+phone);
+		orderTotalPrice.setText("总价：" + money );
+		orderTotalPayment.setText("合计支付：" + agio+"元");
+		orderPayBtn.setText("立即支付" + agio + "元");
 	}
 
 	/**
@@ -113,20 +124,7 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 			break;
 		// 支付按钮
 		case R.id.order_pay_btn:
-			// 判断是否是合法的手机号
-			String s = orderPhone.getText().toString();
-			Boolean isMobileNum = Util.isMobileNum(s);
-			if (isMobileNum == true) { // 手机号合法
-				// 转去支付界面
-				Intent intent = new Intent();
-				intent.setClass(SubmitOrderActivity.this,
-						PayOrderActivity.class);
-				SubmitOrderActivity.this.startActivity(intent);
-			} else { // 不是合法的手机号
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle("提示").setMessage("您输入的手机号格式有误")
-						.setPositiveButton("确定", null).show();
-			}
+			
 			break;
 		}
 	}

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="20dp" >
+    android:paddingBottom="20dp" 
+    android:background="@android:color/white">
 
     <include
         android:layout_width="match_parent"
@@ -75,25 +76,14 @@
                 android:paddingBottom="@dimen/submit_order_paddingbottom"
                 android:paddingLeft="@dimen/submit_order_paddingleft"
                 android:paddingTop="@dimen/submit_order_paddingtop" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/color_text_bg"
-                android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
-                android:paddingLeft="@dimen/submit_order_paddingleft"
-                android:paddingTop="@dimen/submit_order_paddingtop"
-                android:text="购票手机号"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="18sp" />
+			<!-- 手机号 -->
 
             <TextView
                 android:id="@+id/order_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
+                
+                android:paddingBottom="@dimen/submit_order_paddingbottom"
                 android:paddingLeft="@dimen/submit_order_paddingleft"
                 android:paddingTop="@dimen/submit_order_paddingtop" />
             <!-- 结算信息 -->
