@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 public class BindPhoneNumberActivity extends Activity implements
 		OnClickListener, TextWatcher {
-
 	private RelativeLayout titleBack;
 	private EditText originalPhoneNumber;
 	private EditText newPhoneNumber;
