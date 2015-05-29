@@ -1,7 +1,9 @@
 package com.wiseweb.ui;
 
+
+
 import com.wiseweb.movie.R;
-import com.wiseweb.util.Utils;
+import com.wiseweb.util.Util;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -19,9 +21,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListView;
 
 /**
- * @author SunnyCoffee
- * @create 2013-10-24
- * @version 1.0
+ * 
  * @desc 自定义Listview　下拉刷新,上拉加载更多
  */
 
@@ -87,22 +87,6 @@ public class AutoListView extends ListView implements OnScrollListener {
 	public AutoListView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		initView(context);
-	}
-	
-	public View getHeader() {
-		return header;
-	}
-
-	public void setHeader(View header) {
-		this.header = header;
-	}
-
-	public View getFooter() {
-		return footer;
-	}
-
-	public void setFooter(View footer) {
-		this.footer = footer;
 	}
 
 	// 下拉刷新监听
@@ -170,10 +154,8 @@ public class AutoListView extends ListView implements OnScrollListener {
 		measureView(header);
 		headerContentHeight = header.getMeasuredHeight();
 		topPadding(-headerContentHeight);
-		//this.addHeaderView(header);
-		this.addHeaderView(header, null, false);
-		//this.addFooterView(footer);
-		this.addFooterView(footer, null, false);
+		this.addHeaderView(header);
+		this.addFooterView(footer);
 		this.setOnScrollListener(this);
 	}
 
@@ -191,14 +173,14 @@ public class AutoListView extends ListView implements OnScrollListener {
 
 	public void onRefreshComplete(String updateTime) {
 		lastUpdate.setText(this.getContext().getString(R.string.lastUpdateTime,
-				Utils.getCurrentTime()));
+				Util.getCurrentTime()));
 		state = NONE;
 		refreshHeaderViewByState();
 	}
 
 	// 用于下拉刷新结束后的回调
 	public void onRefreshComplete() {
-		String currentTime = Utils.getCurrentTime();
+		String currentTime = Util.getCurrentTime();
 		onRefreshComplete(currentTime);
 	}
 
@@ -320,30 +302,25 @@ public class AutoListView extends ListView implements OnScrollListener {
 	 * @param resultSize
 	 */
 	public void setResultSize(int resultSize) {
-		System.out.println("pageSize*************"+pageSize);
 		if (resultSize == 0) {
-			System.out.println("pageSize1*************"+pageSize);
 			isLoadFull = true;
 			loadFull.setVisibility(View.GONE);
 			loading.setVisibility(View.GONE);
 			more.setVisibility(View.GONE);
 			noData.setVisibility(View.VISIBLE);
 		} else if (resultSize > 0 && resultSize < pageSize) {
-			System.out.println("pageSize2*************"+pageSize);
 			isLoadFull = true;
 			loadFull.setVisibility(View.VISIBLE);
 			loading.setVisibility(View.GONE);
 			more.setVisibility(View.GONE);
 			noData.setVisibility(View.GONE);
-			//pageSize = a;
-		} else if (resultSize == pageSize || resultSize > pageSize) {
-			System.out.println("pageSize3*************"+pageSize);
+		} else if (resultSize == pageSize) {
 			isLoadFull = false;
 			loadFull.setVisibility(View.GONE);
 			loading.setVisibility(View.VISIBLE);
 			more.setVisibility(View.VISIBLE);
 			noData.setVisibility(View.GONE);
-		} 
+		}
 
 	}
 

@@ -55,13 +55,12 @@
             android:value="0Gdz0HEyeNNHpKVeWigG9nrx" />
 
         <activity android:name="com.wiseweb.activity.MainActivity" >
-        </activity>
-        <activity android:name="com.wiseweb.activity.Splash" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name="com.wiseweb.activity.Splash" >
         </activity>
         <activity
             android:name="com.wiseweb.activity.CityListActivity"
@@ -79,7 +78,7 @@
         </activity>
         <activity
             android:name="com.wiseweb.activity.BuyTicketSelectCinema"
-            android:theme="@style/MyTheme" >
+            android:theme="@style/Theme.PageIndicatorDefaults" >
         </activity>
         <activity android:name="com.wiseweb.activity.CinemaSelectFilmActivity" >
         </activity>
@@ -100,6 +99,8 @@
         <activity android:name="com.wiseweb.activity.ModifyPasswordActivity">
         </activity>
         <activity android:name="com.wiseweb.activity.BindPhoneNumberActivity">
+        </activity>
+        <activity android:name="com.wiseweb.activity.FindPasswordActivity">
         </activity>
 
         <!-- 一键分享的 -->
@@ -134,23 +135,25 @@
         <activity android:name="com.wiseweb.activity.FilmSearchResultActivity" >
         </activity>
         <activity android:name="com.wiseweb.activity.ViewCinemaLocationActivity" />
-        <activity android:name="com.wiseweb.activity.SubmitOrderActivity" />
+        <activity android:name="com.wiseweb.activity.SubmitOrderActivity" >
+        </activity>
         <activity android:name="com.wiseweb.activity.MyCinemaTicketActivity" />
         <activity android:name="com.wiseweb.activity.PayOrderActivity" />
+        <activity android:name="com.wiseweb.activity.PayActivity" >
+            
+        </activity>
         <!-- 百度定位 -->
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:permission="android.permission.BAIDU_LOCATION_SERVICE"
-            android:process=":remote" >
+            android:process=":remote" />
+        <service
+            android:name="com.wiseweb.service.LocationService"
+            android:enabled="true" >
             <intent-filter>
-                <action android:name="com.baidu.location.service_v2.4" >
-                </action>
+                <action android:name="com.wiseweb.movie.MSG_ACTION" />
             </intent-filter>
         </service>
-        <service android:name="com.wiseweb.service.LocationService" >
-        </service>
-
         <!--
         <service
             android:name="com.wiseweb.service.CheckUpdate"

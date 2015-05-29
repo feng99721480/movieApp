@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -19,11 +20,10 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,6 +32,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,15 +40,10 @@ import android.widget.Toast;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
-import com.google.gson.Gson;
 import com.wiseweb.bean.Seat;
 import com.wiseweb.bean.SeatInfo;
 import com.wiseweb.constant.Constant;
-import com.wiseweb.json.MovieResult;
-import com.wiseweb.json.MovieResult.Movie;
-import com.wiseweb.json.SeatResult;
-import com.wiseweb.json.SeatResult.AllSeat;
-import com.wiseweb.json.SeatResult.LoverSeat;
+import com.wiseweb.fragment.adapter.UpComingFilmAdapter;
 import com.wiseweb.movie.R;
 import com.wiseweb.seatchoose.view.OnSeatClickListener;
 import com.wiseweb.seatchoose.view.SSThumView;
@@ -59,6 +55,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 
 	private static final int ROW = 8;
 	private static final int EACH_ROW_COUNT = 20;
+	private static final int ORDER_ADD = 0;
 	private SSView mSSView;
 	private SSThumView mSSThumView;
 	private ArrayList<SeatInfo> list_seatInfos = new ArrayList<SeatInfo>();
@@ -73,11 +70,9 @@ public class SelectSeatBuyTicketActivity extends Activity {
 	private String d;
 	private double price;
 	private Button submitOrder;
-	private TextView cinameName;
-	private TextView movieName;
-	private TextView movieTime;
-	private SeatResult.AllSeat allSeat;
-	private SeatResult.LoverSeat loverSeat;
+	private EditText orderPhone;
+	private String mobile;
+	private SharedPreferences orderPreferences;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,145 +81,8 @@ public class SelectSeatBuyTicketActivity extends Activity {
 		setContentView(R.layout.activity_select_seat_buy_ticket);
 		// 初始化shareSDK
 		// ShareSDK.initSDK(this);
-		init();
-		//new Thread(runnable).start();
+		initView();
 	}
-	
-	Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			// 从CinameDetailActivity获取影院名称
-			SharedPreferences sp1 = getSharedPreferences("cinemaInfo",
-					MODE_PRIVATE);
-			String cinameNameStr = sp1.getString("cinameName", "");
-			cinameName.setText(cinameNameStr);
-			// 从CienmaSelectFilmActivity获取电影名称
-			SharedPreferences sp2 = getSharedPreferences("movieInfo",
-					MODE_PRIVATE);
-			String movieNameStr = sp2.getString("movieName", "");
-			movieName.setText(movieNameStr);
-			// 从CinemaSelectFileActivity获取时间
-			SharedPreferences sp3 = getSharedPreferences("moviePlan",
-					MODE_PRIVATE);
-			String featureTime = sp3.getString("featureTime", "");
-			movieTime.setText(featureTime);
-		};
-	};
-
-	// 获取座位数据
-	Runnable runnable = new Runnable() {
-
-		@Override
-		public void run() {
-			HashMap<String, Object> params = new HashMap<String, Object>();
-			// action
-			params.put("action", "seat_info");
-			// time_stamp
-			Date date = new Date();
-			long time_stamp = date.getTime();
-			params.put("time_stamp", time_stamp + "");
-			// 从CinemaSelectFilmActivity获取planid
-			SharedPreferences sp = getSharedPreferences("planid", MODE_PRIVATE);
-			long planId = sp.getLong("plan_id", 0);
-			String enc = GetEnc.getEnc(params, "wiseMovie");
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "planId=" + planId + "&"
-					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
-			System.out.println(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "planId=" + planId + "&"
-					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
-			HttpResponse httpResponse;
-			String result;
-			try {
-				httpResponse = httpClient.execute(getMethod);
-				if (httpResponse.getStatusLine().getStatusCode() == 200) {
-					HttpEntity entity = httpResponse.getEntity();
-					result = EntityUtils.toString(entity, "utf-8");
-
-					JSONArray jsonArray = new JSONObject(result)
-							.getJSONArray("seats");
-					// 取得第i个座位
-					for (int i = 0; i < jsonArray.length(); i++) {
-						// 获取所有座位信息
-						JSONObject seatObj = jsonArray.getJSONObject(i);
-						allSeat = new AllSeat();
-						String graphCol = (String) seatObj.get("graphCol");
-						String graphRow = (String) seatObj.get("graphRow");
-						String hallId = (String) seatObj.get("hallId");
-						String seatCol = (String) seatObj.get("seatCol");
-						String seatNo = (String) seatObj.get("seatNo");
-						String seatPieceName = (String) seatObj
-								.get("seatPieceName");
-						String seatPieceNo = (String) seatObj
-								.get("seatPieceNo");
-						String seatRow = (String) seatObj.get("seatRow");
-						int seatState = (Integer) seatObj.get("seatState");
-						int seatType = (Integer) seatObj.get("seatType");
-						allSeat.setGraphCol(graphCol);
-						allSeat.setGraphRow(graphRow);
-						allSeat.setHallId(hallId);
-						allSeat.setSeatCol(seatCol);
-						allSeat.setSeatNo(seatNo);
-						allSeat.setSeatPieceName(seatPieceName);
-						allSeat.setSeatPieceNo(seatPieceNo);
-						allSeat.setSeatRow(seatRow);
-						allSeat.setSeatState(seatState);
-						allSeat.setSeatType(seatType);
-						System.out.println("所有座位信息"+allSeat.toString());
-						// 获取情侣座信息
-
-						JSONObject loverObj = jsonArray.getJSONObject(i + 1);
-						loverSeat = new LoverSeat();
-						String loverGraphCol = (String) loverObj
-								.get("graphCol");
-						String loverGraphRow = (String) loverObj
-								.get("graphRow");
-						String loverHallId = (String) loverObj.get("hallId");
-						boolean isLoverL = (Boolean) loverObj.get("isLoverL");
-						String loverSeatCol = (String) loverObj.get("seatCol");
-						String loverSeatNo = (String) loverObj.get("seatNo");
-						String loverSeatPieceName = (String) loverObj
-								.get("seatPieceName");
-						String loverSeatPieceNo = (String) loverObj
-								.get("seatPieceNo");
-						String loverSeatRow = (String) loverObj.get("seatRow");
-						int loverSeatState = (Integer) loverObj
-								.get("seatState");
-						int loverSeatType = (Integer) loverObj.get("seatType");
-						loverSeat.setGraphCol(loverGraphCol);
-						loverSeat.setGraphRow(loverGraphRow);
-						loverSeat.setHallId(loverHallId);
-						loverSeat.setLoverL(isLoverL);
-						loverSeat.setSeatCol(loverSeatCol);
-						loverSeat.setSeatNo(loverSeatNo);
-						loverSeat.setSeatPieceName(loverSeatPieceName);
-						loverSeat.setSeatPieceNo(loverSeatPieceNo);
-						loverSeat.setSeatRow(loverSeatRow);
-						loverSeat.setSeatState(loverSeatState);
-						loverSeat.setSeatType(loverSeatType);
-						System.out.println("情侣座位信息"+loverSeat.toString());
-
-					}
-
-					// Message msg = new Message();
-					// // Bundle data = new Bundle();
-					// // msg.setData(data);
-					// msg.what = LIST_OF_MOVIES_IN_CINEMA;
-					// handler.sendMessage(msg);
-				}else{
-					Toast.makeText(SelectSeatBuyTicketActivity.this, "没有获取到数据", 0).show();
-				}
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		}
-	};
 
 	@Override
 	protected void onDestroy() {
@@ -234,10 +92,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 
 	}
 
-	private void init() {
-		movieTime = (TextView) findViewById(R.id.movie_time_tv);
-		movieName = (TextView) findViewById(R.id.movie_name_tv);
-		cinameName = (TextView) findViewById(R.id.cinema_film_name);
+	private void initView() {
 		mSSView = (SSView) this.findViewById(R.id.mSSView);
 		mSSThumView = (SSThumView) this.findViewById(R.id.ss_ssthumview);
 		// mSSView.setXOffset(20);
@@ -372,15 +227,38 @@ public class SelectSeatBuyTicketActivity extends Activity {
 			}
 
 		});
+		orderPhone = (EditText) findViewById(R.id.order_phone);
+
 		submitOrder = (Button) findViewById(R.id.submit_order);
 		submitOrder.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setClass(SelectSeatBuyTicketActivity.this,
-						SubmitOrderActivity.class);
-				SelectSeatBuyTicketActivity.this.startActivity(intent);
+				// 验证手机号的合法性
+				if (orderPhone.getText() == null) {// 手机号没输入
+					AlertDialog.Builder builder = new AlertDialog.Builder(
+							SelectSeatBuyTicketActivity.this);
+					builder.setTitle("提示");
+					builder.setMessage("请输入手机号");
+					builder.setPositiveButton("确定", null);
+					builder.show();
+				} else if (Util.isMobileNum(orderPhone.getText().toString()) == false) { // 输入的手机号不合法
+					new AlertDialog.Builder(SelectSeatBuyTicketActivity.this)
+							.setTitle("提示").setMessage("请输入正确的电话号码")
+							.setPositiveButton("确定", null).show();
+				} else {// 合法手机号
+					mobile = orderPhone.getText().toString();
+					// 创建订单
+					Thread t = new Thread(createOrderRunnable);
+					t.start();
+					try {
+						t.join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+				}
+
 			}
 
 		});
@@ -431,6 +309,196 @@ public class SelectSeatBuyTicketActivity extends Activity {
 		return true;
 	}
 
+	private Handler handler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+
+			switch (msg.what) {
+			case ORDER_ADD:
+
+				break;
+
+			}
+		}
+	};
+	/**
+	 * 创建订单
+	 */
+	Runnable createOrderRunnable = new Runnable() {
+
+		@Override
+		public void run() {
+			HashMap<String, Object> params = new HashMap<String, Object>();
+			long time_stamp = Util.getTimeStamp();
+			params.put("time_stamp", time_stamp);
+			params.put("action", "order_add"); // 接口名称
+			mobile = "13641094940";
+			params.put("mobile", mobile); // 手机号
+			String seatNo = "11059401-15-0000000000000001-1-02,2C11059401-15-0000000000000001-1-01";
+			params.put("seat_no", seatNo); // 座位id
+			long planId = 35346105;
+			params.put("plan_id", planId); // 场次id
+			int sendMessage = 0;
+			params.put("send_message", sendMessage);
+			String enc = GetEnc.getEnc(params, "wiseMovie");
+			HttpClient httpClient = new DefaultHttpClient();
+			// HttpGet getMethod = new HttpGet(Constant.baseURL
+			// + "action=order_add" + "&" + "seat_no=" + seatNo + "&"
+			// + "plan_id=" + planId + "&" + "mobile=" + mobile + "&"
+			// + "send_message=" + sendMessage + "&" + "enc=" + enc + "&"
+			// + "time_stamp=" + time_stamp);
+			// System.out.println(Constant.baseURL + "action=order_add" + "&"
+			// + "seat_no=" + seatNo + "&" + "plan_id=" + planId + "&"
+			// + "mobile=" + mobile + "&" + "send_message=" + sendMessage
+			// + "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+			HttpGet getMethod = new HttpGet(
+					"http://test.komovie.cn/api_movie/service?action=order_add&mobile=13641094940&seat_no=11059401-15-0000000000000001-1-01%2C11059401-15-0000000000000001-1-02&plan_id=35346118&send_message=0&time_stamp=1432802355579&enc=8ee345d93d774e999bc6346fc9f78a72");
+			HttpResponse httpResponse;
+			String result;
+			try {
+				httpResponse = httpClient.execute(getMethod);
+				if (httpResponse.getStatusLine().getStatusCode() == 200) {
+
+					HttpEntity entity = httpResponse.getEntity();
+					result = EntityUtils.toString(entity, "utf-8");
+					// 获得信息
+					System.out.println("result----" + result);
+
+					JSONObject order = new JSONObject(result)
+							.getJSONObject("order");
+					String orderId = order.getString("orderId");
+					// String activityId = order.getString("activityId");
+					String agio = order.getString("agio");// 还需支付的金额
+					String ticketNo = order.getString("ticketNo");
+					String mobile = order.getString("mobile"); // 手机号
+					String money = order.getString("money"); // 订单总额
+					int orderStatus = order.getInt("orderStatus");// 订单状态
+					String seatInfo = order.getString("seatInfo");
+					String seatno = order.getString("seatNo");
+					JSONObject plan = order.getJSONObject("plan");
+					JSONObject cinema = plan.getJSONObject("cinema");
+					String cinemaName = cinema.getString("cinemaName"); // 影院名称
+					// int platform = cinema.getInt("platform");
+					String featureTime = plan.getString("featureTime");
+					String hallName = plan.getString("hallName"); // 厅名
+					JSONObject movie = plan.getJSONObject("movie");
+					String movieName = movie.getString("movieName");// 电影名称
+
+					// 汇总需要的信息带到确认订单activity
+					orderPreferences = getSharedPreferences("orderConfig",
+							Context.MODE_PRIVATE);
+					SharedPreferences.Editor e = orderPreferences.edit();
+					e.putString("orderId", orderId);
+					e.putString("agio", agio);
+					e.putString("mobile", mobile);
+					e.putString("money", money); // 订单总额
+					e.putString("featureTime", featureTime);
+					e.putString("cinemaName", cinemaName);
+					e.putString("movieName", movieName);
+					e.putString("hallName", hallName);
+					e.putString("seatNo", seatno);
+					e.commit();
+
+					Message msg = new Message();
+					// Bundle data = new Bundle();
+					msg.what = ORDER_ADD;
+					handler.sendMessage(msg);
+
+				} else {
+					System.out.println("lalalaalalalalala");
+				}
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			Intent intent = new Intent();
+			intent.setClass(SelectSeatBuyTicketActivity.this,
+					SubmitOrderActivity.class);
+			SelectSeatBuyTicketActivity.this.startActivity(intent);
+		}
+
+	};
+
+	Runnable runnable = new Runnable() {
+
+		@Override
+		public void run() {
+			// JSONObject seatInfoResult = new JSONObject();
+			HashMap<String, Object> params = new HashMap<String, Object>();
+			params.put("action", "seat_info");
+			/**
+			 * 得到planId
+			 */
+			Long planId = 385335l;
+			params.put("planId", planId);
+
+			Date date = new Date();
+			long time_stamp = date.getTime();
+			params.put("time_stamp", time_stamp + "");
+
+			String enc = GetEnc.getEnc(params, "wiseMovie");
+
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
+					+ params.get("action") + "&" + "planId=" + planId + "&"
+					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+
+			HttpResponse httpResponse;
+			String result;
+			try {
+				httpResponse = httpClient.execute(getMethod);
+				if (httpResponse.getStatusLine().getStatusCode() == 200) {
+					HttpEntity entity = httpResponse.getEntity();
+					result = EntityUtils.toString(entity, "utf-8");
+					JSONArray seatsArray = new JSONObject(result)
+							.getJSONArray("seats");
+					for (int i = 0; i < seatsArray.length(); i++) {
+						// 取得第i个座位
+						JSONObject seat = (JSONObject) seatsArray
+								.getJSONObject(i);
+
+						Seat mSeat = new Seat();
+
+						int seatType = seat.getInt("seatType"); // 0:普通座 1：情侣座
+						int graphCol = seat.getInt("graphCol"); // 相对于屏幕的列号，第四象限坐标系x
+						int graphRow = seat.getInt("graphRow"); // 相对于屏幕的排号，第四象限坐标系y
+						String hallId = seat.getString("hallId"); // 厅ID
+						String seatCol = seat.getString("seatCol"); // 影厅规定的列号，用于打印影票
+						String seatNo = seat.getString("seatNo"); // 座位号
+						String seatPieceName = seat.getString("seatPieceName");
+						String seatPieceNo = seat.getString("seatPieceNo");
+						String seatRow = seat.getString("seatRow");
+						String seatState = seat.getString("seatState");
+
+						if (seatType == 1) { // 普通座
+							Boolean isLoverL = seat.getBoolean("isLoverL");
+						}
+
+					}
+
+					Message msg = new Message();
+					// Bundle data = new Bundle();
+					// msg.setData(data);
+					msg.what = 0;
+					// handler.sendMessage(msg);
+				}
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+	};
+
 	/**
 	 * 获得数据 设置座位信息
 	 */
@@ -453,8 +521,8 @@ public class SelectSeatBuyTicketActivity extends Activity {
 					}
 
 				}
-				mSeat.setSeatState(allSeat.getSeatState() + "");
-				mSeat.setLoveInd(allSeat.getSeatType() + "");
+				mSeat.setSeatState("");
+				mSeat.setLoveInd(true);
 				mSeatList.add(mSeat);
 			}
 			mSeatInfo.setDesc(String.valueOf(i + 1));

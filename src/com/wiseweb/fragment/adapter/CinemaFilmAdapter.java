@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.wiseweb.json.MoviePlanResult.MoviePlan;
+import com.wiseweb.json.MoviePlan;
 import com.wiseweb.movie.R;
 
 public class CinemaFilmAdapter extends BaseAdapter {

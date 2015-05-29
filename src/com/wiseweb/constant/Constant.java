@@ -18,6 +18,8 @@ public class Constant {
 			"恐怖", "惊悚", "悬疑", "冒险", "科幻", "犯罪", "战争", "纪录片", "其它" };
 	public static final String[] FILM_AREA = { "美国", "大陆", "港台", "法国", "英国",
 			"德国", "日本", "韩国", "印度", "̩泰国", "其它" };
+//	public static final String baseURL = "http://192.168.0.141:4000/appAPI?";
+//	public static final String orderURL = "http://192.168.0.203:4000/appAPI?";
 	public static final String baseURL = "http://192.168.0.141:4000/appAPI?";
 	public static final String[] CONTENT = new String[] { "3月1日", "3月1日",
 			"3月1日", "3月1日", "3月1日", "3月1日", "3月1日", "3月1日" };

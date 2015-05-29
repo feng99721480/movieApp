@@ -123,6 +123,7 @@ public class BindPhoneNumberActivity extends Activity implements
 					} else {
 						// 倒计时
 						countDown();
+						//此处应该通知服务器向手机发送验证码
 					}
 					cursor.close();
 					db.close();
@@ -133,6 +134,7 @@ public class BindPhoneNumberActivity extends Activity implements
 			break;
 		case R.id.bind_btn:// 修改数据库username
 			verifivationCodeStr = verificationCode.getText().toString().trim();
+			//此处应该验证一下验证码时候与服务器发出的一致
 			if(verifivationCodeStr.equals("123456")){
 				updateUsername(newPhoneNumberStr);
 

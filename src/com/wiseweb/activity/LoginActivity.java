@@ -34,6 +34,7 @@ public class LoginActivity extends Activity {
 	private RelativeLayout loginTitleBack;
 	private ImageView sinaLogin;
 	private Button login;
+	private Button forgetPasswordBtn;
 	private Platform sinaWeibo;
 	private String userName;
 	private Intent intent;
@@ -60,6 +61,16 @@ public class LoginActivity extends Activity {
 	}
 
 	public void initUI() {
+		forgetPasswordBtn = (Button) findViewById(R.id.forget_password);
+		forgetPasswordBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(LoginActivity.this, FindPasswordActivity.class);
+				startActivity(intent);
+			}
+		});
 		helper = new UserSQLiteOpenHelper(LoginActivity.this);
 		loginUsername = (EditText) findViewById(R.id.login_username_et);
 		loginPassword = (EditText) findViewById(R.id.login_password_et);

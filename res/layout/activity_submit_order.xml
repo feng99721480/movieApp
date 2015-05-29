@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="20dp" >
+    android:paddingBottom="20dp" 
+    android:background="@android:color/white">
 
     <include
         android:layout_width="match_parent"
@@ -24,8 +25,8 @@
                 android:id="@+id/count_down"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:background="@color/color_count_down"
+                android:gravity="center"
                 android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
                 android:paddingTop="@dimen/submit_order_paddingbottom_gray" />
 
@@ -75,26 +76,16 @@
                 android:paddingBottom="@dimen/submit_order_paddingbottom"
                 android:paddingLeft="@dimen/submit_order_paddingleft"
                 android:paddingTop="@dimen/submit_order_paddingtop" />
+			<!-- 手机号 -->
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/color_text_bg"
-                android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
-                android:paddingLeft="@dimen/submit_order_paddingleft"
-                android:paddingTop="@dimen/submit_order_paddingtop"
-                android:text="购票手机号"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="18sp" />
-
-            <EditText
                 android:id="@+id/order_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/submit_order_paddingbottom_gray"
+                
+                android:paddingBottom="@dimen/submit_order_paddingbottom"
                 android:paddingLeft="@dimen/submit_order_paddingleft"
-                android:paddingTop="@dimen/submit_order_paddingtop"
-                android:inputType="number" />
+                android:paddingTop="@dimen/submit_order_paddingtop" />
             <!-- 结算信息 -->
 
             <TextView
@@ -128,12 +119,11 @@
                 android:id="@+id/order_pay_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:background="@drawable/btn_pay_now_bg"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                />
+                android:background="@drawable/btn_pay_now_bg"
+                android:textColor="@android:color/white" />
         </LinearLayout>
     </ScrollView>
 

@@ -3,7 +3,6 @@ package com.wiseweb.bean;
 import android.graphics.Bitmap;
 
 public class FilmInfo{
-
 	private String filmName; // 
 	private String genre; // 类型
 	private String director; // 

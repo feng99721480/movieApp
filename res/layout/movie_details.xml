@@ -19,10 +19,12 @@
 
         <ImageView
             android:id="@+id/movie_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="130dp"
             android:layout_alignParentLeft="true"
             android:src="@drawable/runman"
+            android:maxWidth="100dp"
+            android:maxHeight="150dp"
             android:layout_centerVertical="true" />
 
         <LinearLayout

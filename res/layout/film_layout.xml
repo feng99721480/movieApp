@@ -8,8 +8,8 @@
         android:id="@+id/film_title"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:background="@color/main_color"
-        android:layout_alignParentTop="true" >
+        android:layout_alignParentTop="true"
+        android:background="@color/main_color" >
 
         <RelativeLayout
             android:id="@+id/area"
@@ -24,7 +24,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="北京"
                 android:textColor="@android:color/white" />
 
             <ImageView
@@ -40,43 +39,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:orientation="horizontal"
-            android:fadingEdge="horizontal"
             android:background="@drawable/film_title_radio_back"
-            android:padding="3dp"
-            >
+            android:fadingEdge="horizontal"
+            android:orientation="horizontal"
+            android:padding="3dp" >
 
             <RadioButton
                 android:id="@+id/releasingFilm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/film_title_radio_releasing"
-                android:text="@string/releasing"
-                android:textColor="@color/color_text"  
-                android:textSize="12sp"
                 android:button="@null"
                 android:checked="true"
-                android:paddingTop="5dp" 
                 android:paddingBottom="5dp"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"/>
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:text="@string/releasing"
+                android:textColor="@color/color_text"
+                android:textSize="12sp" />
 
             <RadioButton
                 android:id="@+id/onreleasingFilm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/film_title_radio_releasing"
-                android:text="@string/upcoming"
-                android:textColor="@color/color_text" 
-                android:textSize="12sp"
-                android:button="@null" 
-                android:paddingTop="5dp" 
+                android:button="@null"
                 android:paddingBottom="5dp"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"/>
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:text="@string/upcoming"
+                android:textColor="@color/color_text"
+                android:textSize="12sp" />
         </RadioGroup>
-
-       
 
         <ImageView
             android:id="@+id/film_search"
@@ -84,19 +80,26 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_search_white"
             android:paddingRight="10dp"
-             />
+            android:src="@drawable/ic_search_white" />
     </RelativeLayout>
 
-    <ListView
+    <!-- <ListView
         android:id="@+id/listview_film"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:divider="@color/divider_color"
-        android:dividerHeight="1dip"
         android:layout_below="@id/film_title"
-        >
-    </ListView>
+        android:divider="@color/divider_color"
+        android:dividerHeight="1dip" /> -->
+
+    
+    <com.wiseweb.ui.AutoListView
+        android:id="@+id/listview_film"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/film_title"
+        android:divider="@color/divider_color"
+        android:dividerHeight="1dip" >
+    </com.wiseweb.ui.AutoListView>
 
 </RelativeLayout>

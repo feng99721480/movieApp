@@ -1,6 +1,7 @@
 package com.wiseweb.activity;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,14 +14,18 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,19 +34,20 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.wiseweb.constant.Constant;
 import com.wiseweb.fragment.adapter.CinemaFilmAdapter;
 import com.wiseweb.fragment.adapter.HorizontalListViewAdapter;
-import com.wiseweb.json.MoviePlanResult;
-import com.wiseweb.json.MoviePlanResult.MoviePlan;
+import com.wiseweb.json.MoviePlan;
 import com.wiseweb.json.MovieResult;
 import com.wiseweb.json.MovieResult.Movie;
 import com.wiseweb.movie.R;
@@ -64,13 +70,26 @@ public class CinemaSelectFilmActivity extends Activity {
 	private RelativeLayout cinemaFilmDetail;
 	private RelativeLayout cinemaFilmTittleBack;
 	// private List<FilmInfo> mFilmInfo = new ArrayList<FilmInfo>();
-	private List<Bitmap> bms;
-	private List<String> names = new ArrayList<String>();
-	private List<String> properties = new ArrayList<String>();
-	private List<String> scores = new ArrayList<String>();
-	private List<MoviePlan> moviePlans;
-	private static final int LIST_OF_MOVIES_IN_CINEMA = 0; 
+	private List<Bitmap> bms = new ArrayList<Bitmap>(); // 影院上映电影的图片
+	private List<String> names = new ArrayList<String>(); // 电影名称
+	private List<String> properties = new ArrayList<String>(); // 电影类型
+	private List<String> scores = new ArrayList<String>(); // 电影评分
+	private List<Long> movieIds = new ArrayList<Long>();
+	private List<MoviePlan> moviePlans = new ArrayList<MoviePlan>();
+	private static final int LIST_OF_MOVIES_IN_CINEMA = 0;
 	private static final int MOVIE_PLAN = 1;
+	private long movieId; // 存放被点击movie的movieId
+	private SharedPreferences cinemaConfig; // 影院
+	private String cinemaName;
+	private int cinemaId;
+	private String cinemaAddress;
+	private TextView cinemaNameText, cinemaBriefName, cinemaBriefAddress;
+	private List<String> dates = new ArrayList<String>();
+	// private String selectedDate = "2015-05-15";
+	private String selectedDate = "";
+	private int isCount = 0;
+	private SharedPreferences movieConfigure;
+
 	// private List<>
 
 	@Override
@@ -79,15 +98,28 @@ public class CinemaSelectFilmActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_cinema_select_film);
-
-		/*
-		 * WindowManager wm =
-		 * (WindowManager)this.getSystemService(Context.WINDOW_SERVICE); final
-		 * int width = wm.getDefaultDisplay().getWidth(); final int height =
-		 * wm.getDefaultDisplay().getHeight();
-		 */
-		initUI();
+		initView();
 		cinemaFilmScroll.smoothScrollTo(0, 0);
+		// 获得影院相关数据
+		/*
+		 * cinemaConfig = getSharedPreferences("cinemaConfig",
+		 * Context.MODE_PRIVATE); cinemaName =
+		 * cinemaConfig.getString("cinemaName", null); cinemaId =
+		 * cinemaConfig.getInt("cinemaId", 0); cinemaAddress =
+		 * cinemaConfig.getString("cinemaAddress", null); //设置影院的名称和地址
+		 * cinemaBriefName.setText(cinemaName);
+		 * cinemaBriefAddress.setText(cinemaAddress);
+		 */
+		selectedDate = Util.getSystemYearMonthDay();
+		System.out.println("selectedDate" + selectedDate);
+		Thread cinemaMovies = new Thread(runnable);
+		cinemaMovies.start();
+		try {
+			cinemaMovies.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		toCinemaDetail.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -98,19 +130,12 @@ public class CinemaSelectFilmActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-		// 一进入这个界面就显示此影院上映的电影
-//		 new Thread(runnable).start();
-//		startList = getData();
-//		cinemaFilmAdapter = new CinemaFilmAdapter(startList, this);
-//		cinemaFilmList.setAdapter(cinemaFilmAdapter);
+
 		cinemaFilmList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				// TODO Auto-generated method stub
-				Toast.makeText(CinemaSelectFilmActivity.this, "点击了",
-						Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent();
 				intent.setClass(CinemaSelectFilmActivity.this,
 						SelectSeatBuyTicketActivity.class);
@@ -118,75 +143,36 @@ public class CinemaSelectFilmActivity extends Activity {
 			}
 
 		});
-
+		// 上映电影日期的选择
 		cinemaFilmDate
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 					@Override
 					public void onCheckedChanged(RadioGroup radioGroup,
 							int checkedId) {
-						// TODO Auto-generated method stub
-						if (checkedId == R.id.cinema1) {
-
-//							cinemaFilmAdapter = new CinemaFilmAdapter(
-//									startList, CinemaSelectFilmActivity.this);
-//							cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//						}
-//						if (checkedId == R.id.cinema2) {
-//							List<String> day2 = new ArrayList<String>();
-//							day2.add("11:00");
-//							day2.add("11:00");
-//							day2.add("11:00");
-//							cinemaFilmAdapter = new CinemaFilmAdapter(day2,
-//									CinemaSelectFilmActivity.this);
-//							cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//						}
-//						if (checkedId == R.id.cinema3) {
-//							List<String> day3 = new ArrayList<String>();
-//							day3.add("13:00");
-//							day3.add("13:00");
-//							day3.add("13:00");
-//							cinemaFilmAdapter = new CinemaFilmAdapter(day3,
-//									CinemaSelectFilmActivity.this);
-//							cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//						}
-//						if (checkedId == R.id.cinema4) {
-//							List<String> day2 = new ArrayList<String>();
-//							day2.add("17:00");
-//							day2.add("18:00");
-//							day2.add("19:00");
-//							cinemaFilmAdapter = new CinemaFilmAdapter(day2,
-//									CinemaSelectFilmActivity.this);
-//							cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//						}
-//						if (checkedId == R.id.cinema5) {
-//							List<String> day2 = new ArrayList<String>();
-//							day2.add("08:00");
-//							day2.add("09:00");
-//							day2.add("10:00");
-//							cinemaFilmAdapter = new CinemaFilmAdapter(day2,
-//									CinemaSelectFilmActivity.this);
-//							cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//						}
-//						if (checkedId == R.id.cinema6) {
-//							List<String> day2 = new ArrayList<String>();
-//							day2.add("11:00");
-//							day2.add("11:00");
-//							day2.add("11:00");
-//							cinemaFilmAdapter = new CinemaFilmAdapter(day2,
-//									CinemaSelectFilmActivity.this);
-//							cinemaFilmList.setAdapter(cinemaFilmAdapter);
+						RadioButton tempButton = (RadioButton) findViewById(checkedId);
+						selectedDate = tempButton.getText().toString();
+						Thread moviePlan = new Thread(planRunnable);
+						moviePlan.start();
+						// cinemaFilmDate.removeAllViews();
+						try {
+							moviePlan.join();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
-
 					}
 
 				});
 		cinemaFilmDetail.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
+			public void onClick(View v) {
+				Bundle data = new Bundle();
+				data.putLong("movieId", movieId);
+				// 既然影院上映的 肯定都是已经上映的电影
+				data.putBoolean("movieOnCome", true);
 				Intent intent = new Intent();
+				intent.putExtras(data);
 				intent.setClass(CinemaSelectFilmActivity.this,
 						FilmDetailsActivity.class);
 				startActivity(intent);
@@ -217,8 +203,41 @@ public class CinemaSelectFilmActivity extends Activity {
 				hListViewAdapter.notifyDataSetChanged();
 				break;
 			case MOVIE_PLAN:
-				cinemaFilmAdapter = new CinemaFilmAdapter(moviePlans, CinemaSelectFilmActivity.this);
+
+				if (isCount == 0) {
+					for (int i = 0; i < dates.size(); i++) {
+						RadioButton tempButton = new RadioButton(
+								CinemaSelectFilmActivity.this);
+						tempButton
+								.setBackgroundResource(R.drawable.cinema_film_date);
+						tempButton.setPadding(20, 15, 20, 15);
+						// LinearLayout.LayoutParams lp = new
+						// LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						// LinearLayout.LayoutParams.WRAP_CONTENT, 1); // , 1选写
+						// lp.setMargins(10, 20, 30, 40);
+						//
+						// tempButton.setLayoutParams(lp);
+						// tempButton.requestLayout();
+						tempButton
+								.setButtonDrawable(android.R.color.transparent);
+						tempButton.setText(dates.get(i).toString());
+						tempButton.setTag(i);
+						tempButton
+								.setTextColor(R.drawable.cinema_film_date_textcolor);
+						cinemaFilmDate.addView(tempButton,
+								LinearLayout.LayoutParams.MATCH_PARENT,
+								LinearLayout.LayoutParams.WRAP_CONTENT);
+						if (i == 0) {
+							tempButton.setChecked(true);
+						}
+
+					}
+					isCount++;
+				}
+				cinemaFilmAdapter = new CinemaFilmAdapter(moviePlans,
+						CinemaSelectFilmActivity.this);
 				cinemaFilmList.setAdapter(cinemaFilmAdapter);
+				cinemaFilmAdapter.notifyDataSetChanged();
 				break;
 			}
 		}
@@ -237,8 +256,8 @@ public class CinemaSelectFilmActivity extends Activity {
 			long time_stamp = date.getTime();
 			params.put("time_stamp", time_stamp + "");
 			// cinema_id (get the cinema_id)
-			long cinema_id = 66;
-			params.put("cinema_id", cinema_id);
+			int cinemaId = 66;
+			params.put("cinema_id", cinemaId);
 			// start 开始位置
 			int start = 0;
 			params.put("start", start);
@@ -251,12 +270,12 @@ public class CinemaSelectFilmActivity extends Activity {
 			// params.put("city_id", cityId);
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
-			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "cinema_id=" + cinema_id
+			HttpGet getMethod = new HttpGet(Constant.baseURL
+					+ "action=cinema_movies" + "&" + "cinemaId=" + cinemaId
 					+ "&" + "start=" + start + "&" + "count=" + count + "enc="
 					+ enc + "&" + "time_stamp=" + time_stamp);
-			System.out.println(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "cinema_id=" + cinema_id
+			System.out.println(Constant.baseURL
+					+ "action=cinema_movies" + "&" + "cinemaId=" + cinemaId
 					+ "&" + "start=" + start + "&" + "count=" + count + "enc="
 					+ enc + "&" + "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
@@ -273,6 +292,7 @@ public class CinemaSelectFilmActivity extends Activity {
 					// mFilmInfo.clear();
 					for (int i = 0; i < movies.size(); i++) {
 						// FilmInfo film = new FilmInfo();
+						long id;
 						String movieName = "";
 						String movieScore = "";
 						Boolean has2D;
@@ -280,50 +300,62 @@ public class CinemaSelectFilmActivity extends Activity {
 						Boolean hasImax;
 						String movieProperty;
 						// String actionTime = "无数据";
-						String posterPath;
+						String posterPath = "";
+						Bitmap filmImage;
 						if (!(movies.get(i).getMovieName().equals(null))) {
 							movieName = movies.get(i).getMovieName();
-							//保存movieName用于SelectSeatBuyTicketActivity
-							SharedPreferences sp = getSharedPreferences("movieInfo", MODE_PRIVATE);
-							Editor editor = sp.edit();
-							editor.putString("movieName", movieName);
-							editor.commit();
 							// film.setFilmName(movieName);
 						}
 						names.add(movieName);
+						// 影片id
+						id = movies.get(i).getMovieId();
+						movieIds.add(id);
 						if (!(movies.get(i).getScore().equals(null))) {
 							movieScore = movies.get(i).getScore();
 
 						} else {
 							movieScore = "无评分";
+							
 						}
 						scores.add(movieScore);
-						// film.setScore(movieScore);
+
 						has2D = movies.get(i).getHas2D();
 						has3D = movies.get(i).getHas3D();
 						hasImax = movies.get(i).getHasImax();
-						if (has2D && hasImax == true) {
+						if (has2D != null && hasImax != null && has2D
+								&& hasImax == true) {
 							movieProperty = "Imax2D";
-						} else if (has3D && hasImax == true) {
+						} else if (has3D != null && hasImax != null && has3D
+								&& hasImax == true) {
 							movieProperty = "Imax3D";
-						} else if (hasImax == false && has3D == true) {
+						} else if (has3D != null && has3D == true) {
 							movieProperty = "3D";
 						} else {
 							movieProperty = "";
 						}
 						properties.add(movieProperty);
-						// film.setiMax(movieProperty);
-						// if (!(movies.get(i).getPublishTime().equals(null))) {
-						// actionTime = movies.get(i).getPublishTime();
-						// }
-						// film.setActionTime(actionTime);
-						posterPath = movies.get(i).getPosterPath();
-						if (!posterPath.equals(null)) {
-							Bitmap filmImage = Util.getBitmap(posterPath);
-							// film.setImgId(filmImage);
-							bms.add(filmImage);
-						}
 
+						// 获得图片
+						if (movies.get(i).getPathSquare() != null
+								|| movies.get(i).getPathHorizonB() != null
+								|| movies.get(i).getPathVerticalS() != null) {
+							if (movies.get(i).getPathSquare() != null) {
+								posterPath = movies.get(i).getPathSquare();
+
+							} else if (movies.get(i).getPathHorizonB() != null) {
+								posterPath = movies.get(i).getPathHorizonB();
+							} else if (movies.get(i).getPathVerticalS() != null) {
+								posterPath = movies.get(i).getPathVerticalS();
+							}
+							filmImage = Util.getBitmap(posterPath);
+
+						} else {
+							// 将drawable对象转为bitmap
+							Resources res = getResources();
+							filmImage = BitmapFactory.decodeResource(res,
+									R.drawable.ic_empty_search_result);
+						}
+						bms.add(filmImage);
 						// mFilmInfo.add(film);
 					}
 					Message msg = new Message();
@@ -337,7 +369,6 @@ public class CinemaSelectFilmActivity extends Activity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 		}
 
 	};
@@ -354,28 +385,30 @@ public class CinemaSelectFilmActivity extends Activity {
 			long time_stamp = date.getTime();
 			params.put("time_stamp", time_stamp + "");
 			// cinema_id (get the cinema_id)
-			long cinema_id = 66;
-			params.put("cinema_id", cinema_id);
+			int cinemaId = 66;
+			params.put("cinemaId", cinemaId);
 			// movie_id(get the movie_id)
-			long movie_id = 7250;
-			params.put("movie_id", movie_id);
+			// long movie_id = 7250;
+			params.put("movie_id", movieId);
 			// start 开始位置
 			int start = 0;
 			params.put("start", start);
 			// count 数量
 			int count = 10;
 			params.put("count", count);
-			// SharedPreferences s = mMainActivity.getSharedPreferences("city",
-			// Context.MODE_PRIVATE);
-			// String cityId = s.getString("cityId", null);
-			// params.put("city_id", cityId);
+
 			String enc = GetEnc.getEnc(params, "wiseMovie");
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
-					+ params.get("action") + "&" + "cinema_id=" + cinema_id
-					+ "&" + "movie_id=" + movie_id + "&" + "start=" + start
-					+ "&" + "count=" + count + "enc=" + enc + "&"
-					+ "time_stamp=" + time_stamp);
+					+ params.get("action") + "&" + "cinemaId=" + cinemaId + "&"
+					+ "movie_id=" + movieId + "&" + "start=" + start + "&"
+					+ "count=" + count + "enc=" + enc + "&" + "time_stamp="
+					+ time_stamp);
+			System.out.println("plans---" + Constant.baseURL + "action="
+					+ params.get("action") + "&" + "cinemaId=" + cinemaId + "&"
+					+ "movie_id=" + movieId + "&" + "start=" + start + "&"
+					+ "count=" + count + "enc=" + enc + "&" + "time_stamp="
+					+ time_stamp);
 			HttpResponse httpResponse;
 			String result;
 			try {
@@ -383,52 +416,59 @@ public class CinemaSelectFilmActivity extends Activity {
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					HttpEntity entity = httpResponse.getEntity();
 					result = EntityUtils.toString(entity, "utf-8");
-					Gson gson = new Gson();
-					MoviePlanResult moviePlanResult = gson.fromJson(result,
-							MoviePlanResult.class);
-					List<MoviePlan> plans = moviePlanResult.getPlans();
-					// mFilmInfo.clear();
-					moviePlans = new ArrayList<MoviePlan>();
-					//获得相应的数据 再展示出来
-					for (int i = 0; i < plans.size(); i++) {
+
+					JSONObject object = new JSONObject(result)
+							.getJSONObject("plans");
+					JSONArray datesArray = object.getJSONArray("date");
+					moviePlans.clear();
+
+					dates.clear();
+					List<String> list = new ArrayList<String>();
+					for (int i = 0; i < datesArray.length(); i++) {
+						String dateStr = (String) datesArray.getString(i);
+						dates.add(dateStr);
+					}
+
+					List<MoviePlan> plans = new ArrayList<MoviePlan>();
+					// selectedDate ="2015-05-21";
+					JSONArray plansArray = object.getJSONObject("plans")
+							.getJSONArray(selectedDate);
+					// 获得相应的数据 再展示出来
+					String featureTime = "";
+					String screenType = "";
+					String hallName = "";
+					String price = "";
+					for (int i = 0; i < plansArray.length(); i++) {
 						MoviePlan moviePlan = new MoviePlan();
-						//开场时间
-						String featureTime = "";
-						if (!plans.get(i).getFeatureTime().equals(null)) {
-							featureTime = plans.get(i).getFeatureTime();
-							//获取featureTime用于SelectSeatBuyTicket的显示时间组件
-							SharedPreferences sp = getSharedPreferences("moviePlan", MODE_PRIVATE);
-							Editor editor = sp.edit();
-							editor.putString("featureTime", featureTime);
-							editor.commit();
+						// 开场时间
+						JSONObject aPlan = plansArray.getJSONObject(i);
+						if (aPlan.getString("featureTime") != null) {
+							featureTime = Util.getHourAndMin(aPlan
+									.getString("featureTime"));
 						}
 						moviePlan.setFeatureTime(featureTime);
-						//获取planid用于SelectSeatBuyTicketActivity的请求码
-						SharedPreferences sp = getSharedPreferences("planid", Context.MODE_PRIVATE);
-						Editor editor = sp.edit();
-						editor.putLong("plan_id", moviePlan.getPlanId());
-						editor.commit();
-						//屏幕类型
-						String screenType = "";
-						if(!plans.get(i).getScreenType().equals(null)){
-							screenType = plans.get(i).getScreenType();
+						// 屏幕类型
+
+						if (aPlan.getString("screenType") != null) {
+							screenType = aPlan.getString("screenType");
 						}
 						moviePlan.setScreenType(screenType);
-						//厅名
-						String hallName = "";
-						if(!plans.get(i).getHallName().equals(null)){
-							hallName = plans.get(i).getHallName();
+						// 厅名
+
+						if (aPlan.getString("hallName") != null) {
+							hallName = aPlan.getString("hallName");
 						}
 						moviePlan.setHallName(hallName);
-						//场次售价
-						String price = "";
-						if(!plans.get(i).getPrice().equals(null)){
-							price = plans.get(i).getPrice();
+						// 场次售价
+
+						if (aPlan.getString("price") != null) {
+							price = aPlan.getString("price");
 						}
 						moviePlan.setPrice(price);
+
 						moviePlans.add(moviePlan);
 					}
-					
+
 					Message msg = new Message();
 					// Bundle data = new Bundle();
 					// msg.setData(data);
@@ -439,29 +479,38 @@ public class CinemaSelectFilmActivity extends Activity {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
-
 		}
-
 	};
 
-	public void initUI() {
+	public void initView() {
 		toCinemaDetail = (RelativeLayout) findViewById(R.id.to_cinema_detail);
-		// ///////////////////////////////////
+		cinemaNameText = (TextView) findViewById(R.id.cinema_film_name);// 标题的电影名称
+		cinemaBriefName = (TextView) findViewById(R.id.cinema_name);
+		cinemaBriefAddress = (TextView) findViewById(R.id.cinema_address);
 		hListView = (HorizontalListView) findViewById(R.id.horizon_listview);
-		// final int[] ids = { R.drawable.runman, R.drawable.runman,
-		// R.drawable.runman, R.drawable.runman, R.drawable.runman,
-		// R.drawable.runman };
-		// hListViewAdapter = new HorizontalListViewAdapter(
-		// getApplicationContext(), bms);
-		// hListView.setAdapter(hListViewAdapter);
+		hListView.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+
+		});
 		hListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 
-				// TODO Auto-generated method stub
 				// if(olderSelectView == null){
 				// olderSelectView = view;
 				// }else{
@@ -471,96 +520,50 @@ public class CinemaSelectFilmActivity extends Activity {
 				// olderSelectView = view;
 				// view.setSelected(true);
 				// previewImg.setImageResource(ids[position]);
-				hListViewAdapter.setSelectIndex(position);
-				// WindowManager wm =
-				// (WindowManager)this.getSystemService(Context.WINDOW_SERVICE);
-				// hListView.scrollTo(wm.getDefaultDisplay().getWidth(),0);
-				// hListView.scrollTo(300);
-				hListViewAdapter.notifyDataSetChanged();
-				// 不能这样写吧
-//				switch (position) {
-//				case 0:
-//					filmName.setText("电影名称");
-//					filmProperty.setText("iMax3D");
-//					filmProperty
-//							.setBackgroundResource(R.drawable.film_property_imax);
-//					filmScore.setText("8.3分");
-//					cinemaFilmAdapter = new CinemaFilmAdapter(startList,
-//							CinemaSelectFilmActivity.this);
-//					cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//					break;
-//				case 1:
-//					filmName.setText("电影2");
-//					filmProperty.setText("iMax3D");
-//					filmProperty
-//							.setBackgroundResource(R.drawable.film_property_imax);
-//					filmScore.setText("8.3分");
-//					List<String> day2 = new ArrayList<String>();
-//					day2.add("11:00");
-//					day2.add("11:00");
-//					day2.add("11:00");
-//					cinemaFilmAdapter = new CinemaFilmAdapter(day2,
-//							CinemaSelectFilmActivity.this);
-//					cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//					break;
-//				case 2:
-//					filmName.setText("电影3");
-//					filmProperty.setText("iMax3D");
-//					filmProperty
-//							.setBackgroundResource(R.drawable.film_property_imax);
-//					filmScore.setText("8.3分");
-//					List<String> day3 = new ArrayList<String>();
-//					day3.add("13:00");
-//					day3.add("13:00");
-//					day3.add("13:00");
-//					cinemaFilmAdapter = new CinemaFilmAdapter(day3,
-//							CinemaSelectFilmActivity.this);
-//					cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//					break;
-//				case 3:
-//					filmName.setText("电影4");
-//					filmProperty.setText("iMax3D");
-//					filmProperty
-//							.setBackgroundResource(R.drawable.film_property_imax);
-//					filmScore.setText("8.3分");
-//					List<String> day4 = new ArrayList<String>();
-//					day4.add("13:00");
-//					day4.add("13:00");
-//					day4.add("13:00");
-//					cinemaFilmAdapter = new CinemaFilmAdapter(day4,
-//							CinemaSelectFilmActivity.this);
-//					cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//					break;
-//				case 4:
-//					filmName.setText("电影5");
-//					filmProperty.setText("iMax3D");
-//					filmProperty
-//							.setBackgroundResource(R.drawable.film_property_imax);
-//					filmScore.setText("8.3分");
-//					List<String> day5 = new ArrayList<String>();
-//					day5.add("13:00");
-//					day5.add("13:00");
-//					day5.add("13:00");
-//					cinemaFilmAdapter = new CinemaFilmAdapter(day5,
-//							CinemaSelectFilmActivity.this);
-//					cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//					break;
-//				case 5:
-//					filmName.setText("电影6");
-//					filmProperty.setText("iMax3D");
-//					filmProperty
-//							.setBackgroundResource(R.drawable.film_property_imax);
-//					filmScore.setText("8.3分");
-//					List<String> day6 = new ArrayList<String>();
-//					day6.add("13:00");
-//					day6.add("13:00");
-//					day6.add("13:00");
-//					cinemaFilmAdapter = new CinemaFilmAdapter(day6,
-//							CinemaSelectFilmActivity.this);
-//					cinemaFilmList.setAdapter(cinemaFilmAdapter);
-//					break;
-//				}
+				dates.clear();
+				isCount = 0;
+				cinemaFilmDate.removeAllViews();
 
+				hListViewAdapter.setSelectIndex(position);
+
+				hListViewAdapter.notifyDataSetChanged();
+				filmName.setText(names.get(position));
+				filmProperty.setVisibility(View.VISIBLE);
+				if (properties.get(position).equals("iMax3D")) {
+					filmProperty
+							.setBackgroundResource(R.drawable.film_property_imax);
+				} else if (properties.get(position).equals("iMax2D")) {
+
+					filmProperty
+							.setBackgroundResource(R.drawable.film_property_imax);
+				} else if (properties.get(position).equals("3D")) {
+					filmProperty
+							.setBackgroundResource(R.drawable.film_property_3d);
+				} else {
+					filmProperty.setVisibility(View.GONE);
+				}
+				filmProperty.setText(properties.get(position));
+				filmScore.setText(scores.get(position) + "分");
+				// 得到点击的那个movieId,然后根据应用此movieId查询出来排期
+				movieId = movieIds.get(position);
+				// 保存信息
+				movieConfigure = getSharedPreferences("movieConfigure",
+						Context.MODE_PRIVATE);
+				SharedPreferences.Editor editor = movieConfigure.edit();
+				editor.putLong("movieId", movieId);
+				editor.putString("movieName", names.get(position));
+				editor.putBoolean("movieOnCome", true);
+				editor.commit();
+				/**
+				 * 开启获得电影排期的进程
+				 */
+				Thread plansThread = new Thread(planRunnable);
+				plansThread.start();
+				try {
+					plansThread.join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		cinemaFilmList = (ListViewForScrollView) findViewById(R.id.cinema_film_list);
@@ -571,19 +574,5 @@ public class CinemaSelectFilmActivity extends Activity {
 		filmScore = (TextView) findViewById(R.id.film_score);
 		cinemaFilmDetail = (RelativeLayout) findViewById(R.id.cinema_film_detail);
 		cinemaFilmTittleBack = (RelativeLayout) findViewById(R.id.cinema_film_title_back);
-	}
-
-	public List<String> getData() {
-		List<String> list = new ArrayList<String>();
-
-		list.add("17:25");
-		list.add("17:25");
-		list.add("17:25");
-		list.add("17:25");
-		list.add("17:25");
-		list.add("17:25");
-		list.add("17:25");
-		return list;
-
 	}
 }

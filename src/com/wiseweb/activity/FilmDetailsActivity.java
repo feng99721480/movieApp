@@ -3,6 +3,7 @@ package com.wiseweb.activity;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -10,9 +11,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -31,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
+
 import com.google.gson.Gson;
 import com.wiseweb.constant.Constant;
 import com.wiseweb.json.MovieDetailResult;
@@ -61,6 +66,10 @@ public class FilmDetailsActivity extends Activity {
 	private TextView movieLength;
 	private TextView publishTime;
 	private TextView movieName;
+	private String name;
+	private long movieId;
+	private Boolean movieOnCome; // 从那个列表跳过来的
+	private SharedPreferences movieConfigure;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +77,23 @@ public class FilmDetailsActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.movie_details);
 		initView();
+		movieConfigure = getSharedPreferences("movieConfigure",
+				Context.MODE_PRIVATE);
+		name = movieConfigure.getString("movieName", null);
+		movieId = movieConfigure.getLong("movieId", 0);
+		movieOnCome = movieConfigure.getBoolean("movieOnCome", true);   //通过这个标识决定买票按钮是否显示
+		//如果是从即将上映电影列表调过来的，购票按钮将不会显示
+		if(movieOnCome == false){
+			buyTicket.setVisibility(View.GONE);
+		}
+		//获得电影详情
+		Thread movieDetailThread = new Thread(runnable);
+		movieDetailThread.start();
+		try {
+			movieDetailThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		filmDetailBack.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -90,10 +116,10 @@ public class FilmDetailsActivity extends Activity {
 		});
 		// 设置电影评分
 		// 让评分/2才为设置的ratingbar的分数
-		filmRatingBar.setRating((float) (7.0 / 2));
+		// filmRatingBar.setRating((float) (7.0 / 2));
 		// ratingbar显示的评分的2倍为filmRatingText的值
 		// 如果是取得的数据就不用*2
-		filmRatingText.setText(filmRatingBar.getRating() * 2 + "分");
+		// filmRatingText.setText(filmRatingBar.getRating() * 2 + "分");
 		want = BitmapFactory.decodeResource(getResources(),
 				R.drawable.ic_wish_off);
 		imgSpan = new ImageSpan(this, want);
@@ -184,18 +210,19 @@ public class FilmDetailsActivity extends Activity {
 
 		});
 	}
+
 	@SuppressLint("HandlerLeak")
-	Handler handler = new Handler(){
+	Handler handler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			switch(msg.what){
+			switch (msg.what) {
 			case 0:
-				//do something
+				// do something
 			}
 		}
-		
+
 	};
 
 	Runnable runnable = new Runnable() {
@@ -205,7 +232,7 @@ public class FilmDetailsActivity extends Activity {
 			HashMap<String, Object> params = new HashMap<String, Object>();
 			params.put("action", "movie_info");
 
-			Long movieId = 385335l;
+			// Long movieId = 385335l;
 			params.put("movieId", movieId);
 
 			Date date = new Date();
@@ -218,10 +245,9 @@ public class FilmDetailsActivity extends Activity {
 			HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
 					+ params.get("action") + "&" + "movieId=" + movieId + "&"
 					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
-			System.out.println("movie_detail-----" + Constant.baseURL
-					+ "action=" + params.get("action") + "&" + "movieId="
-					+ movieId + "&" + "enc=" + enc + "&" + "time_stamp="
-					+ time_stamp);
+			System.out.println(Constant.baseURL + "action="
+					+ params.get("action") + "&" + "movieId=" + movieId + "&"
+					+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
 			HttpResponse httpResponse;
 			String result;
 			try {
@@ -233,53 +259,67 @@ public class FilmDetailsActivity extends Activity {
 					MovieDetailResult movieDetailResult = gson.fromJson(result,
 							MovieDetailResult.class);
 					MovieDetail movie = movieDetailResult.getMovie();
-					
+
 					String name = "";
-					String score = "无评分";
-					String type="";
-					String c=""; //国家
-					int length=0;
+					float score = 0.0f;
+					String type = "";
+					String c = ""; // 国家
+					int length = 0;
 					String actionTime = "无数据";
-					String posterPath;
-					if (!(movie.getMovieName().equals(null))) {
+					String posterPath = "";
+					if (movie.getMovieName()!=null) {
 						name = movie.getMovieName();
-						// film.setFilmName(movieName);
-						
 					}
 					movieName.setText(name);
-					//评分
-					if (!(movie.getScore().equals(null))) {
+					// 评分
+					if (movie.getScore() != 0) {
 						score = movie.getScore();
-					} 
-					filmRatingText.setText(score);
-					filmRatingBar.setRating((float) (Integer.getInteger(score)/2));
-					// 类型
-					if(!(movie.getMovieType().equals(null))){
-						type = movie.getMovieType();
 					}
-					movieType.setText("类型："+type);
-					//地区
-					if(!(movie.getCountry().equals(null))){
-						c = movie.getCountry();
-					}
-					country.setText("地区："+c);
-					//时长
-					if(movie.getMovieLength() != 0){
-						length = movie.getMovieLength();
-					}
-					movieLength.setText("时长："+length);
-					//上映日期
-					if (!(movie.getPublishTime().equals(null))) {
-						actionTime = movie.getPublishTime();
-					}
-					publishTime.setText("上映日期："+actionTime);
-					//海报
-					posterPath = movie.getPathVerticalS();
-					if (!posterPath.equals(null)) {
-						Bitmap filmImage = Util.getBitmap(posterPath);
-						movieImg.setImageBitmap(filmImage);
+					if (movieOnCome == true) {
+						filmRatingText.setText(score + "分");
+						filmRatingBar.setRating(score / 2);
+					} else {
+//						filmRatingText.setText("多少人想看");
+						filmRatingText.setText("");
+						filmRatingBar.setVisibility(View.GONE);
 					}
 
+					// 类型
+					if (movie.getMovieType() != null) {
+						type = movie.getMovieType();
+					}
+					movieType.setText("类型：" + type);
+					// 地区
+					if (movie.getCountry() != null) {
+						c = movie.getCountry();
+					}
+					country.setText("地区：" + c);
+					// 时长
+					if (movie.getMovieLength() != 0) {
+						length = movie.getMovieLength();
+					}
+					movieLength.setText("时长：" + length + "分钟");
+					// 上映日期
+					if (movie.getPublishTime() != null) {
+						actionTime = movie.getPublishTime();
+					}
+					publishTime.setText("上映日期：" + actionTime);
+					// 海报
+					if (movie.getPathVerticalS() != null
+							|| movie.getPathSquare() != null
+							|| movie.getPathHorizonS() != null) {
+						if (movie.getPathVerticalS() != null) {
+							posterPath = movie.getPathVerticalS();
+						} else if (movie.getPathSquare() != null) {
+							posterPath = movie.getPathSquare();
+						} else if (movie.getPathHorizonS() != null) {
+							posterPath = movie.getPathHorizonS();
+						}
+						Bitmap filmImage = Util.getBitmap(posterPath);
+						movieImg.setImageBitmap(filmImage);
+					} else {
+						movieImg.setImageResource(R.drawable.ic_empty_movie);
+					}
 					Message msg = new Message();
 					// Bundle data = new Bundle();
 					// msg.setData(data);
@@ -333,6 +373,6 @@ public class FilmDetailsActivity extends Activity {
 		country = (TextView) findViewById(R.id.country);
 		movieLength = (TextView) findViewById(R.id.movie_length);
 		publishTime = (TextView) findViewById(R.id.publish_time);
-		movieName = (TextView)findViewById(R.id.movie_detail_back_name);
+		movieName = (TextView) findViewById(R.id.movie_detail_back_name);
 	}
 }

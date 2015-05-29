@@ -1,6 +1,5 @@
 package com.wiseweb.activity;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import com.wiseweb.constant.Constant;
 import com.wiseweb.fragment.BaseFragment;
-import com.wiseweb.fragment.MineFragment;
 import com.wiseweb.movie.R;
 import com.wiseweb.service.LocationService;
 import com.wiseweb.ui.BottomControlPanel;
@@ -33,7 +31,6 @@ public class MainActivity extends Activity implements BottomPanelCallback {
 
 	public static String currFragTag = "";
 
-	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

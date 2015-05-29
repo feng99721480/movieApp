@@ -14,6 +14,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -22,8 +26,6 @@ import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -34,11 +36,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.PopupWindow.OnDismissListener;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import cn.sharesdk.framework.ShareSDK;
 
@@ -84,6 +83,9 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 	private String[] district = { "按区域" };
 	private List<String> districts = new ArrayList<String>();
 	private CinemaSQLiteOpenHelper helper;
+	private SharedPreferences movieConfigure;
+	private String movieName;
+	private TextView filmName;
 
 	private Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
@@ -123,6 +125,9 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_buy_ticket_select_cinema);
 		ShareSDK.initSDK(this);
+		movieConfigure = getSharedPreferences("movieConfigure",
+				Context.MODE_PRIVATE);
+		movieName = movieConfigure.getString("movieName", null);
 		// 初始化控件
 		initUI();
 		initPopupWindow();
@@ -385,8 +390,10 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 						handler.sendMessage(msg);
 
 					} else {
-						Toast.makeText(BuyTicketSelectCinema.this, "没有获取到数据", 0)
-								.show();
+						// Toast.makeText(BuyTicketSelectCinema.this, "没有获取到数据",
+						// 0)
+						// .show();
+						System.out.println("没有获取到数据");
 					}
 
 				} catch (ClientProtocolException e) {
@@ -487,16 +494,20 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 		// 触摸popupwindow外部，popupwindow消失。这个要求你的popupwindow要有背景图片才可以成功，如上
 		popupWindow.setOutsideTouchable(true);
 	}
+	
 	//根据区域查询
 	public List<CinemaInfo> find(String districtNameStr){
 		SQLiteDatabase db = helper.getReadableDatabase();
 		List<CinemaInfo> infos = new ArrayList<CinemaInfo>();
 		infos.clear();
-		Cursor cursor = db.rawQuery("select * from cinema where districtName = ?", new String[]{districtNameStr});
+		Cursor cursor = db.rawQuery(
+				"select * from cinema where districtName = ?", 
+				new String[]{districtNameStr});
 		while(cursor.moveToNext()){
 			System.out.println("下面还有数据呢。。。");
 			String name = cursor.getString(cursor.getColumnIndex("cinemaName"));
-			String address = cursor.getString(cursor.getColumnIndex("cinemaAddress"));
+			String address = cursor.getString(cursor
+					.getColumnIndex("cinemaAddress"));
 			CinemaInfo info = new CinemaInfo();
 			info.setCinemaName(name);
 			info.setCinemaAddress(address);
@@ -508,6 +519,7 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 		
 		return infos;
 	}
+	
 	//将取得的数据添加到数据库
 	public void insert(List<CinemaInfo> list){
 		SQLiteDatabase db = helper.getWritableDatabase();
@@ -522,17 +534,21 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 		}
 		db.close();
 	}
+	
 	public void deleteAll(){
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.delete("cinema", null, null);
 		db.close();
 	}
+	
 	private void initUI() {
 		helper = new CinemaSQLiteOpenHelper(BuyTicketSelectCinema.this);
 		displayWidth = getWindowManager().getDefaultDisplay().getWidth();
 		displayHeight = (int) (getWindowManager().getDefaultDisplay()
 				.getHeight() * 0.6);
 		// cinemaFilterView = new CinemaFilterView(BuyTicketSelectCinema.this);
+		filmName = (TextView) findViewById(R.id.film_name);
+		filmName.setText(movieName);
 		relativeFilter = (RelativeLayout) findViewById(R.id.relative_filter);
 		relativeFilter.setOnClickListener(new OnClickListener() {
 
@@ -556,6 +572,31 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 
 		});
 		listview = (AutoListView) findViewById(R.id.buy_ticket_select_cinema_list);
+		listview.setOnItemClickListener(new OnItemClickListener(){
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				// 因为增加了header 设置当前item上一个item的position
+				position -= listview.getHeaderViewsCount();
+				
+				SharedPreferences sp = getSharedPreferences(
+						"cinemaConfig", Context.MODE_PRIVATE);
+				Editor editor = sp.edit();
+				editor.putInt("cinemaId", cinemaInfo.get(position)
+						.getCinemaId());
+				editor.putString("cinemaName", cinemaInfo.get(position)
+						.getCinemaName());
+				editor.putString("cinemaAddress", cinemaInfo.get(position)
+						.getCinemaAddress());
+				editor.commit();
+				
+				Intent intent = new Intent();
+				intent.setClass(BuyTicketSelectCinema.this, CinemaSelectFilmActivity.class);
+				startActivity(intent);
+			}
+			
+		});
 		// radio = (RadioGroup) findViewById(R.id.cinema_radio);
 		// selectSeat = (RadioButton) findViewById(R.id.cinema_select_seat);
 		// all = (RadioButton) findViewById(R.id.cinema_all);
