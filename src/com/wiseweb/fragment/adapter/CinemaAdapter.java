@@ -80,7 +80,7 @@ public class CinemaAdapter extends BaseAdapter{
 		}*/
 		//è����ͼ�
 		TextView lowestPrice = (TextView)v.findViewById(R.id.lowest_price);
-		lowestPrice.setText("猫眼价："+mListCinemaBean.get(position).getLowestPrice()+"元");
+		lowestPrice.setText("虎啸价："+mListCinemaBean.get(position).getLowestPrice()+"元");
 		//ӰԺ��ַ
 		TextView cinemaAddress = (TextView)v.findViewById(R.id.cinema_address);
 		cinemaAddress.setText(mListCinemaBean.get(position).getCinemaAddress());

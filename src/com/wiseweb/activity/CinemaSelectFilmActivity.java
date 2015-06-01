@@ -101,15 +101,15 @@ public class CinemaSelectFilmActivity extends Activity {
 		initView();
 		cinemaFilmScroll.smoothScrollTo(0, 0);
 		// 获得影院相关数据
-		/*
-		 * cinemaConfig = getSharedPreferences("cinemaConfig",
-		 * Context.MODE_PRIVATE); cinemaName =
-		 * cinemaConfig.getString("cinemaName", null); cinemaId =
-		 * cinemaConfig.getInt("cinemaId", 0); cinemaAddress =
-		 * cinemaConfig.getString("cinemaAddress", null); //设置影院的名称和地址
-		 * cinemaBriefName.setText(cinemaName);
-		 * cinemaBriefAddress.setText(cinemaAddress);
-		 */
+
+		cinemaConfig = getSharedPreferences("cinemaConfig",
+				Context.MODE_PRIVATE);
+		cinemaName = cinemaConfig.getString("cinemaName", null);
+		cinemaId = cinemaConfig.getInt("cinemaId", 0);
+		cinemaAddress = cinemaConfig.getString("cinemaAddress", null); // 设置影院的名称和地址
+		cinemaBriefName.setText(cinemaName);
+		cinemaBriefAddress.setText(cinemaAddress);
+
 		selectedDate = Util.getSystemYearMonthDay();
 		System.out.println("selectedDate" + selectedDate);
 		Thread cinemaMovies = new Thread(runnable);
@@ -256,7 +256,7 @@ public class CinemaSelectFilmActivity extends Activity {
 			long time_stamp = date.getTime();
 			params.put("time_stamp", time_stamp + "");
 			// cinema_id (get the cinema_id)
-			int cinemaId = 66;
+			//int cinemaId = 66;
 			params.put("cinema_id", cinemaId);
 			// start 开始位置
 			int start = 0;
@@ -274,10 +274,10 @@ public class CinemaSelectFilmActivity extends Activity {
 					+ "action=cinema_movies" + "&" + "cinemaId=" + cinemaId
 					+ "&" + "start=" + start + "&" + "count=" + count + "enc="
 					+ enc + "&" + "time_stamp=" + time_stamp);
-			System.out.println(Constant.baseURL
-					+ "action=cinema_movies" + "&" + "cinemaId=" + cinemaId
-					+ "&" + "start=" + start + "&" + "count=" + count + "enc="
-					+ enc + "&" + "time_stamp=" + time_stamp);
+			System.out.println(Constant.baseURL + "action=cinema_movies" + "&"
+					+ "cinemaId=" + cinemaId + "&" + "start=" + start + "&"
+					+ "count=" + count + "enc=" + enc + "&" + "time_stamp="
+					+ time_stamp);
 			HttpResponse httpResponse;
 			String result;
 			try {
@@ -315,7 +315,7 @@ public class CinemaSelectFilmActivity extends Activity {
 
 						} else {
 							movieScore = "无评分";
-							
+
 						}
 						scores.add(movieScore);
 

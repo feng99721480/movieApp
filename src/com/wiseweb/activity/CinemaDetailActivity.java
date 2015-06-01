@@ -361,14 +361,14 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 					visualEffect.setText(detail.getVisualEffect());
 				}else{
 					System.out.println("视觉效果无数据");
-					visualEffect.setText("视觉效果：出色");
+					visualEffect.setVisibility(View.GONE);
 				}
 				// 设置影院环境
 				if (detail.getCinemaEnvrionment() != null) {
 					cinemaEnvironment.setText(detail.getCinemaEnvrionment());
 				}else{
 					System.out.println("影院环境无数据");
-					cinemaEnvironment.setText("影院环境：舒适");
+					cinemaEnvironment.setVisibility(View.GONE);
 				}
 				// 设置影院周边餐饮
 				if (detail.getSurrondingRestaurants() != null) {
@@ -376,7 +376,7 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 							.getSurrondingRestaurants());
 				}else{
 					System.out.println("周边餐饮无数据");
-					surrondingRestaurants.setText("周边餐饮：热闹");
+					surrondingRestaurants.setVisibility(View.GONE);
 				}
 				// 设置影院电话
 				if (!(detail.getCinemaTel().equals(null))) {
