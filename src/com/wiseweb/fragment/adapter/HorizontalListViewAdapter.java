@@ -61,12 +61,12 @@ public class HorizontalListViewAdapter extends BaseAdapter {
 
 	@Override
 	public int getCount() {
-		return mIconIDs.length;
+		return bps.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		return position;
+		return bps.get(position);
 	}
 
 	@Override

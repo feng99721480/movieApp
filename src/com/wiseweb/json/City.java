@@ -5,7 +5,7 @@ import java.util.List;
 public class City {
 	private String tab;
 	private String text;
-	private List<Group> group;
+	private List<Group> group;   //城市信息
 	
 	
 	

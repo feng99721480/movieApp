@@ -36,7 +36,7 @@
 	<string name="demo_title_poi">POI搜索功能--POISearchDemo</string>
     <string name="demo_desc_poi">介绍关键词查询、suggestion查询和查看餐饮类Place详情页功能</string>
     <string name="ticket_wait_payment">待付款</string>
-    <string name="my_cinema_ticket">我的订单</string>
+    <string name="my_cinema_ticket">我的电影票</string>
     <string name="ticket_not_spending">未消费</string>
     <string name="ticket_done">已完成</string>
     <string name="ticket_edit">编辑</string>
@@ -46,8 +46,8 @@
     <string name="confirm_pay">确认支付</string>
     <string name="ticket_phone_text">购票手机号</string>
     
-    <!-- autolistview -->
-    <!-- 自定义组件 -->
+    
+   <!-- 自定义组件 -->
     <string name="pull_to_refresh">下拉可以刷新</string>
     <string name="release_to_refresh">松开可以刷新</string>
     <string name="lastUpdateTime">最近更新：%s</string>

@@ -2,7 +2,6 @@ package com.wiseweb.activity;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,8 +28,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -55,6 +54,7 @@ import com.wiseweb.ui.AutoListView;
 import com.wiseweb.ui.AutoListView.OnLoadListener;
 import com.wiseweb.ui.AutoListView.OnRefreshListener;
 import com.wiseweb.util.GetEnc;
+import com.wiseweb.util.Util;
 
 public class BuyTicketSelectCinema extends FragmentActivity implements
 		OnRefreshListener, OnLoadListener {
@@ -217,31 +217,30 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 				// String baseURL = "http://192.168.0.141:4000/appAPI";
 				HashMap<String, Object> params = new HashMap<String, Object>();
 				params.put("action", "cinema_Query");
-				Date date = new Date();
-				long time_stamp = date.getTime();
+				
+				long time_stamp = Util.getTimeStamp();
 				params.put("time_stamp", time_stamp + "");
 				int count = start + 10;// 数量
 				params.put("count", count);
 				// int start = 0;// 从第几个开始
 				params.put("start", start);
-				// SharedPreferences s =
-				// mMainActivity.getSharedPreferences("city",
-				// Context.MODE_PRIVATE);
-				// String cityId = s.getString("cityId", null);
-				String cityId = "209";
-				params.put("city_id", cityId);
+				SharedPreferences s = getSharedPreferences("city",
+						Context.MODE_PRIVATE);
+				String cityId = s.getString("cityId", null);
+				// String cityId = "209";
+				params.put("cityId", cityId);
 				String enc = GetEnc.getEnc(params, "wiseMovie");
 				HttpClient httpClient = new DefaultHttpClient();
-				HttpGet getMethod = new HttpGet(Constant.baseURL + "action="
-						+ params.get("action") + "&" + "city_id=" + cityId
+				HttpGet getMethod = new HttpGet(Constant.baseURL
+						+ "action=cinema_Query" + "&" + "cityId=" + cityId
 						+ "&" + "start=" + start + "&" + "count=" + count + "&"
 						+ "enc=" + enc + "&" + "time_stamp" + time_stamp);
 				System.out
 						.println("*******************BuyTicketSelectCinema*************************");
-				System.out.println(Constant.baseURL + "action="
-						+ params.get("action") + "&" + "city_id=" + cityId
-						+ "&" + "start=" + start + "&" + "count=" + count + "&"
-						+ "enc=" + enc + "&" + "time_stamp=" + time_stamp);
+				System.out.println(Constant.baseURL + "action=cinema_Query"
+						+ "&" + "cityId=" + cityId + "&" + "start=" + start
+						+ "&" + "count=" + count + "&" + "enc=" + enc + "&"
+						+ "time_stamp" + time_stamp);
 				HttpResponse httpResponse;
 				String result;
 				try {
@@ -269,6 +268,7 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 						}
 						// cinemaInfo.clear();
 						List<CinemaInfo> tempList = new ArrayList<CinemaInfo>();
+
 						for (int i = 0; i < cinemas.size(); i++) {
 							CinemaInfo info = new CinemaInfo();
 							int cinemaId;
@@ -354,7 +354,7 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 										.println("cinemaLowestPrice============="
 												+ cinemaLowestPrice);
 							}
-							//获取影院地址
+							// 获取影院地址
 							if (cinemas.get(i).getCinemaAddress() != null) {
 								cinemaAddress = cinemas.get(i)
 										.getCinemaAddress();
@@ -373,7 +373,7 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 							// }else{
 							// System.out.println("cinameDistance=="+cinameDistance);
 							// }
-							//获取距离
+							// 获取距离
 							if (cinemas.get(i).getDistance() != null) {
 								cinameDistance = cinemas.get(i).getDistance();
 								info.setDistance(cinameDistance);
@@ -474,14 +474,14 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				
+
 				List<CinemaInfo> districtList = find(districts.get(position));
 				cinemaAdapter = new CinemaAdapter(districtList,
 						BuyTicketSelectCinema.this);
 				listview.setAdapter(cinemaAdapter);
-				cinemaAdapter.notifyDataSetChanged();//刷新
-				popupWindow.dismiss();//隐藏窗体
-				listview.setLoadEnable(false);//设置不可下拉加载
+				cinemaAdapter.notifyDataSetChanged();// 刷新
+				popupWindow.dismiss();// 隐藏窗体
+				listview.setLoadEnable(false);// 设置不可下拉加载
 				Toast.makeText(BuyTicketSelectCinema.this,
 						"点击了" + districts.get(position), 0).show();
 			}
@@ -494,16 +494,16 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 		// 触摸popupwindow外部，popupwindow消失。这个要求你的popupwindow要有背景图片才可以成功，如上
 		popupWindow.setOutsideTouchable(true);
 	}
-	
-	//根据区域查询
-	public List<CinemaInfo> find(String districtNameStr){
+
+	// 根据区域查询
+	public List<CinemaInfo> find(String districtNameStr) {
 		SQLiteDatabase db = helper.getReadableDatabase();
 		List<CinemaInfo> infos = new ArrayList<CinemaInfo>();
 		infos.clear();
 		Cursor cursor = db.rawQuery(
-				"select * from cinema where districtName = ?", 
-				new String[]{districtNameStr});
-		while(cursor.moveToNext()){
+				"select * from cinema where districtName = ?",
+				new String[] { districtNameStr });
+		while (cursor.moveToNext()) {
 			System.out.println("下面还有数据呢。。。");
 			String name = cursor.getString(cursor.getColumnIndex("cinemaName"));
 			String address = cursor.getString(cursor
@@ -512,16 +512,16 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 			info.setCinemaName(name);
 			info.setCinemaAddress(address);
 			infos.add(info);
-			
+
 		}
 		cursor.close();
 		db.close();
-		
+
 		return infos;
 	}
-	
-	//将取得的数据添加到数据库
-	public void insert(List<CinemaInfo> list){
+
+	// 将取得的数据添加到数据库
+	public void insert(List<CinemaInfo> list) {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		for (int i = 0; i < list.size(); i++) {
 			String address = list.get(i).getCinemaAddress();
@@ -534,13 +534,13 @@ public class BuyTicketSelectCinema extends FragmentActivity implements
 		}
 		db.close();
 	}
-	
-	public void deleteAll(){
+
+	public void deleteAll() {
 		SQLiteDatabase db = helper.getWritableDatabase();
 		db.delete("cinema", null, null);
 		db.close();
 	}
-	
+
 	private void initUI() {
 		helper = new CinemaSQLiteOpenHelper(BuyTicketSelectCinema.this);
 		displayWidth = getWindowManager().getDefaultDisplay().getWidth();
