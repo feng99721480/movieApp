@@ -85,6 +85,7 @@
         <activity android:name="com.wiseweb.activity.CinemaDetailActivity" >
         </activity>
         <activity android:name="com.wiseweb.activity.SelectSeatBuyTicketActivity" >
+            
         </activity>
         <activity android:name="com.wiseweb.activity.RegisterActivity" >
         </activity>

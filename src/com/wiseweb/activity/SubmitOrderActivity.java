@@ -152,9 +152,9 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			Intent intent = new Intent();
-			intent.setClass(SubmitOrderActivity.this, PayActivity.class);
-			startActivity(intent);
+//			Intent intent = new Intent();
+//			intent.setClass(SubmitOrderActivity.this, PayActivity.class);
+//			startActivity(intent);
 			break;
 		}
 	}

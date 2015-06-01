@@ -5,8 +5,8 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="lib" path="D:/data/android/movie/libs/baidumapapi_v3_4_0.jar"/>
-	<classpathentry exported="true" kind="lib" path="D:/data/android/movie/libs/locSDK_5.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="D:/data/android/movie/libs/android-support-v4.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/openSource/movie/libs/baidumapapi_v3_4_0.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/openSource/movie/libs/android-support-v4.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/openSource/movie/libs/locSDK_5.0.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

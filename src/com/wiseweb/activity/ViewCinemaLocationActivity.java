@@ -47,11 +47,11 @@ public class ViewCinemaLocationActivity extends FragmentActivity implements
 		mPoiSearch.setOnGetPoiSearchResultListener(this);
 		mBaiduMap = ((SupportMapFragment) (getSupportFragmentManager()
 				.findFragmentById(R.id.map))).getBaiduMap();
-		cinemaAddressPreferences = this.getSharedPreferences("cinemaAddress",Context.MODE_PRIVATE);
+		cinemaAddressPreferences = this.getSharedPreferences("cinemaConfig",Context.MODE_PRIVATE);
 		String cinemaAddress = cinemaAddressPreferences.getString("cinemaAddress", null);
 		//得到城市名称
-		city = this.getSharedPreferences("city",Context.MODE_PRIVATE);
-		String cityName = city.getString("city", null);
+		city = this.getSharedPreferences("cityInfo",Context.MODE_PRIVATE);
+		String cityName = city.getString("cityName", null);
 		/**
 		 * 根据地址搜索
 		 */
