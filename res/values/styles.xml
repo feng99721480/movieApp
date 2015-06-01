@@ -53,6 +53,7 @@
     </style>
 
     <!-- dialog显示图片 -->
+    <!--  -->
      <style name="ImageloadingDialogStyle" parent="android:Theme.Dialog">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowFrame">@null</item>
