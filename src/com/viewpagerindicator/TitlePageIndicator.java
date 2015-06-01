@@ -38,6 +38,8 @@ import android.view.ViewConfiguration;
 
 import java.util.ArrayList;
 
+import com.wiseweb.movie.R;
+
 /**
  * A TitlePageIndicator is a PageIndicator which displays the title of left view
  * (if exist), the title of the current select view (centered) and the title of
