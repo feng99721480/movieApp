@@ -85,7 +85,22 @@
         <activity android:name="com.wiseweb.activity.CinemaDetailActivity" >
         </activity>
         <activity android:name="com.wiseweb.activity.SelectSeatBuyTicketActivity" >
-            
+        </activity>
+        <activity android:name="com.wiseweb.activity.RegisterActivity" >
+        </activity>
+        <activity android:name="com.wiseweb.activity.RegisterActivitySecond" >
+        </activity>
+        <activity android:name="com.wiseweb.activity.RegisterActivityThree" >
+        </activity>
+        <activity android:name="com.wiseweb.activity.MyAccountActivity">
+        </activity>
+        <activity android:name="com.wiseweb.activity.ModifyUsernameActivity">
+        </activity>
+        <activity android:name="com.wiseweb.activity.ModifyPasswordActivity">
+        </activity>
+        <activity android:name="com.wiseweb.activity.BindPhoneNumberActivity">
+        </activity>
+        <activity android:name="com.wiseweb.activity.FindPasswordActivity">
         </activity>
 
         <!-- 一键分享的 -->
