@@ -260,8 +260,10 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,
 		cursor = dbRead.query("cinemaInfo", null, "cityId=?",
 				new String[] { cityId }, null, null, null);
 		if (cursor.moveToFirst() == false) {// 查询无结果
+			System.out.println("数据库无内容走这");
 			initData();
 		} else {
+			System.out.println("数据库有内容走这");
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
 				CinemaInfo cinema = new CinemaInfo();

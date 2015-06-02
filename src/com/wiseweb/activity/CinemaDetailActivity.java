@@ -298,12 +298,16 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 						if(logo != null){
 							logoImg.setImageBitmap(logo);
 						}else{
+							
 							System.out.println("没找到LOGO资源");
 						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 					
+				}else{
+					logoImg.setVisibility(View.GONE);
+					System.out.println("LOGO资源路径为空");
 				}
 				//设置影院图库
 				if(detail.getGalleries().length > 0){

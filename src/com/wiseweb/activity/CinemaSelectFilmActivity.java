@@ -258,6 +258,7 @@ public class CinemaSelectFilmActivity extends Activity {
 			// cinema_id (get the cinema_id)
 			//int cinemaId = 66;
 			params.put("cinema_id", cinemaId);
+			System.out.println("cinemaId---------"+cinemaId);
 			// start 开始位置
 			int start = 0;
 			params.put("start", start);

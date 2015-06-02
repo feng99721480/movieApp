@@ -320,6 +320,7 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 				return bitmap;
 			}
 		}
+		cursor.close();
 		db.close();
 		return null;
 	}
