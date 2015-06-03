@@ -42,7 +42,6 @@
     <color name="no_color">#00000000</color>
     <!-- 注册 -->
     <color name="deep_gray">#999d9c</color>
-    <!-- 忘记密码 -->
+	<!-- 忘记密码 -->
     <color name="green">#00ae9d</color>
-
 </resources>

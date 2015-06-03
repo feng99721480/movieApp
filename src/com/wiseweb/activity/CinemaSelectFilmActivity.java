@@ -258,7 +258,6 @@ public class CinemaSelectFilmActivity extends Activity {
 			// cinema_id (get the cinema_id)
 			//int cinemaId = 66;
 			params.put("cinema_id", cinemaId);
-			System.out.println("cinemaId---------"+cinemaId);
 			// start 开始位置
 			int start = 0;
 			params.put("start", start);
@@ -443,6 +442,7 @@ public class CinemaSelectFilmActivity extends Activity {
 						MoviePlan moviePlan = new MoviePlan();
 						// 开场时间
 						JSONObject aPlan = plansArray.getJSONObject(i);
+						
 						if (aPlan.getString("featureTime") != null) {
 							featureTime = Util.getHourAndMin(aPlan
 									.getString("featureTime"));
@@ -466,8 +466,16 @@ public class CinemaSelectFilmActivity extends Activity {
 							price = aPlan.getString("price");
 						}
 						moviePlan.setPrice(price);
-
-						moviePlans.add(moviePlan);
+						
+						if(Util.isTimeLater(aPlan.getString("featureTime") )){
+							try {
+								System.out.println("aaaaaaaa"+Util.getTimeMillis(Util.ConverToDate(aPlan.getString("featureTime"))));
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							moviePlans.add(moviePlan);
+						}
 					}
 
 					Message msg = new Message();
@@ -490,7 +498,7 @@ public class CinemaSelectFilmActivity extends Activity {
 
 	public void initView() {
 		toCinemaDetail = (RelativeLayout) findViewById(R.id.to_cinema_detail);
-		cinemaNameText = (TextView) findViewById(R.id.cinema_film_name);// 标题的电影名称
+		cinemaNameText = (TextView) findViewById(R.id.cinema_film_name);// 标题的影院名称
 		cinemaBriefName = (TextView) findViewById(R.id.cinema_name);
 		cinemaBriefAddress = (TextView) findViewById(R.id.cinema_address);
 		hListView = (HorizontalListView) findViewById(R.id.horizon_listview);

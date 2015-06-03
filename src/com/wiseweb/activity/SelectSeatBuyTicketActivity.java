@@ -248,6 +248,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 							.setPositiveButton("确定", null).show();
 				} else {// 合法手机号
 					mobile = orderPhone.getText().toString();
+					
 					// 创建订单
 					Thread t = new Thread(createOrderRunnable);
 					t.start();
@@ -375,7 +376,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 					String money = order.getString("money"); // 订单总额
 					int orderStatus = order.getInt("orderStatus");// 订单状态
 					String seatInfo = order.getString("seatInfo");
-					String seatno = order.getString("seatNo");
+//					String seatDesc = order.getString("chooseseats");
 					JSONObject plan = order.getJSONObject("plan");
 					JSONObject cinema = plan.getJSONObject("cinema");
 					String cinemaName = cinema.getString("cinemaName"); // 影院名称
@@ -384,7 +385,6 @@ public class SelectSeatBuyTicketActivity extends Activity {
 					String hallName = plan.getString("hallName"); // 厅名
 					JSONObject movie = plan.getJSONObject("movie");
 					String movieName = movie.getString("movieName");// 电影名称
-
 					// 汇总需要的信息带到确认订单activity
 					orderPreferences = getSharedPreferences("orderConfig",
 							Context.MODE_PRIVATE);
@@ -397,7 +397,7 @@ public class SelectSeatBuyTicketActivity extends Activity {
 					e.putString("cinemaName", cinemaName);
 					e.putString("movieName", movieName);
 					e.putString("hallName", hallName);
-					e.putString("seatNo", seatno);
+//					e.putString("seatDesc", seatDesc);
 					e.commit();
 
 					Message msg = new Message();

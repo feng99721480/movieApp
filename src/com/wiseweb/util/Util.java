@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,7 +55,6 @@ public class Util {
 			e.printStackTrace();
 		}
 		return bitmap;
-		
 
 	}
 
@@ -123,15 +123,15 @@ public class Util {
 		da = (Date) format.parse(date);
 		int hour = da.getHours();
 		int min = da.getMinutes();
-		if (min == 0) {
-			return hour + ":" + "00";
+		if (min < 10) {
+			return hour + ":" + "0" + min;
 		}
+
 		return (hour + ":" + min);
 	}
 
 	/**
-	 * 获得此刻时间到1970年1月1号的毫秒数 即使用时间戳参数时使用
-	 * 
+	 * @desc 获得此刻时间到1970年1月1号的毫秒数 即使用时间戳参数时使用
 	 * @return long
 	 */
 	public static long getTimeStamp() {
@@ -151,6 +151,53 @@ public class Util {
 		// SimpleDateFormat dateFormat12 = new
 		// SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 		return dateFormat24.format(Calendar.getInstance().getTime());
+	}
+
+	/**
+	 * 判断一个给定的String类型日期是不是比当前日期早
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static boolean isTimeLater(String date) {
+		try {
+			if (getTimeMillis(ConverToDate(date)) > getTimeStamp()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	/**
+	 * @desc 将String类型的日期转换为Date类型
+	 * @param strDate
+	 * @return
+	 * @throws Exception
+	 */
+    public static Date ConverToDate(String strDate) throws Exception  
+    {  
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+        return df.parse(strDate);  
+    }  
+
+	/**
+	 * 判断某个日期到1970年的毫秒数
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static long getTimeMillis(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+//		cal.set(Calendar.YEAR, date.getYear());
+//		cal.set(Calendar.MONTH, date.getMonth());
+//		cal.set(Calendar.DAY_OF_MONTH, date.getDay());
+//		cal.set(Calendar.HOUR, date.getHours());
+//		cal.set(Calendar.MINUTE, date.getMinutes());
+//		cal.set(Calendar.SECOND, date.getSeconds());
+		// cal.set(Calendar.MILLISECOND, date.getmi);
+		return cal.getTimeInMillis();
 	}
 
 	/**

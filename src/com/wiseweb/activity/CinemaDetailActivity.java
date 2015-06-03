@@ -73,7 +73,6 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 	private TextView cinemaEnvironment;
 	private TextView surrondingRestaurants;
 	private RelativeLayout cinemaPhone;
-	private String phoneNum;
 	private TextView phoneNumText;
 	private RelativeLayout cinemaAddressLayout;
 	private TextView addressText;
@@ -242,8 +241,7 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 		surrondingRestaurants.setText(restaurants);
 		cinemaPhone = (RelativeLayout) findViewById(R.id.cinema_phone);
 		phoneNumText = (TextView) findViewById(R.id.phone_number);
-		// 电话号码
-		phoneNum = phoneNumText.getText().toString();
+		
 		cinemaPhone.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -253,7 +251,7 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 				// call.setAction(Intent.ACTION_CALL);
 				// 跳转到拨号页面并已经输入号码
 				call.setAction(Intent.ACTION_DIAL);
-				call.setData(Uri.parse("tel:" + phoneNum));
+				call.setData(Uri.parse("tel:" + phoneNumText.getText().toString()));
 				// callPhoneAndSendMessage.this.startActivity(call);
 				startActivity(call);
 			}
@@ -298,16 +296,12 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 						if(logo != null){
 							logoImg.setImageBitmap(logo);
 						}else{
-							
 							System.out.println("没找到LOGO资源");
 						}
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 					
-				}else{
-					logoImg.setVisibility(View.GONE);
-					System.out.println("LOGO资源路径为空");
 				}
 				//设置影院图库
 				if(detail.getGalleries().length > 0){
@@ -365,14 +359,14 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 					visualEffect.setText(detail.getVisualEffect());
 				}else{
 					System.out.println("视觉效果无数据");
-					visualEffect.setVisibility(View.GONE);
+					visualEffect.setText("视觉效果：出色");
 				}
 				// 设置影院环境
 				if (detail.getCinemaEnvrionment() != null) {
 					cinemaEnvironment.setText(detail.getCinemaEnvrionment());
 				}else{
 					System.out.println("影院环境无数据");
-					cinemaEnvironment.setVisibility(View.GONE);
+					cinemaEnvironment.setText("影院环境：舒适");
 				}
 				// 设置影院周边餐饮
 				if (detail.getSurrondingRestaurants() != null) {
@@ -380,7 +374,7 @@ public class CinemaDetailActivity extends Activity implements OnClickListener {
 							.getSurrondingRestaurants());
 				}else{
 					System.out.println("周边餐饮无数据");
-					surrondingRestaurants.setVisibility(View.GONE);
+					surrondingRestaurants.setText("周边餐饮：热闹");
 				}
 				// 设置影院电话
 				if (!(detail.getCinemaTel().equals(null))) {

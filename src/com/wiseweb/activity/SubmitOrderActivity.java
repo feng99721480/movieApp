@@ -47,9 +47,9 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 	private Button orderPayBtn;
 	private RelativeLayout submitOrderTitleBack;
 	private SharedPreferences orderPreferences;
-	private String orderId;
-	private SharedPreferences payPreferences;
 
+    
+	public static long time = 15 * 1000 * 60L;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,9 +57,12 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_submit_order);
 		initView();
 		// 倒计时15分钟
-		mc = new MyCount(15 * 1000 * 60, 1000);
+		mc = new MyCount(time, 1000);
 		mc.start();
 		setData();
+		orderPreferences = getSharedPreferences("orderConfig",
+				Context.MODE_PRIVATE);
+		
 		/*
 		 * 各组件点击事件监听
 		 */
@@ -94,15 +97,14 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 		String movieName = orderPreferences.getString("movieName", "");
 		String featureTime = orderPreferences.getString("featureTime", "");
 		String hallName = orderPreferences.getString("hallName", "");
-		String seatNo = orderPreferences.getString("seatNo", "");
+		String seatDesc = orderPreferences.getString("seatDesc", "");
 		String phone = orderPreferences.getString("mobile", "");
 		String money = orderPreferences.getString("money", "");
 		String agio = orderPreferences.getString("agio", "");
-		orderId = orderPreferences.getString("orderId", "");
 		orderCinemaName.setText("影院：" + cinemaName);
 		orderMovieName.setText("电影：" + movieName);
 		orderEvent.setText("场次：" + featureTime);
-		orderSeat.setText("座位：" + hallName + " " + seatNo);
+		orderSeat.setText("座位：" + hallName + " " + seatDesc);
 		orderPhone.setText("手机号：" + phone);
 		orderTotalPrice.setText("总价：" + money + "元");
 		orderTotalPayment.setText("合计支付：" + agio + "元");
@@ -122,11 +124,12 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 		public void onFinish() {
 			countDownText.setText("订单超时");
 			// 不能再支付
-			orderPayBtn.setClickable(false);
+//			orderPayBtn.setClickable(false);
 		}
 
 		@Override
 		public void onTick(long millisUntilFinished) {
+			time = millisUntilFinished;
 			countDownText.setText("支付剩余时间：" + millisUntilFinished / 60000 + "分"
 					+ ((millisUntilFinished / 1000) % 60) + "秒");
 		}
@@ -144,83 +147,11 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 			break;
 		// 支付按钮
 		case R.id.order_pay_btn:
-			// 确认订单
-			Thread t = new Thread(createOrderRunnable);
-			t.start();
-			try {
-				t.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-//			Intent intent = new Intent();
-//			intent.setClass(SubmitOrderActivity.this, PayActivity.class);
-//			startActivity(intent);
+			Intent intent = new Intent();
+			intent.putExtra("time", time);
+			intent.setClass(SubmitOrderActivity.this, PayOrderActivity.class);
+			startActivity(intent);
 			break;
 		}
 	}
-
-	/**
-	 * 确认订单
-	 */
-	Runnable createOrderRunnable = new Runnable() {
-
-		@Override
-		public void run() {
-			HashMap<String, Object> params = new HashMap<String, Object>();
-			long time_stamp = Util.getTimeStamp();
-			params.put("time_stamp", time_stamp);
-			params.put("action", "order_confirm"); // 接口名称
-			params.put("order_id", orderId);
-			params.put("balance", 0); // 座位id
-			String enc = GetEnc.getEnc(params, "wiseMovie");
-			HttpClient httpClient = new DefaultHttpClient();
-			// HttpGet getMethod = new HttpGet(Constant.baseURL
-			// + "action=order_add" + "&" + "seat_no=" + seatNo + "&"
-			// + "plan_id=" + planId + "&" + "mobile=" + mobile + "&"
-			// + "send_message=" + sendMessage + "&" + "enc=" + enc + "&"
-			// + "time_stamp=" + time_stamp);
-			// System.out.println(Constant.baseURL + "action=order_add" + "&"
-			// + "seat_no=" + seatNo + "&" + "plan_id=" + planId + "&"
-			// + "mobile=" + mobile + "&" + "send_message=" + sendMessage
-			// + "&" + "enc=" + enc + "&" + "time_stamp=" + time_stamp);
-			HttpGet getMethod = new HttpGet(
-					"http://test.komovie.cn/api_movie/service?action=order_Confirm&order_id=a1432807288995531315&balance=0&pay_method=1&callback_url=%2Findex&time_stamp=1432807293494&enc=7d33279da6f61170e0554686d0d4c8fc&");
-			HttpResponse httpResponse;
-			String result;
-			try {
-				httpResponse = httpClient.execute(getMethod);
-				if (httpResponse.getStatusLine().getStatusCode() == 200) {
-					HttpEntity entity = httpResponse.getEntity();
-					result = EntityUtils.toString(entity, "utf-8");
-					// 获得信息
-					JSONObject payInfo = new JSONObject(result)
-							.getJSONObject("payInfo");
-					String payUrl = payInfo.getString("payUrl");
-					payPreferences = getSharedPreferences("payInfo",Context.MODE_PRIVATE);
-					SharedPreferences.Editor e = payPreferences.edit();
-					e.putString("payUrl", payUrl);
-					e.commit();
-
-					// Message msg = new Message();
-					// // Bundle data = new Bundle();
-					// msg.what = ORDER_ADD;
-					// handler.sendMessage(msg);
-
-				} else {
-					System.out.println("lalalaalalalalala");
-				}
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (ParseException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-
-		}
-
-	};
-
 }

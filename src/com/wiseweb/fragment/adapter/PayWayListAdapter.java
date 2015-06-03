@@ -21,7 +21,7 @@ public class PayWayListAdapter extends BaseAdapter {
 	private List<PayWay> mList = null;
 	private Context mContext;
 	private LayoutInflater mInflater;
-	private int lastSelectedIndex = -1;
+	private int lastSelectedIndex = 0;
 
 	// private int lastSelectedIndex;
 

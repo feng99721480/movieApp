@@ -260,10 +260,8 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,
 		cursor = dbRead.query("cinemaInfo", null, "cityId=?",
 				new String[] { cityId }, null, null, null);
 		if (cursor.moveToFirst() == false) {// 查询无结果
-			System.out.println("数据库无内容走这");
 			initData();
 		} else {
-			System.out.println("数据库有内容走这");
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
 				CinemaInfo cinema = new CinemaInfo();
@@ -308,6 +306,7 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,
 				params.put("count", count);
 				// int start = 0;// 从第几个开始
 				params.put("start", start);
+				System.out.println("loaddata==="+start);
 				SharedPreferences s = mMainActivity.getSharedPreferences(
 						"city", Context.MODE_PRIVATE);
 				String cityId = s.getString("cityId", null);
@@ -460,7 +459,7 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,
 							int districtId = cinemas.get(i).getDistrictId();
 							String districtName = cinemas.get(i)
 									.getDistrictName();
-							tempList.add(info);
+//							tempList.add(info);
 							// 存库
 							ContentValues cv = new ContentValues();
 							cv.put("cinemaId", cinemaId);
@@ -484,6 +483,7 @@ public class CinemaFragment extends BaseFragment implements OnRefreshListener,
 									null, null);
 							if (cursor.moveToFirst() == false) {// 无数据插入之
 								dbWrite.insert("cinemaInfo", null, cv);
+								tempList.add(info);
 							} else {// 有数据更新之
 								dbWrite.update("cinemaInfo", cv,
 										"cinemaId=? and cityId=?",
