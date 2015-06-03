@@ -247,7 +247,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="2dp"
-            android:text="抠电影用户协议"
+            android:text="虎啸影视用户协议"
             android:textColor="#f58220" />
     </LinearLayout>
 

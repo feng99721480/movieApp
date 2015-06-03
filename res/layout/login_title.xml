@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@color/main_color" >
+
     <RelativeLayout
         android:id="@+id/login_title_back"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="5dp" 
         android:background="@drawable/cinema_film_title_back_bg"
-        android:paddingRight="5dp">
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
 
         <ImageView
             android:id="@+id/login_back_img"
@@ -28,23 +29,21 @@
             android:layout_toRightOf="@id/login_back_img"
             android:text="登录"
             android:textColor="@android:color/white" />
-        
-        <Button
-            android:id="@+id/forget_password"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/btn_boder_white"
-            android:padding="5dp"
-            android:text="忘记密码"
-            android:textColor="@android:color/white"
-            android:textSize="14sp" 
-           />
     </RelativeLayout>
-    
+
+    <Button
+        android:id="@+id/forget_password"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/btn_boder_white"
+        android:padding="5dp"
+        android:text="忘记密码"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
 
 </RelativeLayout>

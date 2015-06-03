@@ -57,6 +57,7 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 	private String gender;
 	private String username;
 	private TextView bindTv;
+	private String usernameXing;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 		nickname = sp.getString("nickname", "");
 		gender = sp.getString("gender", "未知");
 		username = sp.getString("username", "");
+		usernameXing = toXing(username);
 		
 		init();
 		
@@ -85,7 +87,7 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 		
 		bindLayout = (RelativeLayout) findViewById(R.id.my_account_bind_layout);
 		bindTv = (TextView) findViewById(R.id.my_account_bind_tv);
-		bindTv.setText(username);
+		bindTv.setText(usernameXing);
 		PwdLayout = (RelativeLayout) findViewById(R.id.my_account_pwd_layout);
 		helper = new UserSQLiteOpenHelper(MyAccountActivity.this);
 		genderTv = (TextView) findViewById(R.id.my_account_gender_tv);
@@ -331,5 +333,20 @@ public class MyAccountActivity extends Activity implements OnClickListener {
 		values.put("gender", genderStr);
 		db.update("user", values, "nickname=?", new String[]{nickname});
 		db.close();
+	}
+	//将手机号中间4位换成*
+	private String toXing(String usernameStr){
+		String newUsername = usernameStr;
+		String s1 = usernameStr.substring(0, 3);
+		String s2 = usernameStr.substring(3, 7);
+		String s3 = usernameStr.substring(7, 11);
+		StringBuffer b=new StringBuffer();
+		for(int i=0;i<s2.length();i++){
+			b.append("*");
+		}
+		newUsername = s1+b.toString()+s3;
+		System.out.println("s1="+s1+",s2="+s2+",s3="+s3+",b="+b);
+		System.out.println("newUsername============="+newUsername);
+		return newUsername;
 	}
 }

@@ -6,6 +6,7 @@ import java.util.TimerTask;
 import com.wiseweb.db.UserSQLiteOpenHelper;
 import com.wiseweb.movie.R;
 import com.wiseweb.movie.R.color;
+import com.wiseweb.util.Util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -69,13 +70,14 @@ public class RegisterActivity extends Activity {
 						.trim();
 				byte[] number = phoneNumberStr.getBytes();
 
-				if (TextUtils.isEmpty(phoneNumberStr) || number.length != 11) {
+				if (!Util.isMobileNum(phoneNumberStr)) {
 					// Toast.makeText(RegisterActivity.this,
 					// "请输入11位正确的手机号码",
 					// 0).show();
 					dialogForWrongNumber();
 				} else {
 					if (!flag) {
+						//此处服务器应该向用户手机发送验证码
 						Toast.makeText(RegisterActivity.this, "正在向服务器请求验证码。。。",
 								0).show();
 						//讲用户名存入数据库
