@@ -57,14 +57,19 @@ public class PayOrderActivity extends Activity implements OnItemClickListener,
 	private MyCount mc;
 	private Button payBtn;
 	private SharedPreferences orderPreferences;
-	private String orderId;
 	private SharedPreferences payPreferences;
+	private String orderId,money,agio;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_pay_order);
+		orderPreferences = getSharedPreferences("orderConfig",MODE_PRIVATE);
+		orderId = orderPreferences.getString("orderId", "");
+		money = orderPreferences.getString("money", "");
+		agio = orderPreferences.getString("agio", agio);
 		initView();
 		
 		Intent intent = getIntent();
@@ -105,10 +110,10 @@ public class PayOrderActivity extends Activity implements OnItemClickListener,
 	 * 根据影院可以选择的支付方式设置支付列表数据
 	 */
 	public void setData() {
-		orderName.setText("订单名称："+"虎啸影视-订单编号：18813085037");
-		orderTotalPrice.setText("订单总价："+"88元");
+		orderName.setText("订单名称："+"虎啸影视-订单编号:"+orderId);
+		orderTotalPrice.setText("订单总价："+money+"元");
 		remainingMoney.setText("账户余额："+"0元");
-		orderNeedPay.setText("还需支付："+"88元");
+		orderNeedPay.setText("还需支付："+agio+"元");
 //		payWayList.clear();
 		for (int i = 0; i < ways.size(); i++) {
 			payWay = new PayWay();
@@ -215,22 +220,25 @@ public class PayOrderActivity extends Activity implements OnItemClickListener,
 				if (httpResponse.getStatusLine().getStatusCode() == 200) {
 					HttpEntity entity = httpResponse.getEntity();
 					result = EntityUtils.toString(entity, "utf-8");
-					// 获得信息
-					JSONObject payInfo = new JSONObject(result)
-							.getJSONObject("payInfo");
-					String payUrl = payInfo.getString("payUrl");
-					payPreferences = getSharedPreferences("payInfo",Context.MODE_PRIVATE);
-					SharedPreferences.Editor e = payPreferences.edit();
-					e.putString("payUrl", payUrl);
-					e.commit();
-
+					String status = new JSONObject(result).getString("status");
+					if(status.equals("OK")){
+						// 获得信息
+						JSONObject payInfo = new JSONObject(result)
+								.getJSONObject("payInfo");
+						String payUrl = payInfo.getString("payUrl");
+						payPreferences = getSharedPreferences("payInfo",Context.MODE_PRIVATE);
+						SharedPreferences.Editor e = payPreferences.edit();
+						e.putString("payUrl", payUrl);
+						e.commit();
+					}
+					
 					// Message msg = new Message();
 					// // Bundle data = new Bundle();
 					// msg.what = ORDER_ADD;
 					// handler.sendMessage(msg);
 
 				} else {
-					System.out.println("lalalaalalalalala");
+					payBtn.setClickable(false);
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();

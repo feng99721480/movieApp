@@ -117,6 +117,7 @@ public class Util {
 	 * @throws ParseException
 	 */
 	public static String getHourAndMin(String date) throws ParseException {
+		date = date.replace("T", " ").replace(".000Z", "");
 		Date da = new Date();
 		SimpleDateFormat format;
 		format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -161,6 +162,7 @@ public class Util {
 	 */
 	public static boolean isTimeLater(String date) {
 		try {
+			date = date.replace("T", " ").replace(".000Z", "");
 			if (getTimeMillis(ConverToDate(date)) > getTimeStamp()) {
 				return true;
 			}
@@ -169,17 +171,24 @@ public class Util {
 		}
 		return false;
 	}
+	
+	public static String formatDate(String date) {
+		date = date.replace("T", " ").replace(".000Z", "");
+		return date;
+
+	}
+
 	/**
 	 * @desc 将String类型的日期转换为Date类型
 	 * @param strDate
 	 * @return
 	 * @throws Exception
 	 */
-    public static Date ConverToDate(String strDate) throws Exception  
-    {  
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
-        return df.parse(strDate);  
-    }  
+	public static Date ConverToDate(String strDate) throws Exception {
+		strDate = strDate.replace("T", " ").replace(".000Z", "");
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return df.parse(strDate);
+	}
 
 	/**
 	 * 判断某个日期到1970年的毫秒数
@@ -190,12 +199,12 @@ public class Util {
 	public static long getTimeMillis(Date date) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-//		cal.set(Calendar.YEAR, date.getYear());
-//		cal.set(Calendar.MONTH, date.getMonth());
-//		cal.set(Calendar.DAY_OF_MONTH, date.getDay());
-//		cal.set(Calendar.HOUR, date.getHours());
-//		cal.set(Calendar.MINUTE, date.getMinutes());
-//		cal.set(Calendar.SECOND, date.getSeconds());
+		// cal.set(Calendar.YEAR, date.getYear());
+		// cal.set(Calendar.MONTH, date.getMonth());
+		// cal.set(Calendar.DAY_OF_MONTH, date.getDay());
+		// cal.set(Calendar.HOUR, date.getHours());
+		// cal.set(Calendar.MINUTE, date.getMinutes());
+		// cal.set(Calendar.SECOND, date.getSeconds());
 		// cal.set(Calendar.MILLISECOND, date.getmi);
 		return cal.getTimeInMillis();
 	}
@@ -229,7 +238,6 @@ public class Util {
 	public static byte[] imgToByteArray(Bitmap b) {
 		if (b != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			System.out.println("b==null" + (b == null));
 			b.compress(Bitmap.CompressFormat.PNG, 100, baos);
 			return baos.toByteArray();
 		}

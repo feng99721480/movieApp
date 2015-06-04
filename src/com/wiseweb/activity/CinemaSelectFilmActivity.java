@@ -80,7 +80,9 @@ public class CinemaSelectFilmActivity extends Activity {
 	private static final int MOVIE_PLAN = 1;
 	private long movieId; // 存放被点击movie的movieId
 	private SharedPreferences cinemaConfig; // 影院
+	private String movieName;
 	private String cinemaName;
+	private ArrayList<String> times;
 	private int cinemaId;
 	private String cinemaAddress;
 	private TextView cinemaNameText, cinemaBriefName, cinemaBriefAddress;
@@ -89,6 +91,7 @@ public class CinemaSelectFilmActivity extends Activity {
 	private String selectedDate = "";
 	private int isCount = 0;
 	private SharedPreferences movieConfigure;
+	private SharedPreferences cinemaMovieConfig;//存放影院中选择的电影的排期
 
 	// private List<>
 
@@ -100,13 +103,15 @@ public class CinemaSelectFilmActivity extends Activity {
 		setContentView(R.layout.activity_cinema_select_film);
 		initView();
 		cinemaFilmScroll.smoothScrollTo(0, 0);
+		
 		// 获得影院相关数据
-
+		
 		cinemaConfig = getSharedPreferences("cinemaConfig",
 				Context.MODE_PRIVATE);
 		cinemaName = cinemaConfig.getString("cinemaName", null);
 		cinemaId = cinemaConfig.getInt("cinemaId", 0);
 		cinemaAddress = cinemaConfig.getString("cinemaAddress", null); // 设置影院的名称和地址
+		cinemaNameText.setText(cinemaName);
 		cinemaBriefName.setText(cinemaName);
 		cinemaBriefAddress.setText(cinemaAddress);
 
@@ -134,8 +139,14 @@ public class CinemaSelectFilmActivity extends Activity {
 		cinemaFilmList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				cinemaMovieConfig = getSharedPreferences("cinemaMovieConfig",MODE_PRIVATE);
+				SharedPreferences.Editor e = cinemaMovieConfig.edit();
+				e.putString("movieName", movieName);
+				e.putString("cinemaName",cinemaName);
+				e.putString("featureTime", Util.formatDate(times.get(position)));
+				e.commit();
 				Intent intent = new Intent();
 				intent.setClass(CinemaSelectFilmActivity.this,
 						SelectSeatBuyTicketActivity.class);
@@ -434,19 +445,19 @@ public class CinemaSelectFilmActivity extends Activity {
 					JSONArray plansArray = object.getJSONObject("plans")
 							.getJSONArray(selectedDate);
 					// 获得相应的数据 再展示出来
-					String featureTime = "";
+					String featureTime="" ;
 					String screenType = "";
 					String hallName = "";
 					String price = "";
+					times = new ArrayList<String>();
 					for (int i = 0; i < plansArray.length(); i++) {
 						MoviePlan moviePlan = new MoviePlan();
 						// 开场时间
 						JSONObject aPlan = plansArray.getJSONObject(i);
-						
 						if (aPlan.getString("featureTime") != null) {
-							featureTime = Util.getHourAndMin(aPlan
-									.getString("featureTime"));
+							featureTime = Util.getHourAndMin(aPlan.getString("featureTime"));
 						}
+						
 						moviePlan.setFeatureTime(featureTime);
 						// 屏幕类型
 
@@ -467,15 +478,11 @@ public class CinemaSelectFilmActivity extends Activity {
 						}
 						moviePlan.setPrice(price);
 						
-						if(Util.isTimeLater(aPlan.getString("featureTime") )){
-							try {
-								System.out.println("aaaaaaaa"+Util.getTimeMillis(Util.ConverToDate(aPlan.getString("featureTime"))));
-							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+						if(Util.isTimeLater((aPlan.getString("featureTime")))){
+							times.add(aPlan.getString("featureTime"));
 							moviePlans.add(moviePlan);
 						}
+						
 					}
 
 					Message msg = new Message();
@@ -560,7 +567,8 @@ public class CinemaSelectFilmActivity extends Activity {
 						Context.MODE_PRIVATE);
 				SharedPreferences.Editor editor = movieConfigure.edit();
 				editor.putLong("movieId", movieId);
-				editor.putString("movieName", names.get(position));
+				movieName = names.get(position);
+				editor.putString("movieName", movieName);
 				editor.putBoolean("movieOnCome", true);
 				editor.commit();
 				/**

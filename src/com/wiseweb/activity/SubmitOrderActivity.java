@@ -124,7 +124,7 @@ public class SubmitOrderActivity extends Activity implements OnClickListener {
 		public void onFinish() {
 			countDownText.setText("订单超时");
 			// 不能再支付
-//			orderPayBtn.setClickable(false);
+			orderPayBtn.setClickable(false);
 		}
 
 		@Override

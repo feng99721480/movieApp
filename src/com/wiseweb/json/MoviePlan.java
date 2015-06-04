@@ -1,5 +1,7 @@
 package com.wiseweb.json;
 
+import java.util.Date;
+
 public class MoviePlan {
 	public long cinemaId; // 影院id
 	public String featureTime; // 开场时间
